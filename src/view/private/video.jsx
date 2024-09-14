@@ -4,11 +4,22 @@ import { LeaveScreen } from "@/components/video/screens/LeaveScreen";
 import { JoiningScreen } from "@/components/video/screens/JoiningScreen";
 import { useEffect, useState } from "react";
 import { MeetingProvider } from "@videosdk.live/react-sdk";
+import useAuthStore from "@/store/useAuthStore";
+import { useNavigate } from "react-router-dom";
 
 export default function Video() {
+  const { user } = useAuthStore();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if(!user){
+      navigate('/');
+    }
+  },[]);
+  
   const [token, setToken] = useState("");
   const [meetingId, setMeetingId] = useState("");
-  const [participantName, setParticipantName] = useState("");
+  const [participantName, setParticipantName] = useState(user?.displayName || user?.email);
   const [micOn, setMicOn] = useState(false);
   const [webcamOn, setWebcamOn] = useState(false);
   const [customAudioStream, setCustomAudioStream] = useState(null);
@@ -50,7 +61,7 @@ export default function Video() {
               onMeetingLeave={() => {
                 setToken("");
                 setMeetingId("");
-                setParticipantName("");
+                setParticipantName(user?.displayName || user?.email);
                 setWebcamOn(false);
                 setMicOn(false);
                 setMeetingStarted(false);

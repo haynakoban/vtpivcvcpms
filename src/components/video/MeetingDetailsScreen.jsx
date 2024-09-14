@@ -63,8 +63,9 @@ export function MeetingDetailsScreen({
           <input
             value={participantName}
             onChange={(e) => setParticipantName(e.target.value)}
+            disabled
             placeholder="Enter your name"
-            className="px-4 py-3 mt-5 bg-gray-650 rounded-xl text-white w-full text-center"
+            className="px-4 py-3 mt-5 bg-gray-200 rounded-xl text-black w-full text-center"
           />
 
           {/* <p className="text-xs text-white mt-1 text-center">
@@ -72,7 +73,7 @@ export function MeetingDetailsScreen({
           </p> */}
           <button
             disabled={participantName.length < 3}
-            className={`w-full ${
+            className={`w-full hover:bg-[rgba(255,255,255,.1)] ${
               participantName.length < 3 ? "bg-gray-650" : "bg-purple-350"
             }  text-white px-2 py-3 rounded-xl mt-5`}
             onClick={() => {
@@ -94,7 +95,7 @@ export function MeetingDetailsScreen({
         <div className="w-full md:mt-0 mt-4 flex flex-col">
           <div className="flex items-center justify-center flex-col w-full ">
             <button
-              className="w-full bg-purple-350 text-white px-2 py-3 rounded-xl"
+              className="w-full bg-gray-700 text-white px-2 py-3 rounded-xl"
               onClick={async () => {
                 const { meetingId, err } = await _handleOnCreateMeeting();
 
@@ -118,7 +119,7 @@ export function MeetingDetailsScreen({
               Create a meeting
             </button>
             <button
-              className="w-full bg-gray-650 text-white px-2 py-3 rounded-xl mt-5"
+              className="w-full border border-gray-700 px-2 py-3 rounded-xl mt-5"
               onClick={() => {
                 setIsJoinMeetingClicked(true);
               }}

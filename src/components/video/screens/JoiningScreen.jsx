@@ -458,14 +458,14 @@ export function JoiningScreen({
 
                     {!isMobile && (
                       <>
-                        <div className="absolute top-2 right-10">
+                        {/* <div className="absolute top-2 right-10">
                           <NetworkStats />
-                        </div>
+                        </div> */}
 
                         <div className="flex mt-3">
                           {!isFirefox && (
                             <>
-                              <DropDown
+                              {/* <DropDown
                                 mics={mics}
                                 changeMic={changeMic}
                                 customAudioStream={customAudioStream}
@@ -478,7 +478,7 @@ export function JoiningScreen({
                               <DropDownCam
                                 changeWebcam={changeWebcam}
                                 webcams={webcams}
-                              />
+                              /> */}
                             </>
                           )}
                         </div>

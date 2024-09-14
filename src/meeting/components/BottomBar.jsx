@@ -253,7 +253,7 @@ const MicBTN = () => {
                         </button>
                       </div>
                     </Popover.Button>
-                    <Transition
+                    {/* <Transition
                       as={Fragment}
                       enter="transition ease-out duration-200"
                       enterFrom="opacity-0 translate-y-1"
@@ -335,7 +335,7 @@ const MicBTN = () => {
                           </div>
                         </div>
                       </Popover.Panel>
-                    </Transition>
+                    </Transition> */}
                   </>
                 )}
               </Popover>
@@ -450,11 +450,11 @@ const WebCamBTN = () => {
                         <div className="overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5">
                           <div className={" bg-gray-750 py-1"}>
                             <div>
-                              <div className="flex items-center p-3 pb-0">
+                              {/* <div className="flex items-center p-3 pb-0">
                                 <p className="ml-3 text-sm text-gray-900">
                                   {"WEBCAM"}
                                 </p>
-                              </div>
+                              </div> */}
                               <div className="flex flex-col">
                                 {webcams.map(({ deviceId, label }, index) => (
                                   <div
@@ -654,7 +654,7 @@ export function BottomBar({ bottomBarHeight, setIsMeetingLeft }) {
     return (
       <OutlinedButton
         Icon={EndIcon}
-        bgColor="bg-red-150"
+        bgColor="bg-red-800"
         onClick={() => {
           leave();
           setIsMeetingLeft(true);
@@ -796,7 +796,7 @@ export function BottomBar({ bottomBarHeight, setIsMeetingLeft }) {
       <LeaveBTN />
       <MicBTN />
       <WebCamBTN />
-      <RecordingBTN />
+      {/* <RecordingBTN /> */}
       <OutlinedButton Icon={DotsHorizontalIcon} onClick={handleClickFAB} />
       <Transition appear show={Boolean(open)} as={Fragment}>
         <Dialog
@@ -883,7 +883,7 @@ export function BottomBar({ bottomBarHeight, setIsMeetingLeft }) {
       <MeetingIdCopyBTN />
 
       <div className="flex flex-1 items-center justify-center" ref={tollTipEl}>
-        <RecordingBTN />
+        {/* <RecordingBTN /> */}
         <RaiseHandBTN isMobile={isMobile} isTab={isTab} />
         <MicBTN />
         <WebCamBTN />

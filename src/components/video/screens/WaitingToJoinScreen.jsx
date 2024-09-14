@@ -55,7 +55,7 @@ const WaitingToJoinScreen = () => {
         <div
           style={{
             height: isTab ? 200 : isMobile ? 200 : 250,
-            width: isTab ? 200 : isMobile ? 200 : 250,
+            width: isTab ? 200 : isMobile ? 'auto' : 'auto',
           }}
         >
           <Lottie
