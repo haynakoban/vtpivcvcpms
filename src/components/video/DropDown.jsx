@@ -4,11 +4,11 @@ import { Popover, Transition } from "@headlessui/react";
 import { CheckIcon, ChevronDownIcon } from "@heroicons/react/outline";
 import { Fragment } from "react";
 import { useEffect, useRef, useState } from "react";
-import DropMIC from "../icons/DropDown/DropMIC";
-import TestMic from "../icons/DropDown/TestMic";
-import TestMicOff from "../icons/DropDown/TestMicOff";
-import PauseButton from "../icons/DropDown/PauseButton";
-import { useMeetingAppContext } from "../MeetingAppContextDef";
+import DropMIC from "@/icons/DropDown/DropMIC";
+import TestMic from "@/icons/DropDown/TestMic";
+import TestMicOff from "@/icons/DropDown/TestMicOff";
+import PauseButton from "@/icons/DropDown/PauseButton";
+import { useMeetingAppContext } from "@/MeetingAppContextDef";
 
 export default function DropDown({
   mics,

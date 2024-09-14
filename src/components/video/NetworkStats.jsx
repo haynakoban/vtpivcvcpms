@@ -1,11 +1,11 @@
 /* eslint-disable react/no-unescaped-entities */
 /* eslint-disable react/prop-types */
-import UploadIcon from "../icons/NetworkStats/UploadIcon";
-import DownloadIcon from "../icons/NetworkStats/DownloadIcon";
-import RefreshIcon from "../icons/NetworkStats/RefreshIcon";
-import RefreshCheck from "../icons/NetworkStats/RefreshCheck";
+import UploadIcon from "@/icons/NetworkStats/UploadIcon";
+import DownloadIcon from "@/icons/NetworkStats/DownloadIcon";
+import RefreshIcon from "@/icons/NetworkStats/RefreshIcon";
+import RefreshCheck from "@/icons/NetworkStats/RefreshCheck";
 import { getNetworkStats } from "@videosdk.live/react-sdk";
-import WifiOff from "../icons/NetworkStats/WifiOff";
+import WifiOff from "@/icons/NetworkStats/WifiOff";
 import { useEffect, useState } from "react";
 
 const NetworkStats = () => {

@@ -256,7 +256,7 @@ export const CornerDisplayName = ({
             }}
             className="absolute top-2 right-2 rounded-md  p-2 cursor-pointer "
           >
-            <Popover className="relative ">
+            {/* <Popover className="relative ">
               {({ close }) => (
                 <>
                   <Popover.Button
@@ -407,7 +407,7 @@ export const CornerDisplayName = ({
                   </Transition>
                 </>
               )}
-            </Popover>
+            </Popover> */}
           </div>
         </div>
       )}

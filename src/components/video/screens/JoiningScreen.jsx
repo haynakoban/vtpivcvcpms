@@ -12,10 +12,10 @@ import MicOffIcon from "@/icons/MicOffIcon";
 import MicOnIcon from "@/icons/Bottombar/MicOnIcon";
 import MicPermissionDenied from "@/icons/MicPermissionDenied";
 import CameraPermissionDenied from "@/icons/CameraPermissionDenied";
-import DropDown from "@/components/video/ConfirmBox";
-import DropDownCam from "@/components/video/ConfirmBox";
-import DropDownSpeaker from "@/components/video/ConfirmBox";
-import NetworkStats from "@/components/video/ConfirmBox";
+import DropDown from "@/components/video/DropDown";
+import DropDownCam from "@/components/video/DropDownCam";
+import DropDownSpeaker from "@/components/video/DropDownSpeaker";
+import NetworkStats from "@/components/video/NetworkStats";
 import { useMeetingAppContext } from "@/MeetingAppContextDef";
 import { toast } from "react-toastify";
 
@@ -535,7 +535,7 @@ export function JoiningScreen({
           </div>
         </div>
       </div>
-      {/* <ConfirmBox
+      <ConfirmBox
         open={dlgMuted}
         successText="OKAY"
         onSuccess={() => {
@@ -544,8 +544,8 @@ export function JoiningScreen({
         title="System mic is muted"
         subTitle="You're default microphone is muted, please unmute it or increase audio
             input volume from system settings."
-      /> */}
-      {/* <ConfirmBox
+      />
+      <ConfirmBox
         open={dlgDevices}
         successText="DISMISS"
         onSuccess={() => {
@@ -553,7 +553,7 @@ export function JoiningScreen({
         }}
         title="Mic or webcam not available"
         subTitle="Please connect a mic and webcam to speak and share your video in the meeting. You can also join without them."
-      /> */}
+      />
     </div>
   );
 }

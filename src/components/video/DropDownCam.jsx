@@ -3,8 +3,8 @@
 import { Popover, Transition } from "@headlessui/react";
 import { ChevronDownIcon, CheckIcon } from "@heroicons/react/outline";
 import { Fragment, useState } from "react";
-import DropCAM from "../icons/DropDown/DropCAM";
-import { useMeetingAppContext } from "../MeetingAppContextDef";
+import DropCAM from "@/icons/DropDown/DropCAM";
+import { useMeetingAppContext } from "@/MeetingAppContextDef";
 
 export default function DropDownCam({ webcams, changeWebcam }) {
   const { setSelectedWebcam, selectedWebcam, isCameraPermissionAllowed } =

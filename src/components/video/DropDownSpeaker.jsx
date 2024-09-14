@@ -4,10 +4,10 @@ import { Popover, Transition } from "@headlessui/react";
 import { CheckIcon, ChevronDownIcon } from "@heroicons/react/outline";
 import { Fragment } from "react";
 import { useState } from "react";
-import DropSpeaker from "../icons/DropDown/DropSpeaker";
-import TestSpeaker from "../icons/DropDown/TestSpeaker";
-import test_sound from "../sounds/test_sound.mp3";
-import { useMeetingAppContext } from "../MeetingAppContextDef";
+import DropSpeaker from "@/icons/DropDown/DropSpeaker";
+import TestSpeaker from "@/icons/DropDown/TestSpeaker";
+import test_sound from "@/sounds/test_sound.mp3";
+import { useMeetingAppContext } from "@/MeetingAppContextDef";
 
 export default function DropDownSpeaker({ speakers }) {
   const { setSelectedSpeaker, selectedSpeaker, isMicrophonePermissionAllowed } =
