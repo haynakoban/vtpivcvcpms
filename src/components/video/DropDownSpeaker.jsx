@@ -86,11 +86,10 @@ export default function DropDownSpeaker({ speakers }) {
               leave="transition ease-in duration-150"
               leaveFrom="opacity-100 translate-y-0"
               leaveTo="opacity-0 translate-y-1"
-              show={true}
             >
               <Popover.Panel className="absolute bottom-full z-10 mt-3 w-72 px-4 sm:px-0 pb-2">
                 <div className="rounded-lg shadow-lg">
-                  <div className={"bg-gray-350 rounded-lg"}>
+                  <div className={"bg-gray-600 rounded-lg"}>
                     <div>
                       <div className="flex flex-col">
                         {speakers.map((item, index) => {

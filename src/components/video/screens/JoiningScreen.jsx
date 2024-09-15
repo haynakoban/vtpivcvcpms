@@ -466,7 +466,7 @@ export function JoiningScreen({
                         <div className="flex mt-3">
                           {!isFirefox && (
                             <>
-                              {/* <DropDown
+                              <DropDown
                                 mics={mics}
                                 changeMic={changeMic}
                                 customAudioStream={customAudioStream}
@@ -479,7 +479,7 @@ export function JoiningScreen({
                               <DropDownCam
                                 changeWebcam={changeWebcam}
                                 webcams={webcams}
-                              /> */}
+                              />
                             </>
                           )}
                         </div>
