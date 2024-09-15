@@ -4,6 +4,8 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { IoMdArrowRoundBack } from "react-icons/io";
+import { useNavigate } from "react-router-dom";
 
 export function MeetingDetailsScreen({
   onClickJoin,
@@ -12,6 +14,7 @@ export function MeetingDetailsScreen({
   setParticipantName,
   onClickStartMeeting,
 }) {
+  const navigate = useNavigate();
   const [meetingId, setMeetingId] = useState("");
   const [meetingIdError, setMeetingIdError] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
@@ -72,7 +75,6 @@ export function MeetingDetailsScreen({
             Your name will help everyone identify you in the meeting.
           </p> */}
           <Button
-            variant="ghost"
             disabled={participantName.length < 3}
             className={`w-full py-6 rounded-xl mt-5`}
             onClick={() => {
@@ -86,6 +88,18 @@ export function MeetingDetailsScreen({
             }}
           >
             {iscreateMeetingClicked ? "Start a meeting" : "Join a meeting"}
+          </Button>
+          
+          <Button
+            variant="outline"
+            className="`w-full mt-5 px-16 py-6 rounded-xl text-sm font-semibold border"
+            onClick={() => {
+              setMeetingId('');
+              setIsJoinMeetingClicked(false);
+              setIscreateMeetingClicked(false);
+            }}
+          >
+            <IoMdArrowRoundBack  /> &nbsp;&nbsp; Back
           </Button>
         </>
       )}
@@ -125,6 +139,15 @@ export function MeetingDetailsScreen({
               }}
             >
               Join a meeting
+            </Button>
+            <Button
+              variant="outline"
+              className="w-full px-16 py-6 mt-5 rounded-xl text-sm font-semibold border"
+              onClick={() => {
+                navigate('/');
+              }}
+            >
+              <IoMdArrowRoundBack  /> &nbsp;&nbsp; Back to home
             </Button>
           </div>
         </div>
