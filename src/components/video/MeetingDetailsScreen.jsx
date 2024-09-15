@@ -89,17 +89,17 @@ export function MeetingDetailsScreen({
           >
             {iscreateMeetingClicked ? "Start a meeting" : "Join a meeting"}
           </Button>
-          
+
           <Button
             variant="outline"
             className="`w-full mt-5 px-16 py-6 rounded-xl text-sm font-semibold border"
             onClick={() => {
-              setMeetingId('');
+              setMeetingId("");
               setIsJoinMeetingClicked(false);
               setIscreateMeetingClicked(false);
             }}
           >
-            <IoMdArrowRoundBack  /> &nbsp;&nbsp; Back
+            <IoMdArrowRoundBack /> &nbsp;Back
           </Button>
         </>
       )}
@@ -144,10 +144,10 @@ export function MeetingDetailsScreen({
               variant="outline"
               className="w-full px-16 py-6 mt-5 rounded-xl text-sm font-semibold border"
               onClick={() => {
-                navigate('/');
+                navigate("/");
               }}
             >
-              <IoMdArrowRoundBack  /> &nbsp;&nbsp; Back to home
+              <IoMdArrowRoundBack /> &nbsp;Back to home
             </Button>
           </div>
         </div>
