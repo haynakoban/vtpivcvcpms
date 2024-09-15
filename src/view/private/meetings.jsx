@@ -1,25 +1,29 @@
-import { MeetingAppProvider } from "@/MeetingAppContextDef";
-import { MeetingContainer } from "@/meeting/MeetingContainer";
-import { LeaveScreen } from "@/components/video/screens/LeaveScreen";
-import { JoiningScreen } from "@/components/video/screens/JoiningScreen";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { MeetingProvider } from "@videosdk.live/react-sdk";
 import useAuthStore from "@/store/useAuthStore";
-import { useNavigate } from "react-router-dom";
 
-export default function Video() {
+import { MeetingAppProvider } from "@/MeetingAppContextDef";
+import { MeetingContainer } from "@/meeting/MeetingContainer";
+
+import { LeaveScreen } from "@/components/video/screens/LeaveScreen";
+import { JoiningScreen } from "@/components/video/screens/JoiningScreen";
+
+export default function Meetings() {
   const { user } = useAuthStore();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if(!user){
-      navigate('/');
+    if (!user) {
+      navigate("/");
     }
-  },[]);
-  
+  }, []);
+
   const [token, setToken] = useState("");
   const [meetingId, setMeetingId] = useState("");
-  const [participantName, setParticipantName] = useState(user?.displayName || user?.email);
+  const [participantName, setParticipantName] = useState(
+    user?.displayName || user?.email
+  );
   const [micOn, setMicOn] = useState(false);
   const [webcamOn, setWebcamOn] = useState(false);
   const [customAudioStream, setCustomAudioStream] = useState(null);
