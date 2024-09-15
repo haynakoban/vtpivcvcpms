@@ -709,6 +709,25 @@ export function BottomBar({ bottomBarHeight, setIsMeetingLeft }) {
   };
 
   const ChatBTN = ({ isMobile, isTab }) => {
+    const { theme } = useTheme();
+    const dynamicIconColor =
+      theme === "system"
+        ? window.matchMedia("(prefers-color-scheme: dark)").matches
+          ? "#000"
+          : "#fff"
+        : theme === "dark"
+        ? "#000"
+        : "#fff";
+
+    const dynamicIconColor2 =
+      theme === "system"
+        ? window.matchMedia("(prefers-color-scheme: dark)").matches
+          ? "#fff"
+          : "#000"
+        : theme === "dark"
+        ? "#fff"
+        : "#000";
+
     return isMobile || isTab ? (
       <MobileIconButton
         tooltipTitle={"Chat"}
@@ -724,6 +743,8 @@ export function BottomBar({ bottomBarHeight, setIsMeetingLeft }) {
     ) : (
       <OutlinedButton
         Icon={ChatIcon}
+        focusIconColor={dynamicIconColor}
+        color={dynamicIconColor2}
         onClick={() => {
           setSideBarMode((s) =>
             s === sideBarModes.CHAT ? null : sideBarModes.CHAT
@@ -737,6 +758,25 @@ export function BottomBar({ bottomBarHeight, setIsMeetingLeft }) {
 
   const ParticipantsBTN = ({ isMobile, isTab }) => {
     const { participants } = useMeeting();
+    const { theme } = useTheme();
+    const dynamicIconColor =
+      theme === "system"
+        ? window.matchMedia("(prefers-color-scheme: dark)").matches
+          ? "#000"
+          : "#fff"
+        : theme === "dark"
+        ? "#000"
+        : "#fff";
+
+    const dynamicIconColor2 =
+      theme === "system"
+        ? window.matchMedia("(prefers-color-scheme: dark)").matches
+          ? "#fff"
+          : "#000"
+        : theme === "dark"
+        ? "#fff"
+        : "#000";
+
     return isMobile || isTab ? (
       <MobileIconButton
         tooltipTitle={"Participants"}
@@ -754,6 +794,8 @@ export function BottomBar({ bottomBarHeight, setIsMeetingLeft }) {
     ) : (
       <OutlinedButton
         Icon={ParticipantsIcon}
+        focusIconColor={dynamicIconColor}
+        color={dynamicIconColor2}
         onClick={() => {
           setSideBarMode((s) =>
             s === sideBarModes.PARTICIPANTS ? null : sideBarModes.PARTICIPANTS

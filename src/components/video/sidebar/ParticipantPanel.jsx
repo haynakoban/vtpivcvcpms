@@ -9,25 +9,31 @@ import VideoCamOffIcon from "@/icons/ParticipantTabPanel/VideoCamOffIcon";
 import VideoCamOnIcon from "@/icons/ParticipantTabPanel/VideoCamOnIcon";
 import { useMeetingAppContext } from "@/MeetingAppContextDef";
 import { nameTructed } from "@/utils/helper";
+import { useTheme } from "@/components/common/theme-provider";
 
 function ParticipantListItem({ participantId, raisedHand }) {
   const { micOn, webcamOn, displayName, isLocal } =
     useParticipant(participantId);
 
+  const { theme } = useTheme();
+  const dynamicIconColor =
+    theme === "system"
+      ? window.matchMedia("(prefers-color-scheme: dark)").matches
+        ? "#fff"
+        : "#000"
+      : theme === "dark"
+      ? "#fff"
+      : "#000";
+
+  console.log({ dynamicIconColor });
   return (
-    <div className="mt-2 m-2 p-2 bg-gray-700 rounded-lg mb-0">
+    <div className="mt-2 m-2 p-2 border bg-gray-200 dark:bg-gray-800 rounded-lg mb-0">
       <div className="flex flex-1 items-center justify-center relative">
-        <div
-          style={{
-            color: "#212032",
-            backgroundColor: "#757575",
-          }}
-          className="h-10 w-10 text-lg mt-0 rounded overflow-hidden flex relative items-center justify-center"
-        >
+        <div className="h-10 w-10 text-lg font-semibold text-gray-200 dark:text-gray-900 bg-gray-700 dark:bg-gray-200 mt-0 rounded overflow-hidden flex relative items-center justify-center">
           {displayName?.charAt(0).toUpperCase()}
         </div>
         <div className="ml-2 mr-1 flex flex-1">
-          <p className="text-base text-white overflow-hidden whitespace-pre-wrap overflow-ellipsis">
+          <p className="text-base overflow-hidden whitespace-pre-wrap overflow-ellipsis">
             {isLocal ? "You" : nameTructed(displayName, 15)}
           </p>
         </div>
@@ -36,9 +42,19 @@ function ParticipantListItem({ participantId, raisedHand }) {
             <RaiseHand fillcolor={"#fff"} />
           </div>
         )}
-        <div className="m-1 p-1">{micOn ? <MicOnIcon /> : <MicOffIcon />}</div>
         <div className="m-1 p-1">
-          {webcamOn ? <VideoCamOnIcon /> : <VideoCamOffIcon />}
+          {micOn ? (
+            <MicOnIcon fillColor={dynamicIconColor} />
+          ) : (
+            <MicOffIcon fillColor={dynamicIconColor} />
+          )}
+        </div>
+        <div className="m-1 p-1">
+          {webcamOn ? (
+            <VideoCamOnIcon fillColor={dynamicIconColor} />
+          ) : (
+            <VideoCamOffIcon fillColor={dynamicIconColor} />
+          )}
         </div>
       </div>
     </div>

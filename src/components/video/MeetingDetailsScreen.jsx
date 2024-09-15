@@ -44,13 +44,13 @@ export function MeetingDetailsScreen({
         </div>
       ) : isJoinMeetingClicked ? (
         <>
-          <input
+          <Input
             defaultValue={meetingId}
             onChange={(e) => {
               setMeetingId(e.target.value);
             }}
             placeholder={"Enter meeting Id"}
-            className="px-4 py-3 bg-gray-650 rounded-xl w-full text-center"
+            className="py-6 rounded-xl w-full text-center"
           />
           {meetingIdError && (
             <p className="text-xs text-red-600">{`Please enter valid meetingId`}</p>
