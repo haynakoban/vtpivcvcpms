@@ -3,8 +3,8 @@ import { Outlet, useLocation } from "react-router-dom";
 import { Fragment } from "react/jsx-runtime";
 
 import useAuthStore from "@/store/useAuthStore";
-import Navbar from "@/layout/navbar";
-import Footer from "@/layout/footer";
+import Navbar from "@/layout/public/navbar";
+import Footer from "@/layout/public/footer";
 
 export default function MainLayout() {
   const { initializeAuth } = useAuthStore();
