@@ -2,6 +2,8 @@
 import { CheckIcon, ClipboardIcon } from "@heroicons/react/outline";
 import { useState } from "react";
 import { toast } from "react-toastify";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 export function MeetingDetailsScreen({
   onClickJoin,
@@ -22,9 +24,7 @@ export function MeetingDetailsScreen({
     >
       {iscreateMeetingClicked ? (
         <div className="border border-solid border-gray-400 rounded-xl px-4 py-3  flex items-center justify-center">
-          <p className="text-white text-base">
-            {`Meeting code : ${meetingId}`}
-          </p>
+          <p className="text-base">{`Meeting code : ${meetingId}`}</p>
           <button
             className="ml-2"
             onClick={() => {
@@ -38,7 +38,7 @@ export function MeetingDetailsScreen({
             {isCopied ? (
               <CheckIcon className="h-5 w-5 text-green-400" />
             ) : (
-              <ClipboardIcon className="h-5 w-5 text-white" />
+              <ClipboardIcon className="h-5 w-5" />
             )}
           </button>
         </div>
@@ -50,7 +50,7 @@ export function MeetingDetailsScreen({
               setMeetingId(e.target.value);
             }}
             placeholder={"Enter meeting Id"}
-            className="px-4 py-3 bg-gray-650 rounded-xl text-white w-full text-center"
+            className="px-4 py-3 bg-gray-650 rounded-xl w-full text-center"
           />
           {meetingIdError && (
             <p className="text-xs text-red-600">{`Please enter valid meetingId`}</p>
@@ -60,22 +60,21 @@ export function MeetingDetailsScreen({
 
       {(iscreateMeetingClicked || isJoinMeetingClicked) && (
         <>
-          <input
+          <Input
             value={participantName}
             onChange={(e) => setParticipantName(e.target.value)}
             disabled
             placeholder="Enter your name"
-            className="px-4 py-3 mt-5 bg-gray-200 rounded-xl text-black w-full text-center"
+            className="py-6 mt-5 rounded-xl w-full text-center"
           />
 
           {/* <p className="text-xs text-white mt-1 text-center">
             Your name will help everyone identify you in the meeting.
           </p> */}
-          <button
+          <Button
+            variant="ghost"
             disabled={participantName.length < 3}
-            className={`w-full hover:bg-[rgba(255,255,255,.1)] ${
-              participantName.length < 3 ? "bg-gray-650" : "bg-purple-350"
-            }  text-white px-2 py-3 rounded-xl mt-5`}
+            className={`w-full py-6 rounded-xl mt-5`}
             onClick={() => {
               if (iscreateMeetingClicked) {
                 onClickStartMeeting();
@@ -87,15 +86,15 @@ export function MeetingDetailsScreen({
             }}
           >
             {iscreateMeetingClicked ? "Start a meeting" : "Join a meeting"}
-          </button>
+          </Button>
         </>
       )}
 
       {!iscreateMeetingClicked && !isJoinMeetingClicked && (
         <div className="w-full md:mt-0 mt-4 flex flex-col">
           <div className="flex items-center justify-center flex-col w-full ">
-            <button
-              className="w-full bg-gray-700 text-white px-2 py-3 rounded-xl"
+            <Button
+              className="w-full py-6 rounded-xl"
               onClick={async () => {
                 const { meetingId, err } = await _handleOnCreateMeeting();
 
@@ -117,15 +116,16 @@ export function MeetingDetailsScreen({
               }}
             >
               Create a meeting
-            </button>
-            <button
-              className="w-full border border-gray-700 px-2 py-3 rounded-xl mt-5"
+            </Button>
+            <Button
+              variant="outline"
+              className="w-full py-6 rounded-xl mt-5"
               onClick={() => {
                 setIsJoinMeetingClicked(true);
               }}
             >
               Join a meeting
-            </button>
+            </Button>
           </div>
         </div>
       )}

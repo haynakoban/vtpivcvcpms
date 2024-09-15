@@ -35,6 +35,7 @@ import { Dialog, Popover, Transition } from "@headlessui/react";
 import { createPopper } from "@popperjs/core";
 import { useMeetingAppContext } from "@/MeetingAppContextDef";
 import useMediaStream from "@/hooks/useMediaStream";
+import { useTheme } from "@/components/common/theme-provider";
 
 function PipBTN({ isMobile, isTab }) {
   const { pipMode, setPipMode } = useMeetingAppContext();
@@ -198,6 +199,23 @@ const MicBTN = () => {
     speakers && speakers?.length && setSpeakers(speakers);
   };
 
+  const { theme } = useTheme();
+  const dynamicIconColor = localMicOn
+    ? theme === "system"
+      ? window.matchMedia("(prefers-color-scheme: dark)").matches
+        ? "#fff"
+        : "#000"
+      : theme === "dark"
+      ? "#fff"
+      : "#000"
+    : theme === "system"
+    ? window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "#000"
+      : "#fff"
+    : theme === "dark"
+    ? "#000"
+    : "#fff";
+
   const [tooltipShow, setTooltipShow] = useState(false);
   const btnRef = useRef();
   const tooltipRef = useRef();
@@ -219,10 +237,14 @@ const MicBTN = () => {
         onClick={() => {
           mMeeting.toggleMic();
         }}
-        bgColor={localMicOn ? "bg-gray-750" : "bg-white"}
-        borderColor={localMicOn && "#ffffff33"}
+        bgColor={
+          localMicOn
+            ? "bg-white dark:bg-transparent"
+            : "bg-slate-900 dark:bg-white"
+        }
         isFocused={localMicOn}
-        focusIconColor={localMicOn && "white"}
+        focusIconColor={dynamicIconColor}
+        color={dynamicIconColor}
         tooltip={"Toggle Mic"}
         renderRightComponent={() => {
           return (
@@ -247,7 +269,7 @@ const MicBTN = () => {
                           <ChevronDownIcon
                             className="h-4 w-4"
                             style={{
-                              color: mMeeting.localMicOn ? "white" : "black",
+                              color: dynamicIconColor,
                             }}
                           />
                         </button>
@@ -389,6 +411,23 @@ const WebCamBTN = () => {
     setTooltipShow(false);
   };
 
+  const { theme } = useTheme();
+  const dynamicIconColor = localWebcamOn
+    ? theme === "system"
+      ? window.matchMedia("(prefers-color-scheme: dark)").matches
+        ? "#fff"
+        : "#000"
+      : theme === "dark"
+      ? "#fff"
+      : "#000"
+    : theme === "system"
+    ? window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "#000"
+      : "#fff"
+    : theme === "dark"
+    ? "#000"
+    : "#fff";
+
   return (
     <>
       <OutlinedButton
@@ -402,10 +441,14 @@ const WebCamBTN = () => {
           }
           mMeeting.toggleWebcam(track);
         }}
-        bgColor={localWebcamOn ? "bg-gray-750" : "bg-white"}
-        borderColor={localWebcamOn && "#ffffff33"}
+        bgColor={
+          localWebcamOn
+            ? "bg-white dark:bg-transparent"
+            : "bg-slate-900 dark:bg-white"
+        }
         isFocused={localWebcamOn}
-        focusIconColor={localWebcamOn && "white"}
+        focusIconColor={dynamicIconColor}
+        color={dynamicIconColor}
         tooltip={"Toggle Webcam"}
         renderRightComponent={() => {
           return (
@@ -430,7 +473,7 @@ const WebCamBTN = () => {
                           <ChevronDownIcon
                             className="h-4 w-4"
                             style={{
-                              color: localWebcamOn ? "white" : "black",
+                              color: dynamicIconColor,
                             }}
                           />
                         </button>
@@ -655,6 +698,7 @@ export function BottomBar({ bottomBarHeight, setIsMeetingLeft }) {
       <OutlinedButton
         Icon={EndIcon}
         bgColor="bg-red-800"
+        color={"#fff"}
         onClick={() => {
           leave();
           setIsMeetingLeft(true);
@@ -728,7 +772,7 @@ export function BottomBar({ bottomBarHeight, setIsMeetingLeft }) {
     return (
       <div className="flex items-center justify-center lg:ml-0 ml-4 mt-4 xl:mt-0">
         <div className="flex border-2 border-gray-850 p-2 rounded-md items-center justify-center">
-          <h1 className="text-white text-base ">{meetingId}</h1>
+          <h1 className="text-base ">{meetingId}</h1>
           <button
             className="ml-2"
             onClick={() => {
@@ -742,7 +786,7 @@ export function BottomBar({ bottomBarHeight, setIsMeetingLeft }) {
             {isCopied ? (
               <CheckIcon className="h-5 w-5 text-green-400" />
             ) : (
-              <ClipboardIcon className="h-5 w-5 text-white" />
+              <ClipboardIcon className="h-5 w-5" />
             )}
           </button>
         </div>

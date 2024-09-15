@@ -2,6 +2,7 @@
 import Lottie from "lottie-react";
 import { useEffect, useRef, useState } from "react";
 import { createPopper } from "@popperjs/core";
+import { useTheme } from "@/components/common/theme-provider";
 
 export const OutlinedButton = ({
   bgColor,
@@ -29,6 +30,17 @@ export const OutlinedButton = ({
   const [tooltipShow, setTooltipShow] = useState(false);
   const btnRef = useRef();
   const tooltipRef = useRef();
+  const { theme } = useTheme();
+  const dynamicIconColor = isFocused
+    ? focusIconColor
+    : color ||
+      (theme === "system"
+        ? window.matchMedia("(prefers-color-scheme: dark)").matches
+          ? "#fff"
+          : "#000"
+        : theme === "dark"
+        ? "#fff"
+        : "#000");
 
   const openTooltip = () => {
     createPopper(btnRef.current, tooltipRef.current, {
@@ -98,7 +110,7 @@ export const OutlinedButton = ({
         }}
       >
         <div
-          className={`flex items-center justify-center  rounded-lg ${
+          className={`flex items-center justify-center rounded-lg ${
             bgColor ? `${bgColor}` : isFocused ? "bg-white" : "bg-gray-750"
           } ${
             mouseOver
@@ -106,8 +118,8 @@ export const OutlinedButton = ({
               : borderColor
               ? `border-2 border-[${borderColor}] border-solid`
               : bgColor
-              ? "border-2 border-transparent border-solid"
-              : "border-2 border-solid border-[#ffffff33]"
+              ? "border-2 border-solid"
+              : "border-2 border-solid"
           } md:m-2 m-1`}
           style={{
             transition: "all 200ms",
@@ -171,21 +183,11 @@ export const OutlinedButton = ({
                   <>
                     <Icon
                       style={{
-                        color: isFocused
-                          ? focusIconColor || "#1C1F2E"
-                          : color
-                          ? color
-                          : "#fff",
+                        color: dynamicIconColor,
                         height: iconSize,
                         width: iconSize,
                       }}
-                      fillcolor={
-                        isFocused
-                          ? focusIconColor || "#1C1F2E"
-                          : color
-                          ? color
-                          : "#fff"
-                      }
+                      fillcolor={dynamicIconColor}
                     />
                     {badge && (
                       <p
@@ -200,7 +202,7 @@ export const OutlinedButton = ({
                 ))}
             </div>
             {buttonText ? (
-              <p className="text-sm text-white font-semibold mr-2 text-center">
+              <p className="text-sm font-semibold mr-2 text-center">
                 {buttonText}
               </p>
             ) : null}

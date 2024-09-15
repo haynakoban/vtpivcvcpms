@@ -16,6 +16,24 @@
   box-sizing: border-box;
 }
 
+.scrolly::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scrolly::-webkit-scrollbar-thumb {
+  background-color: #888;
+  border-radius: 12px;
+}
+
+.scrolly::-webkit-scrollbar-thumb:hover {
+  background-color: #555;
+}
+
+.scrolly::-webkit-scrollbar-track {
+  background-color: transparent;
+  border-radius: 12px;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

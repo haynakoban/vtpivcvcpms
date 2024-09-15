@@ -41,21 +41,12 @@ const WaitingToJoinScreen = () => {
   };
 
   return (
-    <div
-      className="bg-gray-800"
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        height: "100vh",
-        // backgroundColor: theme.palette.darkTheme.main,
-      }}
-    >
+    <div className="flex items-center justify-center h-[100vh]">
       <div className="flex flex-col">
         <div
           style={{
             height: isTab ? 200 : isMobile ? 200 : 250,
-            width: isTab ? 200 : isMobile ? 'auto' : 'auto',
+            width: isTab ? 200 : isMobile ? "auto" : "auto",
           }}
         >
           <Lottie
@@ -69,9 +60,7 @@ const WaitingToJoinScreen = () => {
             style={{ height: "100%", width: "100%" }}
           />
         </div>
-        <h1 className="text-white text-center font-bold mt-1 text-xl">
-          {message.text}
-        </h1>
+        <h1 className="text-center font-bold mt-1 text-xl">{message.text}</h1>
       </div>
     </div>
   );

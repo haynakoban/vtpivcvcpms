@@ -4,6 +4,8 @@ import { PaperAirplaneIcon } from "@heroicons/react/solid";
 import { useMeeting, usePubSub } from "@videosdk.live/react-sdk";
 import { useEffect, useRef, useState } from "react";
 import { formatAMPM, json_verify, nameTructed } from "@/utils/helper";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 const ChatMessage = ({ senderId, senderName, text, timestamp }) => {
   const mMeeting = useMeeting();
@@ -20,18 +22,18 @@ const ChatMessage = ({ senderId, senderName, text, timestamp }) => {
       <div
         className={`flex ${
           localSender ? "items-end" : "items-start"
-        } flex-col py-1 px-2 rounded-md bg-gray-700`}
+        } flex-col py-1 px-2 rounded-md border`}
       >
-        <p style={{ color: "#ffffff80" }}>
+        <p className="text-gray-600">
           {localSender ? "You" : nameTructed(senderName, 15)}
         </p>
         <div>
-          <p className="inline-block whitespace-pre-wrap break-words text-right text-white">
+          <p className="inline-block whitespace-pre-wrap break-words text-right">
             {text}
           </p>
         </div>
-        <div className="mt-1">
-          <p className="text-xs italic" style={{ color: "#ffffff80" }}>
+        <div className="mt-1 ">
+          <p className="text-xs italic text-gray-600">
             {formatAMPM(new Date(timestamp))}
           </p>
         </div>
@@ -51,8 +53,9 @@ const ChatInput = ({ inputHeight }) => {
       style={{ height: inputHeight }}
     >
       <div className="relative w-full">
-        <span className="absolute inset-y-0 right-0 flex mr-2 rotate-90 ">
-          <button
+        <span className="absolute inset-y-0 right-0 flex mr-3 rotate-90">
+          <Button
+            variant="icon"
             disabled={message.length < 2}
             type="submit"
             className="p-1 focus:outline-none focus:shadow-outline"
@@ -69,14 +72,14 @@ const ChatInput = ({ inputHeight }) => {
           >
             <PaperAirplaneIcon
               className={`w-6 h-6 ${
-                message.length < 2 ? "text-gray-500 " : "text-white"
+                message.length < 2 ? "text-gray-500 " : ""
               }`}
             />
-          </button>
+          </Button>
         </span>
-        <input
+        <Input
           type="text"
-          className="py-4 text-base text-white border-gray-400 border bg-gray-750 rounded pr-10 pl-2 focus:outline-none w-full"
+          className="py-6 text-base rounded pr-10 pl-2 focus:outline-none w-full"
           placeholder="Write your message"
           autoComplete="off"
           ref={input}
@@ -132,7 +135,11 @@ const ChatMessages = ({ listHeight }) => {
   }, [messages]);
 
   return messages ? (
-    <div ref={listRef} style={{ overflowY: "scroll", height: listHeight }}>
+    <div
+      className="scrolly"
+      ref={listRef}
+      style={{ overflowY: "scroll", height: listHeight }}
+    >
       <div className="p-4">
         {messages.map((msg, i) => {
           const { senderId, senderName, message, timestamp } = msg;

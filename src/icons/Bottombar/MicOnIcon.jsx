@@ -21,7 +21,10 @@ function MicOnIcon(props) {
       >
         <path fill="#D9D9D9" d="M0 0H24V24H0z"></path>
       </mask>
-      <g mask="url(#mask0_27_238)">
+      <g
+        fill={props.fillcolor ? props.fillcolor : "#fff"}
+        mask="url(#mask0_27_238)"
+      >
         <path
           fill={props.fillcolor ? props.fillcolor : "#fff"}
           fillRule="evenodd"

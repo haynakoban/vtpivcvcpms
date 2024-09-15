@@ -25,7 +25,7 @@ const SideBarTabView = ({
 
   return (
     <div
-      className="bg-gray-800"
+      className="bg-slate-100 border dark:bg-slate-900"
       style={{
         height,
         width: sideBarContainerWidth,
@@ -37,7 +37,6 @@ const SideBarTabView = ({
     >
       <div>
         <div
-          className="bg-gray-750"
           style={{
             height: height,
             borderRadius: 10,
@@ -54,7 +53,7 @@ const SideBarTabView = ({
                   borderBottom: "1px solid #70707033",
                 }}
               >
-                <p className="text-base text-white font-bold">
+                <p className="text-base font-bold">
                   {sideBarMode === "PARTICIPANTS"
                     ? `${
                         sideBarMode.charAt(0).toUpperCase() +
@@ -63,11 +62,7 @@ const SideBarTabView = ({
                     : sideBarMode.charAt(0).toUpperCase() +
                         sideBarMode.slice(1).toLowerCase() || ""}
                 </p>
-                <button
-                  className="text-white"
-                  onClick={handleClose}
-                  style={{ margin: 0, padding: 0 }}
-                >
+                <button onClick={handleClose} style={{ margin: 0, padding: 0 }}>
                   <XIcon className="h-5 w-5" />
                 </button>
               </div>
