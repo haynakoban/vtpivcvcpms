@@ -1,6 +1,6 @@
 import { auth, db } from "@/config/firebase";
 import { onAuthStateChanged, signOut } from "firebase/auth";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import { create } from "zustand";
 
 const useAuthStore = create((set) => ({
@@ -8,14 +8,11 @@ const useAuthStore = create((set) => ({
   initializeAuth: () => {
     onAuthStateChanged(auth, async (u) => {
       if (u?.uid) {
-        const userQuery = query(
-          collection(db, "users"),
-          where("uid", "==", u?.uid)
-        );
-
-        const userDocs = await getDocs(userQuery);
-        if (!userDocs.empty) {
-          const userData = userDocs.docs[0].data();
+        const userRef = doc(db, 'users', u?.uid);
+        const user = await getDoc(userRef);
+        
+        if (user.exists()) {
+          const userData = user.data();
           set({ user: { id: u?.uid, ...userData } });
         } else {
           set({ user: null });

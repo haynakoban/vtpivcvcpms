@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { auth, db, google } from "@/config/firebase";
 import { signInWithPopup } from "firebase/auth";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import useUsersStore from "@/store/useUsersStore";
 
 export default function SignInWithGoogle() {
@@ -11,16 +11,11 @@ export default function SignInWithGoogle() {
   async function signInWithGoogle() {
     try {
       const result = await signInWithPopup(auth, google);
-
-      const userQuery = query(
-        collection(db, "users"),
-        where("uid", "==", result.user.uid)
-      );
-
-      const userDocs = await getDocs(userQuery);
+      const userRef = doc(db, 'users', result.user?.uid);
+      const user = await getDoc(userRef);
 
       // If there are no matching documents, proceed to create a new user account
-      if (userDocs.empty) {
+      if (!user.exists()) {
         createUser({
           fullName: result?.user?.displayName || "John Doe",
           user: {

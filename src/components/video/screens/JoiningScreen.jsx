@@ -347,7 +347,6 @@ export function JoiningScreen({
     try {
       if (permissonAvaialble.current?.isMicrophonePermissionAllowed) {
         let mics = await getMicrophones();
-        console.log(mics);
         let speakers = await getPlaybackDevices();
         const hasMic = mics.length > 0;
         if (hasMic) {

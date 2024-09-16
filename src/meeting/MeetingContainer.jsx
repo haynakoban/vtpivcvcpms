@@ -147,7 +147,6 @@ export function MeetingContainer({ onMeetingLeave, setIsMeetingLeft }) {
   }
 
   function onMeetingJoined() {
-    console.log("onMeetingJoined");
   }
 
   function onMeetingLeft() {
@@ -159,7 +158,6 @@ export function MeetingContainer({ onMeetingLeave, setIsMeetingLeft }) {
 
   const _handleOnError = (data) => {
     const { code, message } = data;
-    console.log("meetingErr", code, message);
 
     const joiningErrCodes = [
       4001, 4002, 4003, 4004, 4005, 4006, 4007, 4008, 4009, 4010,
@@ -195,10 +193,7 @@ export function MeetingContainer({ onMeetingLeave, setIsMeetingLeft }) {
   useEffect(() => {
     const debounceTimeout = setTimeout(() => {
       const participantIds = Array.from(mMeeting.participants.keys());
-      console.log("Debounced participantIds", participantIds);
-
       setParticipantsData(participantIds);
-      console.log("Setting participants");
     }, 500);
 
     return () => clearTimeout(debounceTimeout);

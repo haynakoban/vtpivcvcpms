@@ -11,10 +11,10 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 
-export default function Appointment() {
+export default function Settings() {
   return (
     <SecureMainLayout>
-      <ContentLayout title="Appointment">
+      <ContentLayout title="Messages">
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -24,11 +24,11 @@ export default function Appointment() {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage>Appointment</BreadcrumbPage>
+              <BreadcrumbPage>Settings</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
-        <div className="mt-5">Appointment</div>
+        <div className="mt-5">Settings</div>
       </ContentLayout>
     </SecureMainLayout>
   );

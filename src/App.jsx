@@ -4,8 +4,18 @@ import { Toaster } from "@/components/ui/toaster";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AppRoutes from "@/routes";
+import useAuthStore from "@/store/useAuthStore";
+import useUsersStore from "@/store/useUsersStore";
+import { useEffect } from "react";
 
 function App() {
+  const { initializeAuth } = useAuthStore();
+  const { users } = useUsersStore();
+
+  useEffect(() => {
+    initializeAuth();
+  }, [initializeAuth, users]);
+
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <Router>

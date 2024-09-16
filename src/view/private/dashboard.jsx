@@ -19,7 +19,7 @@ export default function Dashboard() {
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
-        <div>Dashboard</div>
+        <div className="mt-5">Dashboard</div>
       </ContentLayout>
     </SecureMainLayout>
   );

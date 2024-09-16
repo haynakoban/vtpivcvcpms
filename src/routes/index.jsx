@@ -18,6 +18,8 @@ import Appointment from "@/view/private/appointment";
 import Careplan from "@/view/private/careplan";
 import Messages from "@/view/private/messages";
 import Meetings from "@/view/private/meetings";
+import Account from "@/view/private/account";
+import Settings from "@/view/private/settings";
 
 export default function AppRoutes() {
   const { user } = useAuthStore();
@@ -46,6 +48,8 @@ export default function AppRoutes() {
           <Route path="auth/careplan" element={<Careplan />} />
           <Route path="auth/messages" element={<Messages />} />
           <Route path="auth/meetings" element={<Meetings />} />
+          <Route path="auth/account" element={<Account />} />
+          <Route path="auth/settings" element={<Settings />} />
         </>
       ) : (
         <Route path="auth/*" element={<Navigate to="/login" />} />

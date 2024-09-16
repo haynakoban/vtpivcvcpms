@@ -1,7 +1,6 @@
 import { create } from "zustand";
 import { auth, db } from "@/config/firebase";
 import {
-  addDoc,
   collection,
   serverTimestamp,
   FirestoreError,
@@ -10,8 +9,10 @@ import {
   query,
   getDocs,
   where,
+  updateDoc,
+  setDoc,
 } from "firebase/firestore";
-import { sendPasswordResetEmail } from "firebase/auth";
+import { onAuthStateChanged, sendPasswordResetEmail, signInWithEmailAndPassword, updatePassword } from "firebase/auth";
 
 const useUsersStore = create((set) => ({
   users: [],
@@ -19,7 +20,7 @@ const useUsersStore = create((set) => ({
 
   createUser: async ({ fullName, user }) => {
     try {
-      const userRef = collection(db, "users");
+      const userRef = doc(db, "users", user.uid);
       // Store data in Firestore
       const userData = {
         uid: user.uid,
@@ -28,16 +29,17 @@ const useUsersStore = create((set) => ({
         emailVerified: user.emailVerified,
         photoUrl: user.photoURL || "",
         refreshToken: user.refreshToken,
+        userType: 2,
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
       };
 
-      const result = await addDoc(userRef, userData);
-      const userDoc = doc(db, "users", result.id);
+      await setDoc(userRef, userData);
+      const userDoc = doc(db, "users", user.uid);
       const userDocSnapshot = await getDoc(userDoc);
       const newUser = {
         ...userDocSnapshot.data(),
-        id: result.id,
+        id: user.uid,
       };
 
       set((state) => ({ users: [...state.users, newUser], user: newUser }));
@@ -60,15 +62,15 @@ const useUsersStore = create((set) => ({
       const querySnapshot = await getDocs(userQuery);
 
       if (!querySnapshot.empty) {
-        // const userDoc = querySnapshot.docs[0];
-        // const userData = userDoc.data();
+        const userDoc = querySnapshot.docs[0];
+        const userData = userDoc.data();
 
-        // if (userData.userType != 2) {
-        //   return {
-        //     title: "Email Not Found",
-        //     description: "Please try again.",
-        //   };
-        // }
+        if (userData.userType != 2) {
+          return {
+            title: "Email Not Found",
+            description: "Please try again.",
+          };
+        }
 
         await sendPasswordResetEmail(auth, email);
         return {
@@ -88,6 +90,54 @@ const useUsersStore = create((set) => ({
       };
     }
   },
+
+  updateUserProfile: async (fullName, email, id) => {
+    try{
+      const userRef = doc(db, "users", id);
+      const docSnap = await getDoc(userRef);
+      
+      if (docSnap.exists()) {
+        const userData = docSnap.data();
+        if(fullName == userData.fullName && email == userData.email) return;
+
+        await updateDoc(userRef, {
+          fullName,
+          email,
+          updatedAt: serverTimestamp()
+        });
+  
+        const userr = await getDoc(userRef);
+        if (userr.exists()) {
+          const userData = userr.data();
+          set({ userInfo: { id, ...userData } });
+        }
+        return { success: 'Profile updated successfully.' };
+      } else {
+        return { err: 'No user found.' };
+      }
+    } catch(e){
+      set({ updateError: { other: 'Something went wrong, please try again' } });
+    }
+  },
+
+  updateUserPassword: async (email, password, confirmPassword, oldPassword) => {
+    if (password !== confirmPassword) return { err: "Passwords do not match!" };
+    try {
+      await signInWithEmailAndPassword(auth, email, oldPassword);
+      
+      onAuthStateChanged(auth, async (user) => {
+        if(user){
+          const newPassword = password;
+          await updatePassword(user, newPassword);
+          return { success: 'Password updated successfully.' };
+        }
+      })
+      return { success: 'Password updated successfully.' };
+    } catch (error) {
+        console.log(error)
+        return { err: 'Old password incorrect.' };
+    }
+  }
 }));
 
 export default useUsersStore;

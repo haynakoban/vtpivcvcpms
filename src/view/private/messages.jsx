@@ -28,7 +28,7 @@ export default function Messages() {
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
-        <div>Message</div>
+        <div className="mt-5">Message</div>
       </ContentLayout>
     </SecureMainLayout>
   );

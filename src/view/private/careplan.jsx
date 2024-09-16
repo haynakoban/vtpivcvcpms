@@ -28,7 +28,7 @@ export default function Careplan() {
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
-        <div>Careplan</div>
+        <div className="mt-5">Careplan</div>
       </ContentLayout>
     </SecureMainLayout>
   );

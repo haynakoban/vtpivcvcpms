@@ -11,7 +11,36 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+
+
 export default function Pets() {
+  const pets = [
+    {
+      name: 'Pochi',
+      type: 'Dog',
+      thumbnail: 'https://www.shutterstock.com/image-photo/happy-puppy-welsh-corgi-14-600nw-2270841247.jpg'
+    },
+    {
+      name: 'Ming Ming',
+      type: 'Cat',
+      thumbnail: 'https://cdn.britannica.com/36/234736-050-4AC5B6D5/Scottish-fold-cat.jpg'
+    },
+    {
+      name: 'Mingzi',
+      type: 'Cat',
+      thumbnail: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Cat_November_2010-1a.jpg/800px-Cat_November_2010-1a.jpg'
+    },
+  ];
+
   return (
     <SecureMainLayout>
       <ContentLayout title="My Pets">
@@ -28,7 +57,25 @@ export default function Pets() {
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
-        <div>My Pets</div>
+        <div className="mt-5">My Pets</div>
+        <div className="flex flex-wrap mt-2">
+          {pets.map((pet, i) => {
+            return <div key={i} className="w-full sm:w-1/2 lg:w-1/3 xl:w-1/4 p-1">
+              <Card>
+                <CardHeader>
+                  <CardTitle>{pet?.name}</CardTitle>
+                  <CardDescription>{pet?.type}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <img src={pet?.thumbnail} alt="" className="w-full aspect-square object-cover" />
+                </CardContent>
+                <CardFooter className="w-full">
+                  <Button className="w-full">View Information</Button>
+                </CardFooter>
+              </Card>
+            </div>
+          })}
+        </div>
       </ContentLayout>
     </SecureMainLayout>
   );
