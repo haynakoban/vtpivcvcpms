@@ -26,6 +26,9 @@ const useAuthStore = create((set) => ({
     await signOut(auth);
     set({ user: null });
   },
+  setCurrentUser: (value) => {
+    set({ user: value });
+  },
 }));
 
 export default useAuthStore;

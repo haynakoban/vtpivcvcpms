@@ -53,7 +53,7 @@ export default function Account() {
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      fullName: user?.fullName || user?.displayName || "",
+      fullName: user?.displayName || "",
       email: user?.email || "",
     },
   });
@@ -66,8 +66,6 @@ export default function Account() {
       confirmPassword: "",
     },
   });
-
-  const { reset } = useForm();
 
   async function onUpdateProfile(values) {
     const { fullName, email } = values;
@@ -150,7 +148,7 @@ export default function Account() {
                   )}
                 />
                 <div>
-                  <Button type="submit" className="mt-2 w-full">
+                  <Button type="submit" className="mt-2">
                     Update Profile
                   </Button>
                 </div>
@@ -218,7 +216,7 @@ export default function Account() {
                   )}
                 />
                 <div>
-                  <Button type="submit" className="mt-2 w-full">
+                  <Button type="submit" className="mt-2">
                     Update Password
                   </Button>
                 </div>

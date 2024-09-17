@@ -20,9 +20,15 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import useAuthStore from "@/store/useAuthStore";
+import PetRegistrationForm from "@/components/forms/PetRegistrationForm";
+import { useState } from "react";
 
 
 export default function Pets() {
+  const { user } = useAuthStore();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const pets = [
     {
       name: 'Pochi',
@@ -57,7 +63,12 @@ export default function Pets() {
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
-        <div className="mt-5">My Pets</div>
+        <div className="mt-5 flex justify-between items-center">
+          <div>My Pets</div>
+          {user?.userType == 2 &&
+            <Button onClick={() => setIsModalOpen(true)}>Register My Pet</Button>
+          }
+        </div>
         <div className="flex flex-wrap mt-2">
           {pets.map((pet, i) => {
             return <div key={i} className="w-full sm:w-1/2 lg:w-1/3 xl:w-1/4 p-1">
@@ -76,6 +87,9 @@ export default function Pets() {
             </div>
           })}
         </div>
+        {isModalOpen &&
+          <PetRegistrationForm setIsModalOpen={setIsModalOpen}  />
+        }
       </ContentLayout>
     </SecureMainLayout>
   );

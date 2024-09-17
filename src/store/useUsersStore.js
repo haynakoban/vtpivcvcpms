@@ -13,6 +13,7 @@ import {
   setDoc,
 } from "firebase/firestore";
 import { onAuthStateChanged, sendPasswordResetEmail, signInWithEmailAndPassword, updatePassword } from "firebase/auth";
+import useAuthStore from "./useAuthStore";
 
 const useUsersStore = create((set) => ({
   users: [],
@@ -92,16 +93,18 @@ const useUsersStore = create((set) => ({
   },
 
   updateUserProfile: async (fullName, email, id) => {
+    const setCurrentUser = useAuthStore.getState().setCurrentUser;
+
     try{
       const userRef = doc(db, "users", id);
       const docSnap = await getDoc(userRef);
       
       if (docSnap.exists()) {
         const userData = docSnap.data();
-        if(fullName == userData.fullName && email == userData.email) return;
+        if(fullName == userData.displayName && email == userData.email) return;
 
         await updateDoc(userRef, {
-          fullName,
+          displayName: fullName,
           email,
           updatedAt: serverTimestamp()
         });
@@ -109,7 +112,7 @@ const useUsersStore = create((set) => ({
         const userr = await getDoc(userRef);
         if (userr.exists()) {
           const userData = userr.data();
-          set({ userInfo: { id, ...userData } });
+          setCurrentUser({ id, ...userData });
         }
         return { success: 'Profile updated successfully.' };
       } else {
