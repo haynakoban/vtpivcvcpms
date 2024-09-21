@@ -5,6 +5,7 @@ import { create } from "zustand";
 
 const useAuthStore = create((set) => ({
   user: null,
+  isChanged: false,
   initializeAuth: () => {
     onAuthStateChanged(auth, async (u) => {
       if (u?.uid) {
@@ -28,6 +29,9 @@ const useAuthStore = create((set) => ({
   },
   setCurrentUser: (value) => {
     set({ user: value });
+  },
+  setChanged: (value) => {
+    set({ isChanged: value });
   },
 }));
 

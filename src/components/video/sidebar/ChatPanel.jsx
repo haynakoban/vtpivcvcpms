@@ -20,15 +20,15 @@ const ChatMessage = ({ senderId, senderName, text, timestamp }) => {
       }}
     >
       <div
-        className={`flex ${
+        className={`w-full flex ${
           localSender ? "items-end" : "items-start"
         } flex-col py-1 px-2 rounded-md border`}
       >
         <p className="text-gray-600">
           {localSender ? "You" : nameTructed(senderName, 15)}
         </p>
-        <div>
-          <p className="inline-block whitespace-pre-wrap break-words text-right">
+        <div className="w-full">
+          <p className="whitespace-pre-wrap break-words text-right">
             {text}
           </p>
         </div>

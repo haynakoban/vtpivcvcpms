@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { Input } from "@/components/ui/input";
@@ -14,6 +15,11 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { UploadCloud } from "lucide-react";
+import { useEffect, useState } from "react";
+import usePetStore from "@/store/usePetStore";
+import useAuthStore from "@/store/useAuthStore";
+import { useToast } from "@/hooks/use-toast";
+import LoadingSpinner from "../loaders/LoadingSpinner";
 
 const ageSchema = z.string()
   .transform((val) => {
@@ -27,55 +33,72 @@ const ageSchema = z.string()
     message: 'Age must be an integer.',
   });
 
-const fileSchema = z.object({
-    name: z.string().min(1, "File name is required"),
-    size: z.number().positive("File size must be a positive number"),
-    type: z.string().refine(value => ['image/jpeg', 'image/png'].includes(value), {
-      message: "Invalid file type",
-    }),
-  });
-
 const formSchema = z.object({
     petName: z.string().min(1, "Pet name is required"),
     species: z.string().min(1, "Species is required"),
     breed: z.string().min(1, "Breed is required"),
-    // petImage: z.instanceof(File).optional().refine(file => {
-    //     if (!file) return true;
-    //     const result = fileSchema.safeParse({
-    //         name: file.name,
-    //         size: file.size,
-    //         type: file.type,
-    //     });
-    //     return result.success;
-    // }, { message: "Invalid file" }),
     age: ageSchema,
     birthday: z.date(),
 });
 
-// eslint-disable-next-line react/prop-types
-function PetRegistrationForm({ setIsModalOpen }) {
+function PetRegistrationForm({ setIsModalOpen, updateData }) {
+    const { toast } = useToast();
+    const { user } = useAuthStore();
+    const { isChanged, petRegistration, updatePetInformation } = usePetStore();
+
+    const [petImage, setPetImage] = useState(null);
+    const [imagePreview, setImagePreview] = useState(updateData?.petImage || null);
+    const [petImgErr, setPetImgErr] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+
     const form = useForm({
         resolver: zodResolver(formSchema),
         defaultValues: {
-          petName: "",
-          species: "",
-          breed: "",
-          age: "",
-        //   petImage: undefined,
-          birthday: undefined,
+          petName: updateData?.petName || "",
+          species: updateData?.species || "",
+          breed: updateData?.breed || "",
+          age: updateData?.age.toString() || "",
+          birthday: updateData?.birthday ? new Date(updateData?.birthday.seconds * 1000) : undefined,
         },
         transform: {
             age: (value) => parseInt(value),
         },        
     });
 
-    async function onUpdateProfile(values) {
-        const { petName, breed, species, age, birthday, petImage  } = values;
-        console.log(petName, breed, species, age, birthday, petImage  )
+    async function onPetSubmit(values) {
+        if(updateData){
+            updatePet(values);
+        } else {
+            addPet(values);
+        }
+    }
+
+    async function addPet(values) {
+        const { petName, breed, species, age, birthday } = values;
+        if(!petImage) {
+            setPetImgErr(true);
+            return;
+        }
+        
         try {
-        //   const result = await updateUserProfile(petName, email, user.id);
-        //   if(result?.err) toast({ title: 'Error', description: result.err })
-        //   if(result?.success) toast({ title: 'Success', description: result.success })
+            setIsLoading(true);
+            const result = await petRegistration(petName, breed, species, age, birthday, petImage, user?.id);
+            setIsModalOpen(false);
+            if(result?.err) toast({ title: 'Error', description: result.err })
+            if(result?.success) toast({ title: 'Success', description: result.success })
+        } catch (error) {
+          console.log(error);
+        }
+    }
+
+    async function updatePet(values) {
+        const { petName, breed, species, age, birthday } = values;     
+        try {
+            setIsLoading(true);
+            const result = await updatePetInformation(petName, breed, species, age, birthday, petImage, updateData?.id, updateData?.petImage);
+            setIsModalOpen(false);
+            if(result?.err) toast({ title: 'Error', description: result.err })
+            if(result?.success) toast({ title: 'Success', description: result.success })
         } catch (error) {
           console.log(error);
         }
@@ -83,8 +106,18 @@ function PetRegistrationForm({ setIsModalOpen }) {
 
     const handleFileChange = (e) => {
         const file = e.target.files?.[0] || undefined;
-        form.setValue("petImage", file);
+        setPetImage(file);
+        if (file) {
+            const previewUrl = URL.createObjectURL(file);
+            setImagePreview(previewUrl);
+        }
+        setPetImgErr(false);
     };
+
+    
+  useEffect(() => {
+    setIsLoading(false);
+  },[isChanged]);
 
     return (
         <div className="relative z-[998]" aria-labelledby="modal-title" role="dialog" aria-modal="true">
@@ -98,28 +131,35 @@ function PetRegistrationForm({ setIsModalOpen }) {
                                 <div>Pet Information</div>
                                 <Form {...form}>
                                 <form
-                                    onSubmit={form.handleSubmit(onUpdateProfile)}
+                                    onSubmit={form.handleSubmit(onPetSubmit)}
                                     className="space-y-5"
                                 >
-                                    {/*<FormField
+                                    <FormField
                                         control={form.control}
                                         name="petImage"
                                         render={({ field }) => (
                                             <FormItem className="mt-4">
-                                            <FormLabel>Pet Image</FormLabel>
+                                            <FormLabel className={`${petImgErr ? 'text-red-800' : ''}`}>Pet Image</FormLabel>
                                             <FormControl>
                                                 <div>
-                                                    <label
-                                                    {...field}
-                                                    className="relative flex flex-col items-center justify-center w-full py-6 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-background hover:bg-secondary "
-                                                    >
-                                                    <div className=" text-center">
-                                                        <div className="p-2 rounded-md max-w-min mx-auto">
-                                                        <UploadCloud className="text-primary" size={30} />
-                                                        </div>
-                                                        <p className="text-xs text-gray-500">
-                                                        Click to upload files &#40;files should be under 10 MB &#41;
-                                                        </p>
+                                                    <label className="relative flex flex-col items-center justify-center w-full border-2 border-secondary border-dashed rounded-lg cursor-pointer bg-background hover:bg-secondary ">
+                                                    <div className="w-full text-center">
+                                                        {imagePreview ?
+                                                            <div className="w-full p-6">
+                                                                <div className="bg-foreground rounded-full w-[50%] mx-auto">
+                                                                    <img src={imagePreview} alt="Preview" className="rounded-full w-full aspect-square object-contain" />
+                                                                </div>
+                                                            </div>
+                                                            :
+                                                            <div className="py-12">    
+                                                                <div className="p-2 rounded-md max-w-min mx-auto">
+                                                                <UploadCloud className="text-primary" size={30} />
+                                                                </div>
+                                                                <p className="text-xs text-gray-500">
+                                                                Click to upload files &#40;files should be under 10 MB &#41;
+                                                                </p>
+                                                            </div>
+                                                        }
                                                     </div>
                                                     
                                                     <Input
@@ -130,13 +170,15 @@ function PetRegistrationForm({ setIsModalOpen }) {
                                                         onChange={handleFileChange}
                                                     />
                                                     </label>
-
+                                                    {petImgErr &&
+                                                        <p className="mt-2 text-sm text-red-800">Pet Image is required.</p>
+                                                    }
                                                 </div>
                                             </FormControl>
                                             <FormMessage />
                                             </FormItem>
                                         )}
-                                    /> */}
+                                    />
 
                                     
                                     <FormField
@@ -229,8 +271,9 @@ function PetRegistrationForm({ setIsModalOpen }) {
                                         <Button type="submit" className="mt-2" variant="outline" onClick={() => setIsModalOpen(false)}>
                                             Close
                                         </Button>
-                                        <Button type="submit" className="mt-2 ml-2">
-                                            Register
+                                        <Button type="submit" className="mt-2 ml-2" disabled={isLoading}>
+                                            <LoadingSpinner isLoading={isLoading} />
+                                            {updateData ? 'Update' : 'Register'}
                                         </Button>
                                     </div>
                                 </form>

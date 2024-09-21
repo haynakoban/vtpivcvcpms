@@ -31,6 +31,7 @@ const useUsersStore = create((set) => ({
         photoUrl: user.photoURL || "",
         refreshToken: user.refreshToken,
         userType: 2,
+        isDeleted: false,
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
       };
@@ -132,12 +133,14 @@ const useUsersStore = create((set) => ({
         if(user){
           const newPassword = password;
           await updatePassword(user, newPassword);
+          const isChanged = useAuthStore.getState().isChanged;
+          const setChanged = useAuthStore.getState().setChanged;
+          setChanged(!isChanged);
           return { success: 'Password updated successfully.' };
         }
       })
       return { success: 'Password updated successfully.' };
     } catch (error) {
-        console.log(error)
         return { err: 'Old password incorrect.' };
     }
   }

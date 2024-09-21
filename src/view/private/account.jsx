@@ -21,6 +21,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import useAuthStore from "@/store/useAuthStore";
 import useUsersStore from "@/store/useUsersStore";
+import { useState } from "react";
+import LoadingSpinner from "@/components/loaders/LoadingSpinner";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -47,8 +49,9 @@ const formSchema2 = z.object({
 
 export default function Account() {
   const { toast } = useToast();
-  const { user } = useAuthStore();
+  const { user, isChanged } = useAuthStore();
   const { updateUserProfile, updateUserPassword } = useUsersStore();
+  const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -70,7 +73,8 @@ export default function Account() {
   async function onUpdateProfile(values) {
     const { fullName, email } = values;
     try {
-      const result = await updateUserProfile(fullName, email, user.id);
+      setIsLoading(true);
+      const result = await updateUserProfile(fullName, email, user.id).finally(() => setIsLoading(false));
       if(result?.err) toast({ title: 'Error', description: result.err })
       if(result?.success) toast({ title: 'Success', description: result.success })
     } catch (error) {
@@ -82,7 +86,8 @@ export default function Account() {
     const {  password, confirmPassword, oldPassword } = values;
 
     try {
-      const result = await updateUserPassword(user?.email, password, confirmPassword, oldPassword);
+      setIsLoading(true);
+      const result = await updateUserPassword(user?.email, password, confirmPassword, oldPassword).finally(() => setIsLoading(false));
       if(result?.err) {
         toast({ title: 'Error', description: result.err });
       }
@@ -148,7 +153,8 @@ export default function Account() {
                   )}
                 />
                 <div>
-                  <Button type="submit" className="mt-2">
+                  <Button type="submit" className="mt-2" disabled={isLoading}>
+                    <LoadingSpinner isLoading={isLoading} />
                     Update Profile
                   </Button>
                 </div>
@@ -216,7 +222,8 @@ export default function Account() {
                   )}
                 />
                 <div>
-                  <Button type="submit" className="mt-2">
+                  <Button type="submit" className="mt-2" disabled={isLoading}>
+                    <LoadingSpinner isLoading={isLoading} />
                     Update Password
                   </Button>
                 </div>
