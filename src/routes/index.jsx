@@ -16,6 +16,7 @@ import Dashboard from "@/view/private/dashboard";
 import Pets from "@/view/private/pets";
 import Appointment from "@/view/private/appointment";
 import Careplan from "@/view/private/careplan";
+import CreateAppointment from "@/view/private/create-appointment";
 import Messages from "@/view/private/messages";
 import Meetings from "@/view/private/meetings";
 import Account from "@/view/private/account";
@@ -45,6 +46,10 @@ export default function AppRoutes() {
           <Route path="auth/dashboard" element={<Dashboard />} />
           <Route path="auth/pets" element={<Pets />} />
           <Route path="auth/appointment" element={<Appointment />} />
+          <Route
+            path="auth/appointment/create"
+            element={<CreateAppointment />}
+          />
           <Route path="auth/careplan" element={<Careplan />} />
           <Route path="auth/messages" element={<Messages />} />
           <Route path="auth/meetings" element={<Meetings />} />
