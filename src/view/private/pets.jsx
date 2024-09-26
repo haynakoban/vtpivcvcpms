@@ -51,14 +51,18 @@ import LoadingSpinner from "@/components/loaders/LoadingSpinner";
 
 export default function Pets() {
   const { user } = useAuthStore();
-  const { isChanged, userPets, getUserPet, deletePetInformation } = usePetStore();
+  const { isChanged, userPets, getUserPet, getUserPets, deletePetInformation } = usePetStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [petData, setPetData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    getUserPet(user?.id);
-  },[getUserPet, isChanged, user?.id]);
+    if(user?.userType == 1){
+      getUserPets();
+    } else {
+      getUserPet(user?.id);
+    }
+  },[getUserPet, getUserPets, isChanged, user?.id]);
 
   useEffect(() => {
     if(!isModalOpen) setPetData(null);
@@ -76,7 +80,7 @@ export default function Pets() {
 
   return (
     <SecureMainLayout>
-      <ContentLayout title="My Pets">
+      <ContentLayout title={user?.userType == 1  ? 'Pet Management' : 'My Pets'}>
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -86,12 +90,12 @@ export default function Pets() {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage>My Pets</BreadcrumbPage>
+              <BreadcrumbPage>{user?.userType == 1  ? 'Pet Management' : 'My Pets'}</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
         <div className="mt-5 flex justify-between items-center">
-          <div>My Pets</div>
+          <div>{user?.userType == 1  ? 'Pet Management' : 'My Pets'}</div>
           {user?.userType == 2 &&
             <Button onClick={() => setIsModalOpen(true)}>Register My Pet</Button>
           }

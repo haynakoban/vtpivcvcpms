@@ -16,11 +16,11 @@ import {
 } from "@/components/ui/tooltip";
 
 export function Menu({ isOpen }) {
+  const { user, signOut } = useAuthStore();
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  const menuList = getMenuList(pathname);
+  const menuList = getMenuList(pathname, user?.userType);
 
-  const { signOut } = useAuthStore();
 
   async function handleSignOut() {
     signOut();

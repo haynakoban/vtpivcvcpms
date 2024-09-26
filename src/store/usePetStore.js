@@ -99,6 +99,21 @@ const usePetStore = create((set) => ({
             set({ userPets: [] });
         }
     },
+
+    getUserPets: async () => {
+        try {
+            const q = query(
+                collection(db, 'pets'),
+                where('isDeleted', '==', false)
+            );
+            const querySnapshot = await getDocs(q);
+            const results = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            results.sort((a, b) => a.petName.localeCompare(b.petName));
+            set({ userPets: results });
+        } catch (error) {
+            set({ userPets: [] });
+        }
+    },
     
     updatePetInformation: async (petName, breed, species, age, birthday, petImage, id, preview) => {
         try {

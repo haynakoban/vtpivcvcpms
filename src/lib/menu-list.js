@@ -9,7 +9,7 @@ import {
   Video,
 } from "lucide-react";
 
-export function getMenuList(pathname) {
+export function getMenuList(pathname, userType = 2) {
   return [
     {
       groupLabel: "",
@@ -28,7 +28,7 @@ export function getMenuList(pathname) {
       menus: [
         {
           href: "/auth/pets",
-          label: "My Pets",
+          label: userType == 1 ? "Pet Management" : "My Pets",
           active: pathname.includes("auth/pets"),
           icon: Dog,
           submenus: [],
