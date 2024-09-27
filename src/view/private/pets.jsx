@@ -48,6 +48,7 @@ import PetRegistrationForm from "@/components/forms/PetRegistrationForm";
 import { useEffect, useState } from "react";
 import usePetStore from "@/store/usePetStore";
 import LoadingSpinner from "@/components/loaders/LoadingSpinner";
+import { formatDate } from "@/lib/functions";
 
 export default function Pets() {
   const { user } = useAuthStore();
@@ -58,9 +59,9 @@ export default function Pets() {
 
   useEffect(() => {
     if(user?.userType == 1){
-      getUserPets();
+      getUserPets(false);
     } else {
-      getUserPet(user?.id);
+      getUserPet(false, user?.id);
     }
   },[getUserPet, getUserPets, isChanged, user?.id]);
 
@@ -112,7 +113,29 @@ export default function Pets() {
                   <img src={pet?.petImage} alt="" className="w-full aspect-square object-cover" />
                 </CardContent>
                 <CardFooter className="w-full">
-                  <Button className="w-full" disabled={isLoading}><LoadingSpinner isLoading={isLoading}/> View Information</Button>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button className="w-full" disabled={isLoading}><LoadingSpinner isLoading={isLoading}/> View Information</Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Pet Information</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          <img src={pet?.petImage} alt="" className="w-full aspect-square object-cover" />
+                          <div className="mt-5">
+                            <p>Name: {pet?.petName}</p>
+                            <p>Species: {pet?.species}</p>
+                            <p>Breed: {pet?.breed}</p>
+                            <p>Age: {pet?.age}</p>
+                            <p>Birthday: {formatDate(pet?.birthday.seconds)}</p>
+                          </div>
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Close</AlertDialogCancel>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                   <Popover>
                     <PopoverTrigger asChild>
                       <Button className="ml-2 w-12" variant="outline"><HiOutlineDotsVertical /></Button>

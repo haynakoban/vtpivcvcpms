@@ -52,7 +52,15 @@ const returnPetPie = (pets) => {
       return { petData, chartConfig };
 }
 
+const formatDate = (seconds) => {
+  const date = new Date(seconds * 1000);
+  const options = { year: 'numeric', month: 'long', day: 'numeric' };
+  const formattedDate = date.toLocaleDateString('en-US', options);
+  return formattedDate;
+}
+
 export {
     generateRandomId,
-    returnPetPie
+    returnPetPie,
+    formatDate
 }

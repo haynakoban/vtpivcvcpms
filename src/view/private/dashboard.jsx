@@ -23,9 +23,9 @@ export default function Dashboard() {
   useEffect(() => {
     setIsLoading(true)
     if(user?.userType == 1){
-      getUserPets().finally(() => setIsLoading(false));
+      getUserPets(true).finally(() => setIsLoading(false));
     }else{
-      getUserPet(user?.id).finally(() => setIsLoading(false));
+      getUserPet(true, user?.id).finally(() => setIsLoading(false));
     }
   },[getUserPet, getUserPets, isChanged, user?.id]);
 
@@ -54,6 +54,22 @@ export default function Dashboard() {
             :
             <DashboardPieChart pets={userPets}/>
           }
+        </div>
+        <div className="mt-5">Recently Added Pet</div>
+        <div className="flex flex-wrap mt-2">
+          {userPets.slice(0, 4).map((pet, i) => {
+            return <div key={i} className="w-full sm:w-1/2 lg:w-1/3 xl:w-1/4 p-1">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="capitalize">{pet?.petName}</CardTitle>
+                  <CardDescription className="capitalize">{pet?.species}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <img src={pet?.petImage} alt="" className="w-full aspect-square object-cover" />
+                </CardContent>
+              </Card>
+            </div>
+          })}
         </div>
       </ContentLayout>
     </SecureMainLayout>

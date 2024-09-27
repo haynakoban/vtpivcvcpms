@@ -84,7 +84,7 @@ const usePetStore = create((set) => ({
         }
     },
 
-    getUserPet: async (userId) => {
+    getUserPet: async (latest = false, userId) => {
         try {
             const q = query(
                 collection(db, 'pets'), 
@@ -93,14 +93,18 @@ const usePetStore = create((set) => ({
             );
             const querySnapshot = await getDocs(q);
             const results = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            results.sort((a, b) => a.petName.localeCompare(b.petName));
+            if(latest){
+                results.sort((a, b) => b.createdAt.seconds - a.createdAt.seconds);
+            } else {
+                results.sort((a, b) => a.petName.localeCompare(b.petName));
+            }
             set({ userPets: results });
         } catch (error) {
             set({ userPets: [] });
         }
     },
 
-    getUserPets: async () => {
+    getUserPets: async (latest = false) => {
         try {
             const q = query(
                 collection(db, 'pets'),
@@ -108,7 +112,11 @@ const usePetStore = create((set) => ({
             );
             const querySnapshot = await getDocs(q);
             const results = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            results.sort((a, b) => a.petName.localeCompare(b.petName));
+            if(latest){
+                results.sort((a, b) => b.createdAt.seconds - a.createdAt.seconds);
+            } else {
+                results.sort((a, b) => a.petName.localeCompare(b.petName));
+            }
             set({ userPets: results });
         } catch (error) {
             set({ userPets: [] });
