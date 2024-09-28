@@ -1,6 +1,4 @@
-import { Navigate, Route, Routes } from "react-router-dom";
-
-import useAuthStore from "@/store/useAuthStore";
+import { Route, Routes } from "react-router-dom";
 import MainLayout from "@/layout/public";
 
 // public routes
@@ -21,44 +19,31 @@ import Messages from "@/view/private/messages";
 import Meetings from "@/view/private/meetings";
 import Account from "@/view/private/account";
 import Settings from "@/view/private/settings";
+import Availability from "@/view/private/availability";
 
 export default function AppRoutes() {
-  const { user } = useAuthStore();
-
   return (
     <Routes>
       {/* Public routes - only accessible if not logged in */}
-      {!user ? (
-        <Route element={<MainLayout />}>
-          <Route index element={<Home />} />
-          <Route path="about-us" element={<AboutUs />} />
-          <Route path="login" element={<Login />} />
-          <Route path="register" element={<Register />} />
-          <Route path="forgot" element={<Forgot />} />
-        </Route>
-      ) : (
-        <Route path="*" element={<Navigate to="/auth/dashboard" />} />
-      )}
+      <Route element={<MainLayout />}>
+        <Route index element={<Home />} />
+        <Route path="about-us" element={<AboutUs />} />
+        <Route path="login" element={<Login />} />
+        <Route path="register" element={<Register />} />
+        <Route path="forgot" element={<Forgot />} />
+      </Route>
 
       {/* Private routes - only accessible if logged in */}
-      {user ? (
-        <>
-          <Route path="auth/dashboard" element={<Dashboard />} />
-          <Route path="auth/pets" element={<Pets />} />
-          <Route path="auth/appointment" element={<Appointment />} />
-          <Route
-            path="auth/appointment/create"
-            element={<CreateAppointment />}
-          />
-          <Route path="auth/careplan" element={<Careplan />} />
-          <Route path="auth/messages" element={<Messages />} />
-          <Route path="auth/meetings" element={<Meetings />} />
-          <Route path="auth/account" element={<Account />} />
-          <Route path="auth/settings" element={<Settings />} />
-        </>
-      ) : (
-        <Route path="auth/*" element={<Navigate to="/login" />} />
-      )}
+      <Route path="auth/dashboard" element={<Dashboard />} />
+      <Route path="auth/pets" element={<Pets />} />
+      <Route path="auth/appointment" element={<Appointment />} />
+      <Route path="auth/appointment/create" element={<CreateAppointment />} />
+      <Route path="auth/careplan" element={<Careplan />} />
+      <Route path="auth/messages" element={<Messages />} />
+      <Route path="auth/meetings" element={<Meetings />} />
+      <Route path="auth/account" element={<Account />} />
+      <Route path="auth/settings" element={<Settings />} />
+      <Route path="auth/settings/availability" element={<Availability />} />
 
       {/* Catch-all 404 */}
       <Route path="*" element={<CatchAllPage />} />
