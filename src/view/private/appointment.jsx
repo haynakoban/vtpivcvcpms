@@ -26,9 +26,18 @@ import {
 import DataTable from "@/components/appointments/data-table";
 import { columns, users } from "@/components/appointments/columns";
 import { Button } from "@/components/ui/button";
+import useAuthStore from "@/store/useAuthStore";
+import usePetStore from "@/store/usePetStore";
+import { useEffect } from "react";
 
 export default function Appointment() {
   const navigate = useNavigate();
+  const { user } = useAuthStore();
+  const { getUserPet } = usePetStore();
+
+  useEffect(() => {
+    getUserPet(false, user?.id);
+  },[]);
 
   return (
     <SecureMainLayout>

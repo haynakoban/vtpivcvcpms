@@ -48,26 +48,33 @@ export default function Navbar() {
           </div>
           <div className="flex flex-col justify-between h-full">
             <div className="grid gap-2 py-6">
-              <Button
+              {/* <Button
                 onClick={() => navigate("/pet-register")}
                 variant={"ghost"}
                 className="flex w-full justify-start items-center py-2 text-md font-bold"
               >
                 Pet Registration
-              </Button>
-              <Button
+              </Button> */}
+              {/* <Button
                 onClick={() => navigate("/schedule-appointment")}
                 variant={"ghost"}
                 className="flex w-full justify-start items-center py-2 text-md font-bold"
               >
                 Schedule Appointment
-              </Button>
-              <Button
+              </Button> */}
+              {/* <Button
                 onClick={() => navigate("/video")}
                 variant={"ghost"}
                 className="flex w-full justify-start items-center py-2 text-md font-bold"
               >
                 Video Conferencing
+              </Button> */}
+              <Button
+                onClick={() => navigate("/")}
+                variant={"ghost"}
+                className="flex w-full justify-start items-center py-2 text-md font-bold"
+              >
+                Home
               </Button>
               <Button
                 onClick={() => navigate("/about-us")}
@@ -132,28 +139,36 @@ export default function Navbar() {
         </Link>
         <NavigationMenu className="hidden lg:flex">
           <NavigationMenuList>
-            <NavigationMenuLink asChild>
+            {/* <NavigationMenuLink asChild>
               <Link
                 to={"/pet-register"}
                 className="group inline-flex h-9 w-max items-center justify-center rounded-md bg-white px-4 py-2 text-md font-bold transition-colors hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900 focus:outline-none disabled:pointer-events-none disabled:opacity-50 dark:bg-gray-950 dark:hover:bg-gray-800 dark:hover:text-gray-50 dark:focus:bg-gray-800 dark:focus:text-gray-50"
               >
                 Pet Registration
               </Link>
-            </NavigationMenuLink>
-            <NavigationMenuLink asChild>
+            </NavigationMenuLink> */}
+            {/* <NavigationMenuLink asChild>
               <Link
                 to={"/schedule-appointment"}
                 className="group inline-flex h-9 w-max items-center justify-center rounded-md bg-white px-4 py-2 text-md font-bold transition-colors hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900 focus:outline-none disabled:pointer-events-none disabled:opacity-50 dark:bg-gray-950 dark:hover:bg-gray-800 dark:hover:text-gray-50 dark:focus:bg-gray-800 dark:focus:text-gray-50"
               >
                 Schedule Appointment
               </Link>
-            </NavigationMenuLink>
-            <NavigationMenuLink asChild>
+            </NavigationMenuLink> */}
+            {/* <NavigationMenuLink asChild>
               <Link
                 to={"/video"}
                 className="group inline-flex h-9 w-max items-center justify-center rounded-md bg-white px-4 py-2 text-md font-bold transition-colors hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900 focus:outline-none disabled:pointer-events-none disabled:opacity-50 dark:bg-gray-950 dark:hover:bg-gray-800 dark:hover:text-gray-50 dark:focus:bg-gray-800 dark:focus:text-gray-50"
               >
                 Video Conferencing
+              </Link>
+            </NavigationMenuLink> */}
+            <NavigationMenuLink asChild>
+              <Link
+                to={"/"}
+                className="group inline-flex h-9 w-max items-center justify-center rounded-md bg-white px-4 py-2 text-md font-bold transition-colors hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900 focus:outline-none disabled:pointer-events-none disabled:opacity-50 dark:bg-gray-950 dark:hover:bg-gray-800 dark:hover:text-gray-50 dark:focus:bg-gray-800 dark:focus:text-gray-50"
+              >
+                Home
               </Link>
             </NavigationMenuLink>
             <NavigationMenuLink asChild>

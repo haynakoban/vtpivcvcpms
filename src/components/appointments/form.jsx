@@ -8,23 +8,27 @@ import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
+import usePetStore from "@/store/usePetStore";
+import { checkSelectedPet } from "@/lib/functions";
+
 const steps = [
   {
     id: "Step 1",
-    name: "Personal Information",
+    name: "Pick a date",
     fields: ["firstName", "lastName", "email"],
   },
   {
     id: "Step 2",
-    name: "Address",
-    fields: ["country", "state", "city", "street", "zip"],
+    name: "Selet your pet"
   },
-  { id: "Step 3", name: "Complete" },
+  { id: "Step 3", name: "Billing" },
 ];
 
 export default function Form() {
+  const { userPets } = usePetStore();
   const [previousStep, setPreviousStep] = useState(0);
   const [currentStep, setCurrentStep] = useState(0);
+  const [selectedPet, setSelectedPet] = useState([]);
   const delta = currentStep - previousStep;
 
   const {
@@ -38,8 +42,9 @@ export default function Form() {
   });
 
   const processForm = (data) => {
-    console.log(data);
+    console.log(data, selectedPet);
     reset();
+    setSelectedPet([]);
   };
 
   const next = async () => {
@@ -49,6 +54,10 @@ export default function Form() {
     if (!output) return;
 
     if (currentStep < steps.length - 1) {
+      if (currentStep === 1) {
+        if(selectedPet.length <= 0) return;
+      }
+
       if (currentStep === steps.length - 2) {
         await handleSubmit(processForm)();
       }
@@ -63,6 +72,20 @@ export default function Form() {
       setCurrentStep((step) => step - 1);
     }
   };
+
+  const handleSelectPet = (e) => {
+    const id = e.target.value;
+    const isChecked = e.target.checked;
+
+    if(!isChecked){
+      const removedId = selectedPet.filter((pet) => {
+        return pet != id
+      })
+      setSelectedPet(removedId);
+    } else {
+      setSelectedPet(prev => [...prev, id]);
+    }
+  }
 
   return (
     <section className="absolute inset-0 flex flex-col justify-between p-16">
@@ -194,143 +217,39 @@ export default function Form() {
             animate={{ x: 0, opacity: 1 }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
           >
-            <h2 className="text-base font-semibold leading-7 text-gray-900">
-              Address
+            <h2 className="text-base font-semibold leading-7 ">
+              Select Your Pet
             </h2>
-            <p className="mt-1 text-sm leading-6 text-gray-600">
-              Address where you can receive mail.
-            </p>
 
-            <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-              <div className="sm:col-span-3">
-                <label
-                  htmlFor="country"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Country
+            <div className="mt-2 grid grid-cols-1 gap-x-2 gap-y-2 sm:grid-cols-6">
+              {userPets?.map((pet) => {
+                return <label key={pet?.id} className="sm:col-span-2 border rounded cursor-pointer">
+                    <input type="checkbox" hidden value={pet?.id} onClick={handleSelectPet}/>
+                    <div className={`${checkSelectedPet(selectedPet, pet?.id) ? 'bg-secondary' : ''} flex gap-2 items-center p-2`}>
+                      <img key={pet?.id} src={pet?.petImage} alt="" className="h-12 aspect-square object-cover" />
+                      <div>
+                        <p>{pet?.petName}</p>
+                        <p className="text-xs">{pet?.species}</p>
+                      </div>
+                    </div>
                 </label>
-                <div className="mt-2">
-                  <select
-                    id="country"
-                    {...register("country")}
-                    autoComplete="country-name"
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:max-w-xs sm:text-sm sm:leading-6"
-                  >
-                    <option>United States</option>
-                    <option>Canada</option>
-                    <option>Mexico</option>
-                  </select>
-                  {errors.country?.message && (
-                    <p className="mt-2 text-sm text-red-400">
-                      {errors.country.message}
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              <div className="col-span-full">
-                <label
-                  htmlFor="street"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Street address
-                </label>
-                <div className="mt-2">
-                  <input
-                    type="text"
-                    id="street"
-                    {...register("street")}
-                    autoComplete="street-address"
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
-                  />
-                  {errors.street?.message && (
-                    <p className="mt-2 text-sm text-red-400">
-                      {errors.street.message}
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              <div className="sm:col-span-2 sm:col-start-1">
-                <label
-                  htmlFor="city"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  City
-                </label>
-                <div className="mt-2">
-                  <input
-                    type="text"
-                    id="city"
-                    {...register("city")}
-                    autoComplete="address-level2"
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
-                  />
-                  {errors.city?.message && (
-                    <p className="mt-2 text-sm text-red-400">
-                      {errors.city.message}
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              <div className="sm:col-span-2">
-                <label
-                  htmlFor="state"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  State / Province
-                </label>
-                <div className="mt-2">
-                  <input
-                    type="text"
-                    id="state"
-                    {...register("state")}
-                    autoComplete="address-level1"
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
-                  />
-                  {errors.state?.message && (
-                    <p className="mt-2 text-sm text-red-400">
-                      {errors.state.message}
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              <div className="sm:col-span-2">
-                <label
-                  htmlFor="zip"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  ZIP / Postal code
-                </label>
-                <div className="mt-2">
-                  <input
-                    type="text"
-                    id="zip"
-                    {...register("zip")}
-                    autoComplete="postal-code"
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
-                  />
-                  {errors.zip?.message && (
-                    <p className="mt-2 text-sm text-red-400">
-                      {errors.zip.message}
-                    </p>
-                  )}
-                </div>
-              </div>
+              })}
             </div>
           </motion.div>
         )}
 
         {currentStep === 2 && (
           <>
-            <h2 className="text-base font-semibold leading-7 text-gray-900">
-              Complete
+            <h2 className="text-base font-semibold leading-7">
+              Payment
             </h2>
             <p className="mt-1 text-sm leading-6 text-gray-600">
-              Thank you for your submission.
+              To Complete Your Appointment Please Pay Exact Amount in this Gcash Account, and submit it.
             </p>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg" alt="" className="bg-white my-2 h-[250px]" />
+            <input type="file" />
+            <div className="mt-2"></div>
+            <Button className="btn btn-sm bg-primary">Submit</Button>
           </>
         )}
       </form>

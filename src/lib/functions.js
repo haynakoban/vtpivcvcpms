@@ -59,8 +59,15 @@ const formatDate = (seconds) => {
   return formattedDate;
 }
 
+const checkSelectedPet = (selectedPet, id) => {
+  return selectedPet.filter((pet) => {
+    return pet == id
+  }).length > 0;
+}
+
 export {
     generateRandomId,
     returnPetPie,
-    formatDate
+    formatDate,
+    checkSelectedPet
 }

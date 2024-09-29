@@ -72,12 +72,6 @@ export function UserNav() {
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem className="hover:cursor-pointer" asChild>
-            <Link to="/auth/account" className="flex items-center">
-              <User className="w-4 h-4 mr-3 text-muted-foreground" />
-              Account
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem className="hover:cursor-pointer" asChild>
             <Link to="/auth/settings" className="flex items-center">
               <Settings className="w-4 h-4 mr-3 text-muted-foreground" />
               Settings

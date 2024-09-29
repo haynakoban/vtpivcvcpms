@@ -17,9 +17,9 @@ import Careplan from "@/view/private/careplan";
 import CreateAppointment from "@/view/private/create-appointment";
 import Messages from "@/view/private/messages";
 import Meetings from "@/view/private/meetings";
-import Account from "@/view/private/account";
 import Settings from "@/view/private/settings";
 import Availability from "@/view/private/availability";
+import Security from "@/view/private/security";
 
 export default function AppRoutes() {
   return (
@@ -41,8 +41,8 @@ export default function AppRoutes() {
       <Route path="auth/careplan" element={<Careplan />} />
       <Route path="auth/messages" element={<Messages />} />
       <Route path="auth/meetings" element={<Meetings />} />
-      <Route path="auth/account" element={<Account />} />
       <Route path="auth/settings" element={<Settings />} />
+      <Route path="auth/settings/security" element={<Security />} />
       <Route path="auth/settings/availability" element={<Availability />} />
 
       {/* Catch-all 404 */}

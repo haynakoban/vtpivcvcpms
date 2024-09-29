@@ -99,7 +99,7 @@ function ChatMessages({ messages }) {
   }, [messages]);
 
   return (
-    <div className="flex-1 overflow-auto p-4 grid gap-4 max-h-[450px] scrolly">
+    <div className="flex-1 overflow-auto p-4 grid gap-4 max-h-[600px] scrolly">
       {messages.map((message) => (
         <ChatMessage
           key={message.id}
@@ -198,7 +198,7 @@ export default function MessagesPanel() {
   };
 
   return (
-    <div className="grid grid-cols-[76px_1fr] md:grid-cols-[300px_1fr] h-full w-full max-w-[1200px] bg-background border rounded-lg overflow-hidden">
+    <div className="grid grid-cols-[76px_1fr] md:grid-cols-[300px_1fr] h-[80vh] w-full max-w-[1200px] bg-background border rounded-lg overflow-hidden">
       {/* Sidebar - Chats */}
       <ChatPanel />
 
@@ -214,10 +214,13 @@ export default function MessagesPanel() {
         <div className="border-t p-4">
           <div className="relative">
             <div className="flex items-center gap-3">
-              <Button variant="ghost" size="icon">
-                <Paperclip className="h-4 w-4" />
-                <span className="sr-only">Fill Upload</span>
-              </Button>
+              <label htmlFor="fileUpload">
+                <div className="hover:bg-secondary cursor-pointer p-2 rounded">
+                  <Paperclip className="h-4 w-4" />
+                  <span className="sr-only">Fill Upload</span>
+                  <input type="file" hidden id="fileUpload"/>
+                </div>
+              </label>
               <Textarea
                 placeholder="Type your message..."
                 value={newMessage}

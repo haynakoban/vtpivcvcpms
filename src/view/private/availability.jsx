@@ -131,8 +131,8 @@ export default function Availability() {
     );
 
     const processedTimeSlot = {
-      duration: data.timeSlot.duration,
-      maxClients: data.timeSlot.maxClients,
+      duration: parseInt(data.timeSlot.duration),
+      maxClients: parseInt(data.timeSlot.maxClients),
     };
 
     try {
@@ -159,37 +159,18 @@ export default function Availability() {
 
   return (
     <SecureMainLayout>
-      <ContentLayout title="Messages">
-        {/* <Breadcrumb>
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink asChild>
-                <Link to="/auth/dashboard">Dashboard</Link>
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbLink>
-                <Link to="/auth/settings">Settings</Link>
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbPage>Availability</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb> */}
+      <ContentLayout title="Settings and Privacy">
         <div>
           <div className="flex min-h-screen w-full flex-col">
             <div className="grid w-full max-w-6xl items-start gap-6 md:grid-cols-[180px_1fr] lg:grid-cols-[250px_1fr]">
               <nav className="grid gap-4 text-sm text-muted-foreground">
-                <Link to={"/auth/settings"}>General</Link>
-                <Link href="#">Security</Link>
-                <Link href="#" className="font-semibold text-primary">
-                  Availability
+                <Link to="/auth/settings">
+                  General
                 </Link>
-                <Link href="#">Support</Link>
-                <Link href="#">Advanced</Link>
+                <Link to="/auth/settings/security">Security</Link>
+                {user?.userType == 1 &&
+                  <Link to="#" className="font-semibold text-primary">Availability</Link>
+                }
               </nav>
               <div className="grid gap-6">
                 <Card>

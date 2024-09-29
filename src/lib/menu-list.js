@@ -67,13 +67,6 @@ export function getMenuList(pathname, userType = 2) {
       groupLabel: "Settings and Privacy",
       menus: [
         {
-          href: "/auth/account",
-          label: "Account",
-          active: pathname.includes("auth/account"),
-          icon: User,
-          submenus: [],
-        },
-        {
           href: "/auth/settings",
           label: "Settings",
           active: pathname.includes("auth/settings"),
