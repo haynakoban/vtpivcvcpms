@@ -112,6 +112,51 @@ const checkSelectedPet = (selectedPet, id) => {
   }).length > 0;
 }
 
+const generateTimeSlots = ({ from, to, duration, maxClients }) => {
+  const parseTime = (timeString) => {
+    const [time, modifier] = timeString.split(' ');
+    let [hours, minutes] = time.split(':').map(num => parseInt(num, 10));
+    if (modifier === 'PM' && hours < 12) {
+      hours += 12;
+    } else if (modifier === 'AM' && hours === 12) {
+      hours = 0;
+    }
+  
+    const date = new Date();
+    date.setHours(hours, minutes, 0, 0);
+    return date;
+  };
+  // Input validation
+  if (!from || !to || isNaN(duration) || isNaN(maxClients) || maxClients <= 0) {
+    return [];
+  }
+  const startTime = parseTime(from);
+  const endTime = parseTime(to);
+  const durationMinutes = parseInt(duration, 10);
+  if (startTime >= endTime || durationMinutes <= 0) {
+    return [];
+  }
+  const slots = [];
+  const slotDuration = durationMinutes * 60 * 1000;
+  let currentSlotStart = startTime;
+  while (currentSlotStart < endTime) {
+    const currentSlotEnd = new Date(currentSlotStart.getTime() + slotDuration);
+    if (currentSlotEnd > endTime) break;
+    slots.push({
+      start: currentSlotStart.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }),
+      end: currentSlotEnd.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }),
+    });
+    currentSlotStart = currentSlotEnd;
+  }
+  return slots;
+};
+const checkBookedSlot  = (booked, date, time) => {
+  const has = booked.filter((book, i) => {
+    return (book?.date == date && book?.time  == time);
+  })
+  return has.length > 0;
+}
+
 export {
     generateRandomId,
     returnPetPie,
@@ -119,5 +164,7 @@ export {
     checkSelectedPet,
     formatDateWDay,
     getDay,
-    formattedDate
+    formattedDate,
+    generateTimeSlots,
+    checkBookedSlot,
 }
