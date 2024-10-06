@@ -70,6 +70,22 @@ const useSettingsStore = create((set) => ({
       set({ schedules: [] });
     }
   },
+  
+  getScheduleFirst: async () => {
+    try {
+      const q = query(collection(db, "schedules"));
+
+      const querySnapshot = await getDocs(q);
+      const results = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      
+      set({ schedules: results[0] });
+    } catch (error) {
+      set({ schedules: [] });
+    }
+  },
 }));
 
 export default useSettingsStore;
