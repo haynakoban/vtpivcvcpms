@@ -116,5 +116,8 @@ export {
     generateRandomId,
     returnPetPie,
     formatDate,
-    checkSelectedPet
+    checkSelectedPet,
+    formatDateWDay,
+    getDay,
+    formattedDate
 }
