@@ -1,57 +1,126 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-
-import { FormDataSchema } from "@/lib/schema";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import usePetStore from "@/store/usePetStore";
-import { checkSelectedPet } from "@/lib/functions";
+import { checkSelectedPet, formatDateWDay, generateTimeSlots, getDay, checkBookedSlot, formattedDate } from "@/lib/functions";
+import { Calendar } from "@/components/ui/calendar";
+import { RadioGroup } from "@/components/ui/radio-group";
+import useSettingsStore from "@/store/useSettings";
+import useAuthStore from "@/store/useAuthStore";
 
 const steps = [
   {
     id: "Step 1",
     name: "Pick a date",
-    fields: ["firstName", "lastName", "email"],
   },
   {
     id: "Step 2",
     name: "Selet your pet"
   },
-  { id: "Step 3", name: "Billing" },
+  { 
+    id: "Step 3", 
+    name: "Billing" 
+  },
+];
+
+const bookedAppointment = [
+  {
+    date: '10-07-2024',
+    time: '08:00 AM - 09:00 AM'
+  },
+  {
+    date: '10-07-2024',
+    time: '09:00 AM - 10:00 AM'
+  },
+  {
+    date: '10-07-2024',
+    time: '10:00 AM - 11:00 AM'
+  },
+  {
+    date: '10-07-2024',
+    time: '11:00 AM - 12:00 PM'
+  },
+  {
+    date: '10-07-2024',
+    time: '12:00 PM - 01:00 PM'
+  },
+  {
+    date: '10-07-2024',
+    time: '01:00 PM - 02:00 PM'
+  },
+  {
+    date: '10-07-2024',
+    time: '02:00 PM - 03:00 PM'
+  },
+  {
+    date: '10-07-2024',
+    time: '03:00 PM - 04:00 PM'
+  },
+  {
+    date: '10-07-2024',
+    time: '04:00 PM - 05:00 PM'
+  }
 ];
 
 export default function Form() {
-  const { userPets } = usePetStore();
+  const { userPets, getUserPet } = usePetStore();
+  const { user } = useAuthStore();
+  useEffect(() => {
+    getUserPet(false, user?.id);
+  },[user]);
+
+  const { schedules, getScheduleFirst } = useSettingsStore();
   const [previousStep, setPreviousStep] = useState(0);
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedPet, setSelectedPet] = useState([]);
   const delta = currentStep - previousStep;
+  const [selected, setSelected] = useState(new Date());
+  const today = new Date();
+  const selected_day = getDay(Math.floor(selected.getTime() / 1000));
+  const [availability, setAvailability] = useState({});
+  const [timeSlots, setTimeSlots] = useState([]);
+  const [selectedSlot, setSelectedSlot] = useState(null);
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    trigger,
-    formState: { errors },
-  } = useForm({
-    resolver: zodResolver(FormDataSchema),
-  });
+  const handleSelect = (slot) => {
+    setSelectedSlot(slot);
+  };
 
-  const processForm = (data) => {
-    console.log(data, selectedPet);
-    reset();
+  const fullyBooked = () => {
+    const full = timeSlots?.filter((slots) => checkBookedSlot(bookedAppointment, formattedDate(selected), `${slots.start} - ${slots.end}`)).length === timeSlots?.length
+    return timeSlots?.length < 1 ? false : full;
+  }
+
+  useEffect(() => {
+    getScheduleFirst();
+  },[])
+
+  useEffect(() => {
+    schedules?.schedule?.map(day => {
+      if(day?.day == selected_day){
+        setAvailability({...day, ...schedules.timeSlot});
+      }
+    });
+  },[selected])
+
+
+  useEffect(() => {
+    if(availability){
+      setTimeSlots(generateTimeSlots(availability));
+    }
+  },[availability])
+
+  const processForm = async () => {
+    console.log(formattedDate(selected), selectedSlot, selectedPet);
     setSelectedPet([]);
+    setSelected(new Date());
+    setSelectedSlot(null);
   };
 
   const next = async () => {
-    const fields = steps[currentStep].fields;
-    const output = await trigger(fields, { shouldFocus: true });
-
-    if (!output) return;
+    if (!selectedSlot) return;
 
     if (currentStep < steps.length - 1) {
       if (currentStep === 1) {
@@ -59,7 +128,7 @@ export default function Form() {
       }
 
       if (currentStep === steps.length - 2) {
-        await handleSubmit(processForm)();
+        await processForm();
       }
       setPreviousStep(currentStep);
       setCurrentStep((step) => step + 1);
@@ -86,6 +155,13 @@ export default function Form() {
       setSelectedPet(prev => [...prev, id]);
     }
   }
+
+  const handleSelectDate = (date) => {
+    if(date == undefined) return;
+    if (selected && date.toDateString() === selected.toDateString()) return;
+    setSelected(date);
+    setSelectedSlot(null);
+  };
 
   return (
     <section className="absolute inset-0 flex flex-col justify-between p-16">
@@ -125,7 +201,7 @@ export default function Form() {
       </nav>
 
       {/* Form */}
-      <form className="mt-12 py-12" onSubmit={handleSubmit(processForm)}>
+      <form className="mt-12 py-12">
         {currentStep === 0 && (
           <motion.div
             initial={{ x: delta >= 0 ? "50%" : "-50%", opacity: 0 }}
@@ -133,79 +209,55 @@ export default function Form() {
             transition={{ duration: 0.3, ease: "easeInOut" }}
           >
             <h2 className="text-base font-semibold leading-7 ">
-              Personal Information
+              Pick A Date
             </h2>
             <p className="mt-1 text-sm leading-6 text-gray-600">
-              Provide your personal details.
+              Please select date and time.
             </p>
-            <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-              <div className="sm:col-span-3">
-                <label
-                  htmlFor="firstName"
-                  className="block text-sm font-medium leading-6"
-                >
-                  First name
-                </label>
-                <div className="mt-2">
-                  <input
-                    type="text"
-                    id="firstName"
-                    {...register("firstName")}
-                    autoComplete="given-name"
-                    className="block w-full rounded-md border-0 py-1.5  shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
+            <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 xl:grid-cols-6">
+              <div className="sm:col-span-2">
+                <div className="w-full flex items-center py-4 px-4 justify-center rounded-md border">
+                  <Calendar
+                    mode="single"
+                    selected={selected}
+                    onSelect={handleSelectDate}
+                    fromDate={today}
                   />
-                  {errors.firstName?.message && (
-                    <p className="mt-2 text-sm text-red-400">
-                      {errors.firstName.message}
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              <div className="sm:col-span-3">
-                <label
-                  htmlFor="lastName"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Last name
-                </label>
-                <div className="mt-2">
-                  <input
-                    type="text"
-                    id="lastName"
-                    {...register("lastName")}
-                    autoComplete="family-name"
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
-                  />
-                  {errors.lastName?.message && (
-                    <p className="mt-2 text-sm text-red-400">
-                      {errors.lastName.message}
-                    </p>
-                  )}
                 </div>
               </div>
 
               <div className="sm:col-span-4">
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Email address
-                </label>
-                <div className="mt-2">
-                  <input
-                    id="email"
-                    type="email"
-                    {...register("email")}
-                    autoComplete="email"
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
-                  />
-                  {errors.email?.message && (
-                    <p className="mt-2 text-sm text-red-400">
-                      {errors.email.message}
-                    </p>
-                  )}
-                </div>
+                <div className="px-1 mb-3 font-bold">{formatDateWDay(Math.floor(selected.getTime() / 1000))}</div>
+                <RadioGroup>
+                    {!availability?.isDayChecked ?
+                      <div>No available time.</div>
+                    :
+                    <div className="flex items-center flex-wrap">
+                      {timeSlots?.length < 1 &&
+                        <div>No available time.</div>
+                      }
+
+                      {timeSlots?.map((slots, i) => {
+                        const slotValue = `${slots.start} - ${slots.end}`;
+
+                        return <div key={i} className={`${timeSlots?.length > 10 ? 'w-full xl:w-1/3' : 'w-full xl:w-1/2'} p-1`}>
+                            <div 
+                                className={`flex items-start flex-col rounded border p-2 cursor-pointer ${selectedSlot == slotValue ? 'bg-primary text-primary-foreground ' : ''} ${checkBookedSlot(bookedAppointment, formattedDate(selected), slotValue) ? 'bg-secondary booked-cursor' : ''}`} 
+                                onClick={() => {
+                                  if(!checkBookedSlot(bookedAppointment, formattedDate(selected), slotValue)){
+                                    handleSelect(slotValue)
+                                  }
+                                }}>
+                                  &nbsp;&nbsp;{slots?.start} - {slots?.end} 
+                                  <span className="text-xs">&nbsp;&nbsp;&nbsp;&nbsp;{checkBookedSlot(bookedAppointment, formattedDate(selected), slotValue) ? 'Booked' : 'Available'}</span>
+                            </div>
+                          </div>
+                      })}
+
+                    </div>
+                    }
+                    <div className="px-2 text-destructive">{fullyBooked() ? 'Fully Booked' : ''}</div>
+                </RadioGroup>
               </div>
             </div>
           </motion.div>
@@ -225,7 +277,7 @@ export default function Form() {
               {userPets?.map((pet) => {
                 return <label key={pet?.id} className="sm:col-span-2 border rounded cursor-pointer">
                     <input type="checkbox" hidden value={pet?.id} onClick={handleSelectPet}/>
-                    <div className={`${checkSelectedPet(selectedPet, pet?.id) ? 'bg-secondary' : ''} flex gap-2 items-center p-2`}>
+                    <div className={`${checkSelectedPet(selectedPet, pet?.id) ? 'bg-primary text-primary-foreground' : ''} flex gap-2 items-center p-2`}>
                       <img key={pet?.id} src={pet?.petImage} alt="" className="h-12 aspect-square object-cover" />
                       <div>
                         <p>{pet?.petName}</p>
@@ -255,7 +307,7 @@ export default function Form() {
       </form>
 
       {/* Navigation */}
-      <div className="mt-8 pt-5">
+      <div className="mt-8 pt-5 pb-20">
         <div className="flex justify-between">
           <Button
             variant="outline"

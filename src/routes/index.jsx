@@ -20,6 +20,8 @@ import Meetings from "@/view/private/meetings";
 import Settings from "@/view/private/settings";
 import Availability from "@/view/private/availability";
 import Security from "@/view/private/security";
+import Conversations from "@/view/private/conversations";
+import ComposeMessage from "@/view/private/compose-message";
 
 export default function AppRoutes() {
   return (
@@ -44,6 +46,8 @@ export default function AppRoutes() {
       <Route path="auth/settings" element={<Settings />} />
       <Route path="auth/settings/security" element={<Security />} />
       <Route path="auth/settings/availability" element={<Availability />} />
+      <Route path="auth/messages/compose" element={<ComposeMessage />} />
+      <Route path="auth/messages/:id" element={<Conversations />} />
 
       {/* Catch-all 404 */}
       <Route path="*" element={<CatchAllPage />} />

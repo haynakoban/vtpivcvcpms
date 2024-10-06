@@ -88,12 +88,33 @@ const formatDate = (seconds) => {
   return formattedDate;
 };
 
-const checkSelectedPet = (selectedPet, id) => {
-  return (
-    selectedPet.filter((pet) => {
-      return pet == id;
-    }).length > 0
-  );
-};
+const formatDateWDay = (seconds) => {
+  const date = new Date(seconds * 1000);
+  const options = { year: 'numeric', month: 'long', day: 'numeric',  weekday: 'long', };
+  const formattedDate = date.toLocaleDateString('en-US', options);
+  return formattedDate;
+}
 
-export { generateRandomId, returnPetPie, formatDate, checkSelectedPet };
+const getDay = (seconds) => {
+  const date = new Date(seconds * 1000);
+  const options = { weekday: 'long', };
+  const formattedDate = date.toLocaleDateString('en-US', options);
+  return formattedDate;
+}
+
+const formattedDate = (date) => {
+  return `${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}-${date.getFullYear()}`;
+}
+
+const checkSelectedPet = (selectedPet, id) => {
+  return selectedPet.filter((pet) => {
+    return pet == id
+  }).length > 0;
+}
+
+export {
+    generateRandomId,
+    returnPetPie,
+    formatDate,
+    checkSelectedPet
+}

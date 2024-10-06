@@ -12,12 +12,18 @@ import {
   updateDoc,
   setDoc,
 } from "firebase/firestore";
-import { onAuthStateChanged, sendPasswordResetEmail, signInWithEmailAndPassword, updatePassword } from "firebase/auth";
+import {
+  onAuthStateChanged,
+  sendPasswordResetEmail,
+  signInWithEmailAndPassword,
+  updatePassword,
+} from "firebase/auth";
 import useAuthStore from "./useAuthStore";
 
 const useUsersStore = create((set) => ({
   users: [],
   user: null,
+  talkingTo: {},
 
   createUser: async ({ fullName, user }) => {
     try {
@@ -27,6 +33,7 @@ const useUsersStore = create((set) => ({
         uid: user.uid,
         email: user.email || "",
         displayName: fullName,
+        alternateDisplayName: fullName.toLowerCase(),
         emailVerified: user.emailVerified,
         photoUrl: user.photoURL || "",
         refreshToken: user.refreshToken,
@@ -96,31 +103,31 @@ const useUsersStore = create((set) => ({
   updateUserProfile: async (fullName, email, id) => {
     const setCurrentUser = useAuthStore.getState().setCurrentUser;
 
-    try{
+    try {
       const userRef = doc(db, "users", id);
       const docSnap = await getDoc(userRef);
-      
+
       if (docSnap.exists()) {
         const userData = docSnap.data();
-        if(fullName == userData.displayName && email == userData.email) return;
+        if (fullName == userData.displayName && email == userData.email) return;
 
         await updateDoc(userRef, {
           displayName: fullName,
           email,
-          updatedAt: serverTimestamp()
+          updatedAt: serverTimestamp(),
         });
-  
+
         const userr = await getDoc(userRef);
         if (userr.exists()) {
           const userData = userr.data();
           setCurrentUser({ id, ...userData });
         }
-        return { success: 'Profile updated successfully.' };
+        return { success: "Profile updated successfully." };
       } else {
-        return { err: 'No user found.' };
+        return { err: "No user found." };
       }
-    } catch(e){
-      set({ updateError: { other: 'Something went wrong, please try again' } });
+    } catch (e) {
+      set({ updateError: { other: "Something went wrong, please try again" } });
     }
   },
 
@@ -128,22 +135,39 @@ const useUsersStore = create((set) => ({
     if (password !== confirmPassword) return { err: "Passwords do not match!" };
     try {
       await signInWithEmailAndPassword(auth, email, oldPassword);
-      
+
       onAuthStateChanged(auth, async (user) => {
-        if(user){
+        if (user) {
           const newPassword = password;
           await updatePassword(user, newPassword);
           const isChanged = useAuthStore.getState().isChanged;
           const setChanged = useAuthStore.getState().setChanged;
           setChanged(!isChanged);
-          return { success: 'Password updated successfully.' };
+          return { success: "Password updated successfully." };
         }
-      })
-      return { success: 'Password updated successfully.' };
+      });
+      return { success: "Password updated successfully." };
     } catch (error) {
-        return { err: 'Old password incorrect.' };
+      return { err: "Old password incorrect." };
     }
-  }
+  },
+
+  getUser: async (id) => {
+    try {
+      const userRef = collection(db, "users");
+      const userQuery = query(userRef, where("uid", "==", id));
+      const userSnapshot = await getDocs(userQuery);
+
+      if (!userSnapshot.empty) {
+        const userDoc = userSnapshot.docs[0];
+        const userData = { ...userDoc.data(), id: userDoc.id };
+
+        set({ talkingTo: userData });
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  },
 }));
 
 export default useUsersStore;

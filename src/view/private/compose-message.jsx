@@ -1,22 +1,25 @@
 import { useEffect, useState } from "react";
+
 import SecureMainLayout from "@/layout/private";
 import { ContentLayout } from "@/layout/private/content-layout";
 
 // store
 import useAuthStore from "@/store/useAuthStore";
+import { useFirebaseSearch } from "@/store/useFirestoreSearch";
+import useConversationStore from "@/store/useConversationStore";
 
 // components
 import ChatPanel from "@/components/messages/chat/chat-panel";
 import ChatContainer from "@/components/messages/chat/chat-container";
 import ChatWindow from "@/components/messages/chat/chat-window";
-import ChatHeaderEmpty from "@/components/messages/chat/chat-header-empty";
 import ChatSendMessage from "@/components/messages/chat/chat-send-message";
-import ChatMessagesIntro from "@/components/messages/chat/chat-messages-intro";
-import useConversationStore from "@/store/useConversationStore";
+import ChatSearchUser from "@/components/messages/chat/chat-search-user";
+import ChatMessagesEmpty from "@/components/messages/chat/chat-messages-empty";
 
-export default function Messages() {
+export default function ComposeMessage() {
   const [isLoading, setIsLoading] = useState(false);
   const { user } = useAuthStore();
+  const { searchResults, handleSearch } = useFirebaseSearch();
   const { conversations, fetchRecentConvo } = useConversationStore();
 
   useEffect(() => {
@@ -35,7 +38,6 @@ export default function Messages() {
       init();
     }
   }, [user?.uid, fetchRecentConvo]);
-
   return (
     <SecureMainLayout>
       <ContentLayout title="Messages">
@@ -51,11 +53,15 @@ export default function Messages() {
 
           {/* Chat Window */}
           <ChatWindow>
-            {/* Chat Header */}
-            <ChatHeaderEmpty />
+            {/* Chat Search User */}
+            <ChatSearchUser
+              searchResults={searchResults}
+              handleSearch={handleSearch}
+              userId={user?.uid}
+            />
 
-            {/* Chat Messages */}
-            <ChatMessagesIntro />
+            {/* Chat Messages Empty */}
+            <ChatMessagesEmpty />
 
             {/* Chat Send Message */}
             <ChatSendMessage disabled={true} />

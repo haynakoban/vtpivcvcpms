@@ -34,6 +34,10 @@
   border-radius: 12px;
 }
 
+.booked-cursor{
+  cursor: not-allowed;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
