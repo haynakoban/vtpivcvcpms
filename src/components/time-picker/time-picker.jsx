@@ -4,9 +4,10 @@ import * as React from "react";
 import { Label } from "@/components/ui/label";
 import { TimePickerInput } from "./time-picker-input";
 import { TimePeriodSelect } from "./period-select";
+import { isAMorPM } from "@/lib/functions";
 
 export function TimePicker({ date, setDate }) {
-  const [period, setPeriod] = React.useState("PM");
+  const [period, setPeriod] = React.useState(isAMorPM(date));
 
   const minuteRef = React.useRef(null);
   const hourRef = React.useRef(null);

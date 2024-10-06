@@ -1,4 +1,12 @@
+/* eslint-disable no-unused-vars */
 import moment from "moment";
+
+export const isAMorPM = (date) => {
+  const processDate = new Date(date);
+  const amPm = moment(processDate).format("A");
+
+  return amPm;
+};
 
 export const messageDate = ({ timestamp, format = "h:mm A" }) => {
   const jsDate = timestamp?.toDate();
@@ -90,38 +98,47 @@ const formatDate = (seconds) => {
 
 const formatDateWDay = (seconds) => {
   const date = new Date(seconds * 1000);
-  const options = { year: 'numeric', month: 'long', day: 'numeric',  weekday: 'long', };
-  const formattedDate = date.toLocaleDateString('en-US', options);
+  const options = {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    weekday: "long",
+  };
+  const formattedDate = date.toLocaleDateString("en-US", options);
   return formattedDate;
-}
+};
 
 const getDay = (seconds) => {
   const date = new Date(seconds * 1000);
-  const options = { weekday: 'long', };
-  const formattedDate = date.toLocaleDateString('en-US', options);
+  const options = { weekday: "long" };
+  const formattedDate = date.toLocaleDateString("en-US", options);
   return formattedDate;
-}
+};
 
 const formattedDate = (date) => {
-  return `${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}-${date.getFullYear()}`;
-}
+  return `${String(date.getMonth() + 1).padStart(2, "0")}-${String(
+    date.getDate()
+  ).padStart(2, "0")}-${date.getFullYear()}`;
+};
 
 const checkSelectedPet = (selectedPet, id) => {
-  return selectedPet.filter((pet) => {
-    return pet == id
-  }).length > 0;
-}
+  return (
+    selectedPet.filter((pet) => {
+      return pet == id;
+    }).length > 0
+  );
+};
 
 const generateTimeSlots = ({ from, to, duration, maxClients }) => {
   const parseTime = (timeString) => {
-    const [time, modifier] = timeString.split(' ');
-    let [hours, minutes] = time.split(':').map(num => parseInt(num, 10));
-    if (modifier === 'PM' && hours < 12) {
+    const [time, modifier] = timeString.split(" ");
+    let [hours, minutes] = time.split(":").map((num) => parseInt(num, 10));
+    if (modifier === "PM" && hours < 12) {
       hours += 12;
-    } else if (modifier === 'AM' && hours === 12) {
+    } else if (modifier === "AM" && hours === 12) {
       hours = 0;
     }
-  
+
     const date = new Date();
     date.setHours(hours, minutes, 0, 0);
     return date;
@@ -143,28 +160,36 @@ const generateTimeSlots = ({ from, to, duration, maxClients }) => {
     const currentSlotEnd = new Date(currentSlotStart.getTime() + slotDuration);
     if (currentSlotEnd > endTime) break;
     slots.push({
-      start: currentSlotStart.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }),
-      end: currentSlotEnd.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }),
+      start: currentSlotStart.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+      }),
+      end: currentSlotEnd.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+      }),
     });
     currentSlotStart = currentSlotEnd;
   }
   return slots;
 };
-const checkBookedSlot  = (booked, date, time) => {
+const checkBookedSlot = (booked, date, time) => {
   const has = booked.filter((book, i) => {
-    return (book?.date == date && book?.time  == time);
-  })
+    return book?.date == date && book?.time == time;
+  });
   return has.length > 0;
-}
+};
 
 export {
-    generateRandomId,
-    returnPetPie,
-    formatDate,
-    checkSelectedPet,
-    formatDateWDay,
-    getDay,
-    formattedDate,
-    generateTimeSlots,
-    checkBookedSlot,
-}
+  generateRandomId,
+  returnPetPie,
+  formatDate,
+  checkSelectedPet,
+  formatDateWDay,
+  getDay,
+  formattedDate,
+  generateTimeSlots,
+  checkBookedSlot,
+};

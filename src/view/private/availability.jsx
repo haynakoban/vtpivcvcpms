@@ -164,13 +164,13 @@ export default function Availability() {
           <div className="flex min-h-screen w-full flex-col">
             <div className="grid w-full max-w-6xl items-start gap-6 md:grid-cols-[180px_1fr] lg:grid-cols-[250px_1fr]">
               <nav className="grid gap-4 text-sm text-muted-foreground">
-                <Link to="/auth/settings">
-                  General
-                </Link>
+                <Link to="/auth/settings">General</Link>
                 <Link to="/auth/settings/security">Security</Link>
-                {user?.userType == 1 &&
-                  <Link to="#" className="font-semibold text-primary">Availability</Link>
-                }
+                {user?.userType == 1 && (
+                  <Link to="#" className="font-semibold text-primary">
+                    Availability
+                  </Link>
+                )}
               </nav>
               <div className="grid gap-6">
                 <Card>
@@ -324,6 +324,7 @@ export default function Availability() {
                     </CardFooter>
                   </form>
                 </Card>
+                <div className="my-5"></div>
               </div>
             </div>
           </div>
