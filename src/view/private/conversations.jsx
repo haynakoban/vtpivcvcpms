@@ -39,6 +39,7 @@ export default function Conversations() {
   const [isSending, setIsSending] = useState(false);
   const [images, setImages] = useState([]);
   const [preview, setPreview] = useState([]);
+  const [filePreview, setFilePreview] = useState([]);
   const [error, setError] = useState(false);
 
   useEffect(() => {
@@ -131,13 +132,12 @@ export default function Conversations() {
           images,
         }).finally(() => {
           setIsSending(false);
-          setTimeout(() => {
-            setMessage("");
-            setImages([]);
-            setPreview([]);
-            setError(false);
-            document.getElementById("fileUpload").value = "";
-          }, 1000);
+          setMessage("");
+          setImages([]);
+          setPreview([]);
+          setFilePreview([]);
+          setError(false);
+          document.getElementById("fileUpload").value = "";
         });
       }
     } catch (err) {
@@ -181,6 +181,8 @@ export default function Conversations() {
               setImages={setImages}
               preview={preview}
               setPreview={setPreview}
+              filePreview={filePreview}
+              setFilePreview={setFilePreview}
               error={error}
               setError={setError}
               isSending={isSending}

@@ -4,12 +4,26 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
 import usePetStore from "@/store/usePetStore";
-import { checkSelectedPet, formatDateWDay, generateTimeSlots, getDay, checkBookedSlot, formattedDate } from "@/lib/functions";
+import { checkSelectedPet, formatDateWDay, generateTimeSlots, getDay, checkBookedSlot, formattedDate, stringToDate, isPastDateTime, vetAppointments } from "@/lib/functions";
 import { Calendar } from "@/components/ui/calendar";
 import { RadioGroup } from "@/components/ui/radio-group";
 import useSettingsStore from "@/store/useSettings";
 import useAuthStore from "@/store/useAuthStore";
+import PayPalButton from "@/components/billing/PayPalButton";
+
+import useAppointmentStore from "@/store/useAppointmentStore";
+import { Input } from "@/components/ui/input";
 
 const steps = [
   {
@@ -26,52 +40,21 @@ const steps = [
   },
 ];
 
-const bookedAppointment = [
-  {
-    date: '10-07-2024',
-    time: '08:00 AM - 09:00 AM'
-  },
-  {
-    date: '10-07-2024',
-    time: '09:00 AM - 10:00 AM'
-  },
-  {
-    date: '10-07-2024',
-    time: '10:00 AM - 11:00 AM'
-  },
-  {
-    date: '10-07-2024',
-    time: '11:00 AM - 12:00 PM'
-  },
-  {
-    date: '10-07-2024',
-    time: '12:00 PM - 01:00 PM'
-  },
-  {
-    date: '10-07-2024',
-    time: '01:00 PM - 02:00 PM'
-  },
-  {
-    date: '10-07-2024',
-    time: '02:00 PM - 03:00 PM'
-  },
-  {
-    date: '10-07-2024',
-    time: '03:00 PM - 04:00 PM'
-  },
-  {
-    date: '10-07-2024',
-    time: '04:00 PM - 05:00 PM'
-  }
-];
-
 export default function Form() {
+  const { getUserAppointments, userAppointments, scheduleAppointment } = useAppointmentStore();
   const { userPets, getUserPet } = usePetStore();
   const { user } = useAuthStore();
+  const [selectedAppointment, setSelectedAppointment] = useState('');
+  const [otherValue, setOtherValue] = useState('');
+
   useEffect(() => {
     getUserPet(false, user?.id);
   },[user]);
 
+  useEffect(() => {
+    getUserAppointments(user?.id);
+  },[user])
+  
   const { schedules, getScheduleFirst } = useSettingsStore();
   const [previousStep, setPreviousStep] = useState(0);
   const [currentStep, setCurrentStep] = useState(0);
@@ -89,7 +72,7 @@ export default function Form() {
   };
 
   const fullyBooked = () => {
-    const full = timeSlots?.filter((slots) => checkBookedSlot(bookedAppointment, formattedDate(selected), `${slots.start} - ${slots.end}`)).length === timeSlots?.length
+    const full = timeSlots?.filter((slots) => checkBookedSlot(userAppointments, formattedDate(selected), `${slots.start} - ${slots.end}`)).length === timeSlots?.length
     return timeSlots?.length < 1 ? false : full;
   }
 
@@ -103,8 +86,7 @@ export default function Form() {
         setAvailability({...day, ...schedules.timeSlot});
       }
     });
-  },[selected])
-
+  },[selected, schedules, selected_day])
 
   useEffect(() => {
     if(availability){
@@ -113,7 +95,8 @@ export default function Form() {
   },[availability])
 
   const processForm = async () => {
-    console.log(formattedDate(selected), selectedSlot, selectedPet);
+    const appointmentType = selectedAppointment == 'others' ? otherValue : selectedAppointment;
+    scheduleAppointment(formattedDate(selected), selectedSlot, selectedPet, appointmentType, user?.id);
     setSelectedPet([]);
     setSelected(new Date());
     setSelectedSlot(null);
@@ -125,11 +108,10 @@ export default function Form() {
     if (currentStep < steps.length - 1) {
       if (currentStep === 1) {
         if(selectedPet.length <= 0) return;
+        if(selectedAppointment == '') return;
+        if(selectedAppointment == 'others' && otherValue == '') return;
       }
 
-      if (currentStep === steps.length - 2) {
-        await processForm();
-      }
       setPreviousStep(currentStep);
       setCurrentStep((step) => step + 1);
     }
@@ -161,6 +143,7 @@ export default function Form() {
     if (selected && date.toDateString() === selected.toDateString()) return;
     setSelected(date);
     setSelectedSlot(null);
+    setTimeSlots([]);
   };
 
   return (
@@ -239,17 +222,18 @@ export default function Form() {
 
                       {timeSlots?.map((slots, i) => {
                         const slotValue = `${slots.start} - ${slots.end}`;
+                        const isPastTime = isPastDateTime(formattedDate(selected), slots.start);
 
                         return <div key={i} className={`${timeSlots?.length > 10 ? 'w-full xl:w-1/3' : 'w-full xl:w-1/2'} p-1`}>
                             <div 
-                                className={`flex items-start flex-col rounded border p-2 cursor-pointer ${selectedSlot == slotValue ? 'bg-primary text-primary-foreground ' : ''} ${checkBookedSlot(bookedAppointment, formattedDate(selected), slotValue) ? 'bg-secondary booked-cursor' : ''}`} 
+                                className={`flex items-start flex-col rounded border p-2 cursor-pointer ${selectedSlot == slotValue ? 'bg-primary text-primary-foreground ' : ''} ${(checkBookedSlot(userAppointments, formattedDate(selected), slotValue) || isPastTime) ? 'bg-secondary booked-cursor' : ''}`} 
                                 onClick={() => {
-                                  if(!checkBookedSlot(bookedAppointment, formattedDate(selected), slotValue)){
+                                  if(!checkBookedSlot(userAppointments, formattedDate(selected), slotValue) && !isPastTime){
                                     handleSelect(slotValue)
                                   }
                                 }}>
                                   &nbsp;&nbsp;{slots?.start} - {slots?.end} 
-                                  <span className="text-xs">&nbsp;&nbsp;&nbsp;&nbsp;{checkBookedSlot(bookedAppointment, formattedDate(selected), slotValue) ? 'Booked' : 'Available'}</span>
+                                  <span className="text-xs">&nbsp;&nbsp;&nbsp;&nbsp;{(checkBookedSlot(userAppointments, formattedDate(selected), slotValue) || isPastTime) ? (checkBookedSlot(userAppointments, formattedDate(selected), slotValue) ? 'Booked' : 'Unavailable') : 'Available'}</span>
                             </div>
                           </div>
                       })}
@@ -269,6 +253,32 @@ export default function Form() {
             animate={{ x: 0, opacity: 1 }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
           >
+            <h2 className="text-base font-semibold leading-7 ">
+              Select Type of Appointment
+            </h2>
+
+            <div className="mb-5">
+              <Select onValueChange={setSelectedAppointment}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Select</SelectLabel>
+                    {vetAppointments?.map((appointment) => {
+                      return <SelectItem  key={appointment} value={appointment}>{appointment}</SelectItem>
+                    })}
+                    <SelectItem value='others'>Others</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
+            {selectedAppointment == 'others' &&
+              <div className="mb-5">
+                <Input type="email" value={otherValue} onValueChange={(e) => setOtherValue(e.target.value)} placeholder="Please specify" />
+              </div>
+            }
+
             <h2 className="text-base font-semibold leading-7 ">
               Select Your Pet
             </h2>
@@ -295,13 +305,12 @@ export default function Form() {
             <h2 className="text-base font-semibold leading-7">
               Payment
             </h2>
-            <p className="mt-1 text-sm leading-6 text-gray-600">
-              To Complete Your Appointment Please Pay Exact Amount in this Gcash Account, and submit it.
+            <p className="my-1 text-sm leading-6 text-gray-600">
+              To Complete Your Appointment Please Pay Exact Amount.
             </p>
-            <img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg" alt="" className="bg-white my-2 h-[250px]" />
-            <input type="file" />
-            <div className="mt-2"></div>
-            <Button className="btn btn-sm bg-primary">Submit</Button>
+            <PayPalButton 
+              amount={schedules?.appointmentAmount} 
+              processForm={processForm}/>
           </>
         )}
       </form>

@@ -12,13 +12,7 @@ import {
   where,
 } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
-
-const generateRandomId = () => {
-  const now = Date.now().toString(36);
-  const random = Math.random().toString(36).substr(2, 9);
-  const randomExtra = Math.random().toString(36).substr(2, 9);
-  return `${now}-${random}-${randomExtra}`;
-};
+import { generateRandomId } from "@/lib/functions";
 
 const useMessageStore = create((set) => ({
   messages: [],
@@ -52,7 +46,9 @@ const useMessageStore = create((set) => ({
                 // Upload completed successfully, get download URL
                 getDownloadURL(uploadTask.snapshot.ref)
                   .then((downloadURL) => {
-                    imageUrls.push(downloadURL);
+                    const fileName = img.name;
+                    const fileExtension = fileName.split('.').pop().toLowerCase();
+                    imageUrls.push({ url: downloadURL, extension: fileExtension, fileName });
                     resolve();
                   })
                   .catch((e) => {

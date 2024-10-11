@@ -64,11 +64,12 @@ export default function DataTable({ columns, data }) {
       <div className="flex items-center justify-between">
         <div className="flex items-center py-4">
           <Input
-            placeholder="Search by pet..."
-            value={table.getColumn("petName")?.getFilterValue() ?? ""}
-            onChange={(event) =>
-              table.getColumn("petName")?.setFilterValue(event.target.value)
-            }
+            placeholder="Search..."
+            value={table.getColumn("appointmentType")?.getFilterValue()}
+            onChange={(event) => {
+              const value = event.target.value;
+              table.getColumn("appointmentType")?.setFilterValue(value);
+            }}
             className="max-w-sm"
           />
         </div>

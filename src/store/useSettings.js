@@ -16,9 +16,9 @@ import {
 const useSettingsStore = create((set) => ({
   schedules: [],
 
-  updateSchedule: async (schedule, timeSlot, userId, id = null) => {
+  updateSchedule: async (schedule, timeSlot, appointmentAmount, userId, id = null) => {
     try {
-      const scheduleData = { schedule, timeSlot, userId };
+      const scheduleData = { schedule, timeSlot, appointmentAmount, userId };
 
       if (id) {
         const docRef = doc(db, "schedules", id);

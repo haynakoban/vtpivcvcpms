@@ -56,7 +56,7 @@ export default function Dashboard() {
           }
         </div>
         <div className="mt-5">Recently Added Pet</div>
-        <div className="flex flex-wrap mt-2">
+        <div className="flex flex-wrap mt-2 pb-12">
           {userPets.slice(0, 4).map((pet, i) => {
             return <div key={i} className="w-full sm:w-1/2 lg:w-1/3 xl:w-1/4 p-1">
               <Card>

@@ -87,6 +87,7 @@ export default function Availability() {
         duration: 30,
         maxClients: 1,
       },
+      appointmentAmount: 100
     },
   });
 
@@ -135,11 +136,13 @@ export default function Availability() {
       maxClients: parseInt(data.timeSlot.maxClients),
     };
 
+    const appointmentAmount = data.appointmentAmount;
     try {
       setIsLoading(true);
       const result = await updateSchedule(
         processedSchedule,
         processedTimeSlot,
+        appointmentAmount,
         user?.id,
         schedules[0]?.id || null
       );
@@ -173,6 +176,42 @@ export default function Availability() {
                 )}
               </nav>
               <div className="grid gap-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Appointment Price Management</CardTitle>
+                    <CardDescription>
+                      Set the default price/amount for every booking.
+                    </CardDescription>
+                  </CardHeader>
+                  <form onSubmit={handleSubmit(onSubmit)}>
+                    <CardContent>
+                      <div className="grid gap-4">
+                        {/* Amount Input */}
+                        <div>
+                          <label className="block text-sm font-medium">
+                            Amount (PHP)
+                          </label>
+                          <Controller
+                            control={control}
+                            name="appointmentAmount"
+                            render={({ field }) => (
+                              <Input
+                                type="number"
+                                placeholder="Enter duration"
+                                {...field}
+                              />
+                            )}
+                          />
+                        </div>
+                      </div>
+                    </CardContent>
+                    <CardFooter className="border-t px-6 py-4">
+                      <Button type="submit" disabled={isLoading}>
+                        {isLoading ? "Saving..." : "Save"}
+                      </Button>
+                    </CardFooter>
+                  </form>
+                </Card>
                 <Card>
                   <CardHeader>
                     <CardTitle>Appointment Time Slot Management</CardTitle>
