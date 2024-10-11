@@ -1,3 +1,12 @@
+import AboutUsSection from "@/components/sections/about-us";
+import BlogPosts from "@/components/sections/blog-posts";
+
 export default function AboutUs() {
-  return <div>AboutUs</div>;
+  return (
+    <main>
+      <AboutUsSection />
+
+      <BlogPosts />
+    </main>
+  );
 }
