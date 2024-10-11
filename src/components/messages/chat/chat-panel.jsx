@@ -3,9 +3,13 @@ import { Plus } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import moment from "moment";
+import useAuthStore from "@/store/useAuthStore";
+import { timeAgo } from "@/lib/functions";
 
 export default function ChatPanel({ conversations }) {
   const navigate = useNavigate();
+  const { user } = useAuthStore();
 
   return (
     <div className="border-r bg-muted/20">
@@ -42,11 +46,12 @@ export default function ChatPanel({ conversations }) {
                   <div className="flex-1 truncate hidden md:block">
                     <p className="font-medium truncate">{c.user.displayName}</p>
                     <p className="text-sm text-muted-foreground truncate">
-                      {c.message.content}
+                      {user?.id == c.message.senderId ? 'You: ' : ''}
+                      {c.message.content || 'Sent an attachment'}
                     </p>
                   </div>
                   <div className="text-xs text-muted-foreground hidden md:block">
-                    2h
+                    {timeAgo(c.message?.createdAt?.seconds * 1000)}
                   </div>
                 </Link>
               </div>

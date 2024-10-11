@@ -244,6 +244,24 @@ const convertTimeStringToDate = (timeString, dateString, name, status, carePlanS
   return { start: startDate, end: endDate, title, color, desc };
 };
 
+const timeAgo = (date) => {
+  const now = moment();
+  const duration = moment.duration(now.diff(moment(date)));
+
+  const seconds = Math.floor(duration.asSeconds());
+  const minutes = Math.floor(duration.asMinutes());
+  const hours = Math.floor(duration.asHours());
+  const days = Math.floor(duration.asDays());
+  const years = Math.floor(duration.asYears());
+
+  if (isNaN(seconds) || seconds < 0) return '';
+  if (years > 0) return `${years}y`;
+  if (days > 0) return `${days}d`;
+  if (hours > 0) return `${hours}h`;
+  if (minutes > 0) return `${minutes}m`;
+  return `${seconds}s`;
+};
+
 const vetAppointments = [
   "Wellness Checkup",
   "Vaccination Appointment",
@@ -280,5 +298,6 @@ export {
   stringToDate,
   isPastDateTime,
   vetAppointments,
-  convertTimeStringToDate
+  convertTimeStringToDate,
+  timeAgo
 };
