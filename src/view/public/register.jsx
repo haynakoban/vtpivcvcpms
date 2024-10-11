@@ -7,6 +7,7 @@ import { auth } from "@/config/firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import SignInWithGoogle from "@/components/auth/sign-in-with-google";
 import useUsersStore from "@/store/useUsersStore";
+import useAuditStore from "@/store/useAuditStore";
 
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
@@ -54,6 +55,7 @@ const formSchema = z.object({
 export default function Register() {
   const navigate = useNavigate();
   const { createUser } = useUsersStore();
+  const { addAudit } = useAuditStore();
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -85,7 +87,15 @@ export default function Register() {
         },
       });
 
-      navigate("/");
+      addAudit({
+        userId: result.user.uid,
+        log: "Registered and Signed in with email and password",
+        action: "Registered/Logged In",
+      });
+
+      setTimeout(() => {
+        navigate("/");
+      }, 1000);
     } catch (e) {
       console.error(e);
     }

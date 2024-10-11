@@ -2,6 +2,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { Ellipsis, LogOut } from "lucide-react";
 import useAuthStore from "@/store/useAuthStore";
+import useAuditStore from "@/store/useAuditStore";
 
 import { cn } from "@/lib/utils";
 import { getMenuList } from "@/lib/menu-list";
@@ -17,14 +18,21 @@ import {
 
 export function Menu({ isOpen }) {
   const { user, signOut } = useAuthStore();
+  const { addAudit } = useAuditStore();
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const menuList = getMenuList(pathname, user?.userType);
 
-
   async function handleSignOut() {
-    signOut();
-    navigate("/login");
+    addAudit({
+      userId: user.id,
+      log: "Signed out the user",
+      action: "Logged Out",
+    });
+    setTimeout(() => {
+      signOut();
+      navigate("/login");
+    }, 1000);
   }
 
   return (

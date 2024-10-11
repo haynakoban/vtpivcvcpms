@@ -3,15 +3,17 @@ import { auth, db, google } from "@/config/firebase";
 import { signInWithPopup } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import useUsersStore from "@/store/useUsersStore";
+import useAuditStore from "@/store/useAuditStore";
 
 export default function SignInWithGoogle() {
   const { createUser } = useUsersStore();
+  const { addAudit } = useAuditStore();
   const navigate = useNavigate();
 
   async function signInWithGoogle() {
     try {
       const result = await signInWithPopup(auth, google);
-      const userRef = doc(db, 'users', result.user?.uid);
+      const userRef = doc(db, "users", result.user?.uid);
       const user = await getDoc(userRef);
 
       // If there are no matching documents, proceed to create a new user account
@@ -27,6 +29,12 @@ export default function SignInWithGoogle() {
           },
         });
       }
+
+      addAudit({
+        userId: user.id,
+        log: "Signed in with google",
+        action: "Logged In",
+      });
 
       navigate("/");
     } catch (e) {

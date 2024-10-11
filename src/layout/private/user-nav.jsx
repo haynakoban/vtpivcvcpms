@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { LayoutGrid, LogOut, Settings, User } from "lucide-react";
+import { LayoutGrid, LogOut, Settings } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -19,14 +19,23 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import useAuthStore from "@/store/useAuthStore";
+import useAuditStore from "@/store/useAuditStore";
 
 export function UserNav() {
   const navigate = useNavigate();
+  const { addAudit } = useAuditStore();
   const { user, signOut } = useAuthStore();
 
   async function handleSignOut() {
-    signOut();
-    navigate("/login");
+    addAudit({
+      userId: user.id,
+      log: "Signed out the user",
+      action: "Logged Out",
+    });
+    setTimeout(() => {
+      signOut();
+      navigate("/login");
+    }, 1000);
   }
 
   return (

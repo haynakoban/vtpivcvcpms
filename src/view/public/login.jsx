@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/no-unescaped-entities */
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -6,6 +8,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { auth } from "@/config/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import SignInWithGoogle from "@/components/auth/sign-in-with-google";
+import useAuditStore from "@/store/useAuditStore";
 
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
@@ -35,6 +38,7 @@ const formSchema = z.object({
 
 export default function Login() {
   const navigate = useNavigate();
+  const { addAudit } = useAuditStore();
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -51,7 +55,14 @@ export default function Login() {
       const result = await signInWithEmailAndPassword(auth, email, password);
 
       if (result) {
-        navigate("/");
+        addAudit({
+          userId: result.user.uid,
+          log: "Signed in with email and password",
+          action: "Logged In",
+        });
+        setTimeout(() => {
+          navigate("/");
+        }, 1000);
       }
     } catch (error) {
       form.setError("email", {

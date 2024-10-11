@@ -22,6 +22,7 @@ import Availability from "@/view/private/availability";
 import Security from "@/view/private/security";
 import Conversations from "@/view/private/conversations";
 import ComposeMessage from "@/view/private/compose-message";
+import AuditTrails from "@/view/private/audit-trails";
 
 export default function AppRoutes() {
   return (
@@ -37,6 +38,7 @@ export default function AppRoutes() {
 
       {/* Private routes - only accessible if logged in */}
       <Route path="auth/dashboard" element={<Dashboard />} />
+      <Route path="auth/audit" element={<AuditTrails />} />
       <Route path="auth/pets" element={<Pets />} />
       <Route path="auth/appointment" element={<Appointment />} />
       <Route path="auth/appointment/create" element={<CreateAppointment />} />
