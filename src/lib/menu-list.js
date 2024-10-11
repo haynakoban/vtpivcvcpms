@@ -51,7 +51,7 @@ export function getMenuList(pathname, userType = 2) {
   if(userType == 1){
     menu.unshift({
       href: "/auth/audit",
-      label: "Audit Trail",
+      label: "Audit Trails",
       active: pathname.includes("auth/audit"),
       icon: Logs,
       submenus: [],
