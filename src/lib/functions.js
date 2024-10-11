@@ -241,8 +241,8 @@ const convertTimeStringToDate = (timeString, dateString, name, status, carePlanS
   const now = new Date();
 
   const title = `${name}${name.endsWith('s') ? '' : "'s"} Appointment`;
-  const color = status == 'cancelled' ? '#F44336' : (carePlanStatus ? '#4CAF50' :  ((endDate < now) ? 'lightgray' : '#FF9800'));
-  const desc = status == 'cancelled' ? 'Cancelled' : (carePlanStatus ? 'Completed' :  ((endDate < now) ? 'No-show' : 'Pending'));
+  const color = status == 'cancelled' ? '#F44336' : (carePlanStatus ? '#4CAF50' :  (status == 'no-show' ? 'lightgray' : '#FF9800'));
+  const desc = status == 'cancelled' ? 'Cancelled' : (carePlanStatus ? 'Completed' : (status == 'no-show' ? 'No-show' : 'Pending'));
   return { start: startDate, end: endDate, title, color, desc };
 };
 

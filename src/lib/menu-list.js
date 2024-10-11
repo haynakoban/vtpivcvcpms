@@ -5,11 +5,59 @@ import {
   MessageCircle,
   Settings,
   SquareChartGantt,
-  User,
   Video,
+  Logs
 } from "lucide-react";
 
 export function getMenuList(pathname, userType = 2) {
+  const menu = [
+    {
+      href: "/auth/pets",
+      label: userType == 1 ? "Pet Management" : "My Pets",
+      active: pathname.includes("auth/pets"),
+      icon: Dog,
+      submenus: [],
+    },
+    {
+      href: "/auth/appointment",
+      label: "Appointment",
+      active: pathname.includes("auth/appointment"),
+      icon: Calendar,
+      submenus: [],
+    },
+    {
+      href: "/auth/careplan",
+      label: "Careplan",
+      active: pathname.includes("auth/careplan"),
+      icon: SquareChartGantt,
+      submenus: [],
+    },
+    {
+      href: "/auth/messages",
+      label: "Messages",
+      active: pathname.includes("auth/messages"),
+      icon: MessageCircle,
+      submenus: [],
+    },
+    {
+      href: "/auth/meetings",
+      label: "Meetings",
+      active: pathname.includes("auth/meetings"),
+      icon: Video,
+      submenus: [],
+    },
+  ];
+
+  if(userType == 1){
+    menu.unshift({
+      href: "/auth/audit",
+      label: "Audit Trail",
+      active: pathname.includes("auth/audit"),
+      icon: Logs,
+      submenus: [],
+    });
+  }
+
   return [
     {
       groupLabel: "",
@@ -25,43 +73,7 @@ export function getMenuList(pathname, userType = 2) {
     },
     {
       groupLabel: "Contents",
-      menus: [
-        {
-          href: "/auth/pets",
-          label: userType == 1 ? "Pet Management" : "My Pets",
-          active: pathname.includes("auth/pets"),
-          icon: Dog,
-          submenus: [],
-        },
-        {
-          href: "/auth/appointment",
-          label: "Appointment",
-          active: pathname.includes("auth/appointment"),
-          icon: Calendar,
-          submenus: [],
-        },
-        {
-          href: "/auth/careplan",
-          label: "Careplan",
-          active: pathname.includes("auth/careplan"),
-          icon: SquareChartGantt,
-          submenus: [],
-        },
-        {
-          href: "/auth/messages",
-          label: "Messages",
-          active: pathname.includes("auth/messages"),
-          icon: MessageCircle,
-          submenus: [],
-        },
-        {
-          href: "/auth/meetings",
-          label: "Meetings",
-          active: pathname.includes("auth/meetings"),
-          icon: Video,
-          submenus: [],
-        },
-      ],
+      menus: menu
     },
     {
       groupLabel: "Settings and Privacy",

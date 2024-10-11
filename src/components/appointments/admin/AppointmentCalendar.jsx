@@ -20,10 +20,11 @@ import { stringToDate } from '@/lib/functions';
 import { FaUpload } from 'react-icons/fa6';
 
 function AppointmentCalendar() {
-    const { getAppointments, appointments } = useAppointmentStore();
+    const { getAppointments, appointments, updateNoShowStatus, isChanged } = useAppointmentStore();
     const [appointmentData, setAppointmentData] = useState(null);
     const [isOpen, setIsOpen] = useState(false);
     const [file, setFile] = useState(null);
+    const [noShow, setNoShow] = useState(false);
 
     const handleDrop = (e) => {
         e.preventDefault();
@@ -46,7 +47,7 @@ function AppointmentCalendar() {
 
     useEffect(() => {
         getAppointments();
-    },[]);
+    },[isChanged]);
 
     useEffect(() => {
         if(!isOpen){
@@ -73,6 +74,10 @@ function AppointmentCalendar() {
         setAppointmentData(event);
         setIsOpen(true);
     };
+
+    const handleUploadPrescription = (appointmentId) => {
+        console.log(file, appointmentId)
+    }
 
     return (
         <div>
@@ -118,17 +123,44 @@ function AppointmentCalendar() {
                             <div>Appointment: {appointmentData?.appointmentType}</div>
                             <div>Date: {stringToDate(appointmentData?.date)}</div>
                             <div>Time: {appointmentData?.time}</div>
-                            <div className="mt-2">Status: &nbsp;<span className={`py-1 px-2 text-white capitalize rounded-md bg-[${appointmentData?.color}]`}>{appointmentData?.desc}</span> </div>
+                            <div className="mt-2">Status: &nbsp;<span className={`py-1 px-2 text-white capitalize rounded-md bg-[${appointmentData?.color}]`}>{appointmentData?.desc}</span></div>
+                            {appointmentData?.desc == 'Pending' ?
+                                <div className="mt-2">
+                                    <p>Client did not attend? Click <b>"No-show"</b> to update status.</p>
+                                    <div className='flex justify-start items-center gap-2'>
+                                        <button className='block border px-3 py-2 rounded hover:bg-secondary' onClick={(() => setNoShow(true))}>No-show</button>
+                                        <AlertDialog open={noShow}>
+                                            <AlertDialogContent>
+                                                <AlertDialogHeader>
+                                                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                                                <AlertDialogDescription>
+                                                    This action cannot be undone. This will update your client status into "No-show".
+                                                </AlertDialogDescription>
+                                                </AlertDialogHeader>
+                                                <AlertDialogFooter>
+                                                <AlertDialogCancel onClick={() => setNoShow(false)}>Close</AlertDialogCancel>
+                                                <AlertDialogAction onClick={() => {
+                                                        updateNoShowStatus(appointmentData?.id);
+                                                        setNoShow(false);
+                                                        setIsOpen(false);
+                                                    }}
+                                                >Sure</AlertDialogAction>
+                                                </AlertDialogFooter>
+                                            </AlertDialogContent>
+                                        </AlertDialog>
+                                    </div>
+                                </div>
+                            : ''}
                             <div className='mt-5'>Prescription:</div>
                             <div 
                                 onDrop={handleDrop}
                                 onDragOver={handleDragOver}
-                                className={`mt-2 mb-2 flex justify-center flex-col items-center aspect-video bg-secondary rounded-md ${appointmentData?.status == 'cancelled' ? 'booked-cursor' : ''}`}>
+                                className={`mt-2 mb-2 flex justify-center flex-col items-center aspect-video bg-secondary rounded-md ${(appointmentData?.status == 'cancelled' || appointmentData?.desc == 'No-show') ? 'booked-cursor' : ''}`}>
                                 <FaUpload className="text-3xl text-center" />
                                 <p className='mt-2'>Drag and drop file here</p>
                                 <p className='my-2'>- or -</p>
                                 <label htmlFor="prescription_file">
-                                    <div className={`bg-primary text-primary-foreground px-3 py-2 rounded hover:bg-primary/85 cursor-pointer  ${appointmentData?.status == 'cancelled' ? 'booked-cursor' : ''}`}>Browse File</div>
+                                    <div className={`bg-primary text-primary-foreground px-3 py-2 rounded hover:bg-primary/85 cursor-pointer  ${(appointmentData?.status == 'cancelled' || appointmentData?.desc == 'No-show') ? 'booked-cursor' : ''}`}>Browse File</div>
                                     <input 
                                         type="file" 
                                         hidden 
@@ -144,7 +176,7 @@ function AppointmentCalendar() {
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                         <AlertDialogCancel onClick={() => setIsOpen(false)}>Close</AlertDialogCancel>
-                        <AlertDialogAction disabled={!file}>Upload</AlertDialogAction>
+                        <AlertDialogAction disabled={!file} onClick={() => handleUploadPrescription(appointmentData?.id)}>Upload</AlertDialogAction>
                         </AlertDialogFooter>
                     </AlertDialogContent>
                 </AlertDialog>

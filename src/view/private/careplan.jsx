@@ -78,7 +78,11 @@ export default function Careplan() {
                     <CardContent>
                       <div className="text-center">{stringToDate(appointment?.date)}</div>
                       <div className="text-center text-sm">{appointment?.time}</div>
-                      <div className="text-center text-sm bg-primary text-primary-foreground py-2 px-3 mt-5 rounded cursor-pointer hover:bg-primary/85">View Prescription</div>
+                      {appointment?.prescriptionFile ?
+                        <div className="text-center text-sm bg-primary text-primary-foreground py-2 px-3 mt-5 rounded cursor-pointer hover:bg-primary/85">View Prescription</div>
+                        :
+                        <div className="text-center text-sm bg-secondary text-secondary-foreground py-2 px-3 mt-5 rounded booked-cursor">View Prescription</div>
+                      }
                     </CardContent>
                   </Card>
                 </div>

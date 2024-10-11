@@ -12,11 +12,12 @@ import {
   doc,
   updateDoc,
 } from "firebase/firestore";
-import { convertTimeStringToDate } from "@/lib/functions";
+import { convertTimeStringToDate, generateRandomId } from "@/lib/functions";
 
 const useAppointmentStore = create((set) => ({
   appointments: [],
   userAppointments: [],
+  isChanged: null,
 
   scheduleAppointment: async (date, time, pets, appointmentType, userId) => {
     try {
@@ -27,7 +28,8 @@ const useAppointmentStore = create((set) => ({
         userId,
         appointmentType,
         status: 'booked',
-        carePlanStatus: false,
+        userFeedback: null,
+        prescriptionFile: null,
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
       };
@@ -64,7 +66,7 @@ const useAppointmentStore = create((set) => ({
                     petData.push(petDoc.data());
                 });
 
-                const { start, end, title, color, desc } = convertTimeStringToDate(appointment?.time, appointment?.date, (user?.displayName || user?.alternateDisplayName), appointment?.status, appointment?.carePlanStatus);
+                const { start, end, title, color, desc } = convertTimeStringToDate(appointment?.time, appointment?.date, (user?.displayName || user?.alternateDisplayName), appointment?.status, appointment?.prescriptionFile);
                 return { ...appointment, start, end, title, color, desc, pets: petData, alternateDisplayName: user?.alternateDisplayName, displayName: user?.displayName, email: user?.email, uid: user?.uid, userType: user?.userType };
             }
         });
@@ -97,7 +99,7 @@ const useAppointmentStore = create((set) => ({
                     petData.push(petDoc.data());
                 });
                 
-                const { start, end, title, color, desc } = convertTimeStringToDate(appointment?.time, appointment?.date, (user?.displayName || user?.alternateDisplayName), appointment?.status, appointment?.carePlanStatus);
+                const { start, end, title, color, desc } = convertTimeStringToDate(appointment?.time, appointment?.date, (user?.displayName || user?.alternateDisplayName), appointment?.status, appointment?.prescriptionFile);
                 return { ...appointment, start, end, title, color, desc, pets: petData, alternateDisplayName: user?.alternateDisplayName, displayName: user?.displayName, email: user?.email, uid: user?.uid, userType: user?.userType };
             }
         });
@@ -108,7 +110,7 @@ const useAppointmentStore = create((set) => ({
     }
   },
 
-  cancelAppointment: async (appointmentId) => { // update status to pending
+  cancelAppointment: async (appointmentId) => { // update status to cancelled
     try{
         const appointmentRef = doc(db, "appointments", appointmentId);
             
@@ -119,7 +121,51 @@ const useAppointmentStore = create((set) => ({
       } catch(e){
         
       }
-},
+  },
+
+  updateNoShowStatus: async (appointmentId) => { // update status to no-show
+    try{
+        const appointmentRef = doc(db, "appointments", appointmentId);
+            
+        await updateDoc(appointmentRef, {
+            status: 'no-show',
+            updatedAt: serverTimestamp()
+        });
+
+        set({ isChanged: generateRandomId() })
+      } catch(e){
+        
+      }
+  },
+
+  updatePrescriptionFile: async (appointmentId) => { // update prescription file
+    try{
+        const prescriptionUrl = '';
+        const appointmentRef = doc(db, "appointments", appointmentId);
+        await updateDoc(appointmentRef, {
+            prescriptionFile: prescriptionUrl,
+            updatedAt: serverTimestamp()
+        });
+
+        set({ isChanged: generateRandomId() })
+      } catch(e){
+        
+      }
+  },
+
+  updateUserFeedback: async (appointmentId, userFeedback) => { // update status to no-show
+    try{
+        const appointmentRef = doc(db, "appointments", appointmentId);
+        await updateDoc(appointmentRef, {
+            userFeedback,
+            updatedAt: serverTimestamp()
+        });
+
+        set({ isChanged: generateRandomId() })
+      } catch(e){
+        
+      }
+  },
 }));
 
 export default useAppointmentStore;

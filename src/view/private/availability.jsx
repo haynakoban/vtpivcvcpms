@@ -117,7 +117,9 @@ export default function Availability() {
         maxClients: schedules[0].timeSlot.maxClients,
       };
 
-      reset({ schedule: formattedSchedules, timeSlot: formattedTimeSlot });
+      const appointmentAmount = schedules[0].appointmentAmount;
+
+      reset({ schedule: formattedSchedules, timeSlot: formattedTimeSlot, appointmentAmount });
     }
   }, [schedules, reset]);
 
