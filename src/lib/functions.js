@@ -238,8 +238,6 @@ const convertTimeStringToDate = (timeString, dateString, name, status, carePlanS
   const endDate = new Date(date);
   endDate.setHours(endHour24, endMin, 0);
 
-  const now = new Date();
-
   const title = `${name}${name.endsWith('s') ? '' : "'s"} Appointment`;
   const color = status == 'cancelled' ? '#F44336' : (carePlanStatus ? '#4CAF50' :  (status == 'no-show' ? 'lightgray' : '#FF9800'));
   const desc = status == 'cancelled' ? 'Cancelled' : (carePlanStatus ? 'Completed' : (status == 'no-show' ? 'No-show' : 'Pending'));

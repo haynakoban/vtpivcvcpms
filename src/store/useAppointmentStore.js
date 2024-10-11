@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { db } from "@/config/firebase";
+import { db, storage } from "@/config/firebase";
 import {
   collection,
   serverTimestamp,
@@ -13,6 +13,17 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { convertTimeStringToDate, generateRandomId } from "@/lib/functions";
+import { deleteObject, getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+
+async function deleteImage(downloadURL) {
+  try {
+    const filePath = decodeURIComponent(
+      downloadURL.split("/o/")[1].split("?")[0].replace(/%2F/g, "/")
+    );
+    const fileRef = ref(storage, filePath);
+    await deleteObject(fileRef);
+  } catch (error) {}
+}
 
 const useAppointmentStore = create((set) => ({
   appointments: [],
@@ -138,9 +149,47 @@ const useAppointmentStore = create((set) => ({
       }
   },
 
-  updatePrescriptionFile: async (appointmentId) => { // update prescription file
+  updatePrescriptionFile: async (file, appointmentId, url) => { // update prescription file
     try{
-        const prescriptionUrl = '';
+        let prescriptionUrl = '';
+        if (file) {
+          try {
+            const storageRef = ref(storage, `pdf/${generateRandomId()}`);
+            const uploadTask = uploadBytesResumable(storageRef, file);
+
+            // Wait for each upload task to complete
+            await new Promise((resolve, reject) => {
+              uploadTask.on(
+                "state_changed",
+                (snapshot) => {},
+                (error) => {
+                  reject("Error uploading file");
+                },
+                () => {
+                  // Upload completed successfully, get download URL
+                  getDownloadURL(uploadTask.snapshot.ref)
+                    .then((downloadURL) => {
+                      const fileName = file.name;
+                      prescriptionUrl = {
+                        url: downloadURL,
+                        name: fileName
+                      }
+                      
+                      resolve();
+                    })
+                    .catch((e) => {
+                      return { err: "Something went wrong, please try again." };
+                    });
+                }
+              );
+            });
+
+            await deleteImage(url);
+          } catch (error) {
+            return { err: "Something went wrong, please try again." };
+          }
+        }
+
         const appointmentRef = doc(db, "appointments", appointmentId);
         await updateDoc(appointmentRef, {
             prescriptionFile: prescriptionUrl,

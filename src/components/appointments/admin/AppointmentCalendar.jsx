@@ -18,19 +18,23 @@ import {
 } from "@/components/ui/alert-dialog";
 import { stringToDate } from '@/lib/functions';
 import { FaUpload } from 'react-icons/fa6';
+import LoadingSpinner from '@/components/loaders/LoadingSpinner';
 
 function AppointmentCalendar() {
-    const { getAppointments, appointments, updateNoShowStatus, isChanged } = useAppointmentStore();
+    const { getAppointments, appointments, updateNoShowStatus, isChanged, updatePrescriptionFile } = useAppointmentStore();
     const [appointmentData, setAppointmentData] = useState(null);
     const [isOpen, setIsOpen] = useState(false);
     const [file, setFile] = useState(null);
     const [noShow, setNoShow] = useState(false);
+    const [saveLoading, setSaveLoading] = useState(false);
 
     const handleDrop = (e) => {
         e.preventDefault();
         const droppedFile = e.dataTransfer.files[0];
         if (droppedFile) {
-          setFile(droppedFile);
+            if (droppedFile.type === 'application/pdf' || droppedFile.name.endsWith('.pdf')) {
+                setFile(droppedFile);
+            }
         }
     };
 
@@ -75,8 +79,12 @@ function AppointmentCalendar() {
         setIsOpen(true);
     };
 
-    const handleUploadPrescription = (appointmentId) => {
-        console.log(file, appointmentId)
+    const handleUploadPrescription = (appointmentId, url) => {
+        setSaveLoading(true);
+        updatePrescriptionFile(file, appointmentId, url).finally(() => {
+            setSaveLoading(false);
+            setIsOpen(false);
+        })
     }
 
     return (
@@ -165,18 +173,25 @@ function AppointmentCalendar() {
                                         type="file" 
                                         hidden 
                                         id='prescription_file'
+                                        accept=".pdf"
                                         onChange={handleFileChange}
                                         disabled={appointmentData?.status == 'cancelled'} />
                                 </label>
                             </div>
-                            {file && 
+                            {file ? 
                                 <a href={URL.createObjectURL(file)} target='_blank' className='block border px-3 py-2 rounded hover:bg-secondary w-full'>{file?.name || 'File'}</a>
+                                :
+                                <>
+                                {appointmentData?.prescriptionFile &&
+                                    <a href={appointmentData?.prescriptionFile?.url} target='_blank' className='block border px-3 py-2 rounded hover:bg-secondary w-full'>{appointmentData?.prescriptionFile?.name}</a>
+                                }
+                                </>
                             }
                         </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                         <AlertDialogCancel onClick={() => setIsOpen(false)}>Close</AlertDialogCancel>
-                        <AlertDialogAction disabled={!file} onClick={() => handleUploadPrescription(appointmentData?.id)}>Upload</AlertDialogAction>
+                        <AlertDialogAction disabled={!file || saveLoading} onClick={() => handleUploadPrescription(appointmentData?.id, appointmentData?.prescriptionFile?.url)}><LoadingSpinner isLoading={saveLoading} /> Upload</AlertDialogAction>
                         </AlertDialogFooter>
                     </AlertDialogContent>
                 </AlertDialog>

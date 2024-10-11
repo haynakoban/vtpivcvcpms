@@ -41,7 +41,7 @@ const steps = [
 ];
 
 export default function Form() {
-  const { getUserAppointments, userAppointments, scheduleAppointment } = useAppointmentStore();
+  const { getAppointments, appointments, scheduleAppointment } = useAppointmentStore();
   const { userPets, getUserPet } = usePetStore();
   const { user } = useAuthStore();
   const [selectedAppointment, setSelectedAppointment] = useState('');
@@ -52,8 +52,8 @@ export default function Form() {
   },[user]);
 
   useEffect(() => {
-    getUserAppointments(user?.id);
-  },[user])
+    getAppointments();
+  },[])
   
   const { schedules, getScheduleFirst } = useSettingsStore();
   const [previousStep, setPreviousStep] = useState(0);
@@ -72,7 +72,7 @@ export default function Form() {
   };
 
   const fullyBooked = () => {
-    const full = timeSlots?.filter((slots) => checkBookedSlot(userAppointments, formattedDate(selected), `${slots.start} - ${slots.end}`)).length === timeSlots?.length
+    const full = timeSlots?.filter((slots) => checkBookedSlot(appointments, formattedDate(selected), `${slots.start} - ${slots.end}`)).length === timeSlots?.length
     return timeSlots?.length < 1 ? false : full;
   }
 
@@ -226,14 +226,14 @@ export default function Form() {
 
                         return <div key={i} className={`${timeSlots?.length > 10 ? 'w-full xl:w-1/3' : 'w-full xl:w-1/2'} p-1`}>
                             <div 
-                                className={`flex items-start flex-col rounded border p-2 cursor-pointer ${selectedSlot == slotValue ? 'bg-primary text-primary-foreground ' : ''} ${(checkBookedSlot(userAppointments, formattedDate(selected), slotValue) || isPastTime) ? 'bg-secondary booked-cursor' : ''}`} 
+                                className={`flex items-start flex-col rounded border p-2 cursor-pointer ${selectedSlot == slotValue ? 'bg-primary text-primary-foreground ' : ''} ${(checkBookedSlot(appointments, formattedDate(selected), slotValue) || isPastTime) ? 'bg-secondary booked-cursor' : ''}`} 
                                 onClick={() => {
-                                  if(!checkBookedSlot(userAppointments, formattedDate(selected), slotValue) && !isPastTime){
+                                  if(!checkBookedSlot(appointments, formattedDate(selected), slotValue) && !isPastTime){
                                     handleSelect(slotValue)
                                   }
                                 }}>
                                   &nbsp;&nbsp;{slots?.start} - {slots?.end} 
-                                  <span className="text-xs">&nbsp;&nbsp;&nbsp;&nbsp;{(checkBookedSlot(userAppointments, formattedDate(selected), slotValue) || isPastTime) ? (checkBookedSlot(userAppointments, formattedDate(selected), slotValue) ? 'Booked' : 'Unavailable') : 'Available'}</span>
+                                  <span className="text-xs">&nbsp;&nbsp;&nbsp;&nbsp;{(checkBookedSlot(appointments, formattedDate(selected), slotValue) || isPastTime) ? (checkBookedSlot(appointments, formattedDate(selected), slotValue) ? 'Booked' : 'Unavailable') : 'Available'}</span>
                             </div>
                           </div>
                       })}
