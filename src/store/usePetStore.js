@@ -12,6 +12,7 @@ import {
   getDocs,
   updateDoc,
   doc,
+  getDoc,
 } from "firebase/firestore";
 import {
   deleteObject,
@@ -20,6 +21,7 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { generateRandomId } from "@/lib/functions";
+import useAuditStore from "@/store/useAuditStore";
 
 async function deleteImage(downloadURL) {
   try {
@@ -45,6 +47,7 @@ const usePetStore = create((set) => ({
     userId
   ) => {
     try {
+      const { addAudit } = useAuditStore.getState();
       let petImage = "";
       if (petProfile) {
         try {
@@ -91,7 +94,15 @@ const usePetStore = create((set) => ({
         updatedAt: serverTimestamp(),
       };
 
-      await addDoc(collection(db, "pets"), newPet);
+      const result = await addDoc(collection(db, "pets"), newPet);
+
+      addAudit({
+        userId,
+        log: "New pet information created successfully",
+        action: "Created Pet",
+        actionId: result.id,
+      });
+
       set((prev) => ({ isChanged: !prev.isChanged }));
       return { success: "Pet registered successfully." };
     } catch (err) {
@@ -156,6 +167,7 @@ const usePetStore = create((set) => ({
     preview
   ) => {
     try {
+      const { addAudit } = useAuditStore.getState();
       let petImg = preview;
       if (petImage) {
         try {
@@ -203,6 +215,20 @@ const usePetStore = create((set) => ({
       const supplyRef = doc(db, "pets", id);
       await updateDoc(supplyRef, newPet);
 
+      const docSnap = await getDoc(supplyRef);
+
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        const userId = data.userId;
+
+        addAudit({
+          userId,
+          log: "Pet information updated successfully",
+          action: "Updated Pet",
+          actionId: id,
+        });
+      }
+
       set((prev) => ({ isChanged: !prev.isChanged }));
       return { success: "Pet updated successfully." };
     } catch (error) {
@@ -212,6 +238,8 @@ const usePetStore = create((set) => ({
 
   deletePetInformation: async (id) => {
     try {
+      const { addAudit } = useAuditStore.getState();
+
       const newPet = {
         isDeleted: true,
         updatedAt: serverTimestamp(),
@@ -219,6 +247,20 @@ const usePetStore = create((set) => ({
 
       const supplyRef = doc(db, "pets", id);
       await updateDoc(supplyRef, newPet);
+
+      const docSnap = await getDoc(supplyRef);
+
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        const userId = data.userId;
+
+        addAudit({
+          userId,
+          log: "Pet information deleted successfully.",
+          action: "Deleted Pet",
+          actionId: id,
+        });
+      }
 
       set((prev) => ({ isChanged: !prev.isChanged }));
       return { success: "Pet deleted successfully." };

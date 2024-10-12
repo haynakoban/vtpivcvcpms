@@ -91,6 +91,7 @@ export default function Register() {
         userId: result.user.uid,
         log: "Registered and Signed in with email and password",
         action: "Registered/Logged In",
+        actionId: result.user.uid,
       });
 
       setTimeout(() => {

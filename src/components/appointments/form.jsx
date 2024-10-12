@@ -15,7 +15,16 @@ import {
 } from "@/components/ui/select";
 
 import usePetStore from "@/store/usePetStore";
-import { checkSelectedPet, formatDateWDay, generateTimeSlots, getDay, checkBookedSlot, formattedDate, stringToDate, isPastDateTime, vetAppointments } from "@/lib/functions";
+import {
+  checkSelectedPet,
+  formatDateWDay,
+  generateTimeSlots,
+  getDay,
+  checkBookedSlot,
+  formattedDate,
+  isPastDateTime,
+  vetAppointments,
+} from "@/lib/functions";
 import { Calendar } from "@/components/ui/calendar";
 import { RadioGroup } from "@/components/ui/radio-group";
 import useSettingsStore from "@/store/useSettings";
@@ -32,29 +41,30 @@ const steps = [
   },
   {
     id: "Step 2",
-    name: "Selet your pet"
+    name: "Selet your pet",
   },
-  { 
-    id: "Step 3", 
-    name: "Billing" 
+  {
+    id: "Step 3",
+    name: "Billing",
   },
 ];
 
 export default function Form() {
-  const { getAppointments, appointments, scheduleAppointment } = useAppointmentStore();
+  const { getAppointments, appointments, scheduleAppointment } =
+    useAppointmentStore();
   const { userPets, getUserPet } = usePetStore();
   const { user } = useAuthStore();
-  const [selectedAppointment, setSelectedAppointment] = useState('');
-  const [otherValue, setOtherValue] = useState('');
+  const [selectedAppointment, setSelectedAppointment] = useState("");
+  const [otherValue, setOtherValue] = useState("");
 
   useEffect(() => {
     getUserPet(false, user?.id);
-  },[user]);
+  }, [user]);
 
   useEffect(() => {
     getAppointments();
-  },[])
-  
+  }, []);
+
   const { schedules, getScheduleFirst } = useSettingsStore();
   const [previousStep, setPreviousStep] = useState(0);
   const [currentStep, setCurrentStep] = useState(0);
@@ -72,31 +82,45 @@ export default function Form() {
   };
 
   const fullyBooked = () => {
-    const full = timeSlots?.filter((slots) => checkBookedSlot(appointments, formattedDate(selected), `${slots.start} - ${slots.end}`)).length === timeSlots?.length
+    const full =
+      timeSlots?.filter((slots) =>
+        checkBookedSlot(
+          appointments,
+          formattedDate(selected),
+          `${slots.start} - ${slots.end}`
+        )
+      ).length === timeSlots?.length;
     return timeSlots?.length < 1 ? false : full;
-  }
+  };
 
   useEffect(() => {
     getScheduleFirst();
-  },[])
+  }, []);
 
   useEffect(() => {
-    schedules?.schedule?.map(day => {
-      if(day?.day == selected_day){
-        setAvailability({...day, ...schedules.timeSlot});
+    schedules?.schedule?.map((day) => {
+      if (day?.day == selected_day) {
+        setAvailability({ ...day, ...schedules.timeSlot });
       }
     });
-  },[selected, schedules, selected_day])
+  }, [selected, schedules, selected_day]);
 
   useEffect(() => {
-    if(availability){
+    if (availability) {
       setTimeSlots(generateTimeSlots(availability));
     }
-  },[availability])
+  }, [availability]);
 
   const processForm = async () => {
-    const appointmentType = selectedAppointment == 'others' ? otherValue : selectedAppointment;
-    scheduleAppointment(formattedDate(selected), selectedSlot, selectedPet, appointmentType, user?.id);
+    const appointmentType =
+      selectedAppointment == "others" ? otherValue : selectedAppointment;
+    scheduleAppointment(
+      formattedDate(selected),
+      selectedSlot,
+      selectedPet,
+      appointmentType,
+      user?.id
+    );
     setSelectedPet([]);
     setSelected(new Date());
     setSelectedSlot(null);
@@ -107,9 +131,9 @@ export default function Form() {
 
     if (currentStep < steps.length - 1) {
       if (currentStep === 1) {
-        if(selectedPet.length <= 0) return;
-        if(selectedAppointment == '') return;
-        if(selectedAppointment == 'others' && otherValue == '') return;
+        if (selectedPet.length <= 0) return;
+        if (selectedAppointment == "") return;
+        if (selectedAppointment == "others" && otherValue == "") return;
       }
 
       setPreviousStep(currentStep);
@@ -128,18 +152,18 @@ export default function Form() {
     const id = e.target.value;
     const isChecked = e.target.checked;
 
-    if(!isChecked){
+    if (!isChecked) {
       const removedId = selectedPet.filter((pet) => {
-        return pet != id
-      })
+        return pet != id;
+      });
       setSelectedPet(removedId);
     } else {
-      setSelectedPet(prev => [...prev, id]);
+      setSelectedPet((prev) => [...prev, id]);
     }
-  }
+  };
 
   const handleSelectDate = (date) => {
-    if(date == undefined) return;
+    if (date == undefined) return;
     if (selected && date.toDateString() === selected.toDateString()) return;
     setSelected(date);
     setSelectedSlot(null);
@@ -191,9 +215,7 @@ export default function Form() {
             animate={{ x: 0, opacity: 1 }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
           >
-            <h2 className="text-base font-semibold leading-7 ">
-              Pick A Date
-            </h2>
+            <h2 className="text-base font-semibold leading-7 ">Pick A Date</h2>
             <p className="mt-1 text-sm leading-6 text-gray-600">
               Please select date and time.
             </p>
@@ -210,37 +232,85 @@ export default function Form() {
               </div>
 
               <div className="sm:col-span-4">
-                <div className="px-1 mb-3 font-bold">{formatDateWDay(Math.floor(selected.getTime() / 1000))}</div>
+                <div className="px-1 mb-3 font-bold">
+                  {formatDateWDay(Math.floor(selected.getTime() / 1000))}
+                </div>
                 <RadioGroup>
-                    {!availability?.isDayChecked ?
-                      <div>No available time.</div>
-                    :
+                  {!availability?.isDayChecked ? (
+                    <div>No available time.</div>
+                  ) : (
                     <div className="flex items-center flex-wrap">
-                      {timeSlots?.length < 1 &&
-                        <div>No available time.</div>
-                      }
+                      {timeSlots?.length < 1 && <div>No available time.</div>}
 
                       {timeSlots?.map((slots, i) => {
                         const slotValue = `${slots.start} - ${slots.end}`;
-                        const isPastTime = isPastDateTime(formattedDate(selected), slots.start);
+                        const isPastTime = isPastDateTime(
+                          formattedDate(selected),
+                          slots.start
+                        );
 
-                        return <div key={i} className={`${timeSlots?.length > 10 ? 'w-full xl:w-1/3' : 'w-full xl:w-1/2'} p-1`}>
-                            <div 
-                                className={`flex items-start flex-col rounded border p-2 cursor-pointer ${selectedSlot == slotValue ? 'bg-primary text-primary-foreground ' : ''} ${(checkBookedSlot(appointments, formattedDate(selected), slotValue) || isPastTime) ? 'bg-secondary booked-cursor' : ''}`} 
-                                onClick={() => {
-                                  if(!checkBookedSlot(appointments, formattedDate(selected), slotValue) && !isPastTime){
-                                    handleSelect(slotValue)
-                                  }
-                                }}>
-                                  &nbsp;&nbsp;{slots?.start} - {slots?.end} 
-                                  <span className="text-xs">&nbsp;&nbsp;&nbsp;&nbsp;{(checkBookedSlot(appointments, formattedDate(selected), slotValue) || isPastTime) ? (checkBookedSlot(appointments, formattedDate(selected), slotValue) ? 'Booked' : 'Unavailable') : 'Available'}</span>
+                        return (
+                          <div
+                            key={i}
+                            className={`${
+                              timeSlots?.length > 10
+                                ? "w-full xl:w-1/3"
+                                : "w-full xl:w-1/2"
+                            } p-1`}
+                          >
+                            <div
+                              className={`flex items-start flex-col rounded border p-2 cursor-pointer ${
+                                selectedSlot == slotValue
+                                  ? "bg-primary text-primary-foreground "
+                                  : ""
+                              } ${
+                                checkBookedSlot(
+                                  appointments,
+                                  formattedDate(selected),
+                                  slotValue
+                                ) || isPastTime
+                                  ? "bg-secondary booked-cursor"
+                                  : ""
+                              }`}
+                              onClick={() => {
+                                if (
+                                  !checkBookedSlot(
+                                    appointments,
+                                    formattedDate(selected),
+                                    slotValue
+                                  ) &&
+                                  !isPastTime
+                                ) {
+                                  handleSelect(slotValue);
+                                }
+                              }}
+                            >
+                              &nbsp;&nbsp;{slots?.start} - {slots?.end}
+                              <span className="text-xs">
+                                &nbsp;&nbsp;&nbsp;&nbsp;
+                                {checkBookedSlot(
+                                  appointments,
+                                  formattedDate(selected),
+                                  slotValue
+                                ) || isPastTime
+                                  ? checkBookedSlot(
+                                      appointments,
+                                      formattedDate(selected),
+                                      slotValue
+                                    )
+                                    ? "Booked"
+                                    : "Unavailable"
+                                  : "Available"}
+                              </span>
                             </div>
                           </div>
+                        );
                       })}
-
                     </div>
-                    }
-                    <div className="px-2 text-destructive">{fullyBooked() ? 'Fully Booked' : ''}</div>
+                  )}
+                  <div className="px-2 text-destructive">
+                    {fullyBooked() ? "Fully Booked" : ""}
+                  </div>
                 </RadioGroup>
               </div>
             </div>
@@ -266,18 +336,27 @@ export default function Form() {
                   <SelectGroup>
                     <SelectLabel>Select</SelectLabel>
                     {vetAppointments?.map((appointment) => {
-                      return <SelectItem  key={appointment} value={appointment}>{appointment}</SelectItem>
+                      return (
+                        <SelectItem key={appointment} value={appointment}>
+                          {appointment}
+                        </SelectItem>
+                      );
                     })}
-                    <SelectItem value='others'>Others</SelectItem>
+                    <SelectItem value="others">Others</SelectItem>
                   </SelectGroup>
                 </SelectContent>
               </Select>
             </div>
-            {selectedAppointment == 'others' &&
+            {selectedAppointment == "others" && (
               <div className="mb-5">
-                <Input type="email" value={otherValue} onValueChange={(e) => setOtherValue(e.target.value)} placeholder="Please specify" />
+                <Input
+                  type="email"
+                  value={otherValue}
+                  onValueChange={(e) => setOtherValue(e.target.value)}
+                  placeholder="Please specify"
+                />
               </div>
-            }
+            )}
 
             <h2 className="text-base font-semibold leading-7 ">
               Select Your Pet
@@ -285,16 +364,37 @@ export default function Form() {
 
             <div className="mt-2 grid grid-cols-1 gap-x-2 gap-y-2 sm:grid-cols-6">
               {userPets?.map((pet) => {
-                return <label key={pet?.id} className="sm:col-span-2 border rounded cursor-pointer">
-                    <input type="checkbox" hidden value={pet?.id} onClick={handleSelectPet}/>
-                    <div className={`${checkSelectedPet(selectedPet, pet?.id) ? 'bg-primary text-primary-foreground' : ''} flex gap-2 items-center p-2`}>
-                      <img key={pet?.id} src={pet?.petImage} alt="" className="h-12 aspect-square object-cover" />
+                return (
+                  <label
+                    key={pet?.id}
+                    className="sm:col-span-2 border rounded cursor-pointer"
+                  >
+                    <input
+                      type="checkbox"
+                      hidden
+                      value={pet?.id}
+                      onClick={handleSelectPet}
+                    />
+                    <div
+                      className={`${
+                        checkSelectedPet(selectedPet, pet?.id)
+                          ? "bg-primary text-primary-foreground"
+                          : ""
+                      } flex gap-2 items-center p-2`}
+                    >
+                      <img
+                        key={pet?.id}
+                        src={pet?.petImage}
+                        alt=""
+                        className="h-12 aspect-square object-cover"
+                      />
                       <div>
                         <p>{pet?.petName}</p>
                         <p className="text-xs">{pet?.species}</p>
                       </div>
                     </div>
-                </label>
+                  </label>
+                );
               })}
             </div>
           </motion.div>
@@ -302,15 +402,14 @@ export default function Form() {
 
         {currentStep === 2 && (
           <>
-            <h2 className="text-base font-semibold leading-7">
-              Payment
-            </h2>
+            <h2 className="text-base font-semibold leading-7">Payment</h2>
             <p className="my-1 text-sm leading-6 text-gray-600">
               To Complete Your Appointment Please Pay Exact Amount.
             </p>
-            <PayPalButton 
-              amount={schedules?.appointmentAmount} 
-              processForm={processForm}/>
+            <PayPalButton
+              amount={schedules?.appointmentAmount}
+              processForm={processForm}
+            />
           </>
         )}
       </form>

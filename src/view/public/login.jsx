@@ -59,6 +59,7 @@ export default function Login() {
           userId: result.user.uid,
           log: "Signed in with email and password",
           action: "Logged In",
+          actionId: result.user.uid,
         });
         setTimeout(() => {
           navigate("/");

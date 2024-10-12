@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-empty */
 // useAuditStore.js
 import { create } from "zustand";
 import {
@@ -46,11 +48,12 @@ const useAuditStore = create((set) => ({
       return unsubscribe;
     } catch (err) {}
   },
-  addAudit: async ({ userId, log, action }) => {
+  addAudit: async ({ userId, log, action, actionId }) => {
     const newLogs = {
       userId,
       log,
       action,
+      actionId,
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
     };

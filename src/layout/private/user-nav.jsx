@@ -31,6 +31,7 @@ export function UserNav() {
       userId: user.id,
       log: "Signed out the user",
       action: "Logged Out",
+      actionId: user.id,
     });
     setTimeout(() => {
       signOut();

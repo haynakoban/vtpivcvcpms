@@ -34,6 +34,7 @@ export default function SignInWithGoogle() {
         userId: user.id,
         log: "Signed in with google",
         action: "Logged In",
+        actionId: user.id,
       });
 
       navigate("/");
