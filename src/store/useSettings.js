@@ -12,12 +12,20 @@ import {
   doc,
   setDoc,
 } from "firebase/firestore";
+import useAuditStore from "@/store/useAuditStore";
 
 const useSettingsStore = create((set) => ({
   schedules: [],
 
-  updateSchedule: async (schedule, timeSlot, appointmentAmount, userId, id = null) => {
+  updateSchedule: async (
+    schedule,
+    timeSlot,
+    appointmentAmount,
+    userId,
+    id = null
+  ) => {
     try {
+      const { addAudit } = useAuditStore.getState();
       const scheduleData = { schedule, timeSlot, appointmentAmount, userId };
 
       if (id) {
@@ -28,6 +36,14 @@ const useSettingsStore = create((set) => ({
         if (docSnap.exists()) {
           const updatedData = [{ id: docSnap.id, ...docSnap.data() }];
           set({ schedules: updatedData });
+
+          addAudit({
+            userId: id,
+            log: "Schedules updated successfully.",
+            action: "Updated Schedules",
+            actionId: id,
+          });
+
           return { success: "Schedule updated successfully." };
         } else {
           return { error: "Schedule update failed. Please try again." };
@@ -42,6 +58,14 @@ const useSettingsStore = create((set) => ({
         if (newDocSnap.exists()) {
           const newData = [{ id: newDocSnap.id, ...newDocSnap.data() }];
           set({ schedules: newData });
+
+          addAudit({
+            userId: id,
+            log: "New schedules created successfully.",
+            action: "Created Schedules",
+            actionId: id,
+          });
+
           return { success: "Schedule created successfully." };
         } else {
           return { error: "Schedule creation failed. Please try again." };
@@ -70,7 +94,7 @@ const useSettingsStore = create((set) => ({
       set({ schedules: [] });
     }
   },
-  
+
   getScheduleFirst: async () => {
     try {
       const q = query(collection(db, "schedules"));
@@ -80,7 +104,7 @@ const useSettingsStore = create((set) => ({
         id: doc.id,
         ...doc.data(),
       }));
-      
+
       set({ schedules: results[0] });
     } catch (error) {
       set({ schedules: [] });

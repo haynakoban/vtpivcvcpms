@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
+import useAuditStore from "@/store/useAuditStore";
+import useAuthStore from "@/store/useAuthStore";
 
 export function MeetingDetailsScreen({
   onClickJoin,
@@ -14,6 +16,8 @@ export function MeetingDetailsScreen({
   setParticipantName,
   onClickStartMeeting,
 }) {
+  const { user } = useAuthStore();
+  const { addAudit } = useAuditStore();
   const navigate = useNavigate();
   const [meetingId, setMeetingId] = useState("");
   const [meetingIdError, setMeetingIdError] = useState(false);
@@ -79,9 +83,23 @@ export function MeetingDetailsScreen({
             className={`w-full py-6 rounded-xl mt-5`}
             onClick={() => {
               if (iscreateMeetingClicked) {
+                addAudit({
+                  userId: user.id,
+                  log: "New meeting created",
+                  action: "Created a meeting",
+                  actionId: user.id,
+                });
+
                 onClickStartMeeting();
               } else {
                 if (meetingId.match("\\w{4}\\-\\w{4}\\-\\w{4}")) {
+                  addAudit({
+                    userId: user.id,
+                    log: "Joined a meeting",
+                    action: "Joined a meeting",
+                    actionId: user.id,
+                  });
+
                   onClickJoin(meetingId);
                 } else setMeetingIdError(true);
               }

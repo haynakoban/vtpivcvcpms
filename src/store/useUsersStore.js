@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { create } from "zustand";
 import { auth, db } from "@/config/firebase";
 import {
@@ -18,7 +19,8 @@ import {
   signInWithEmailAndPassword,
   updatePassword,
 } from "firebase/auth";
-import useAuthStore from "./useAuthStore";
+import useAuthStore from "@/store/useAuthStore";
+import useAuditStore from "@/store/useAuditStore";
 
 const useUsersStore = create((set) => ({
   users: [],
@@ -101,6 +103,7 @@ const useUsersStore = create((set) => ({
   },
 
   updateUserProfile: async (fullName, email, id) => {
+    const { addAudit } = useAuditStore.getState();
     const setCurrentUser = useAuthStore.getState().setCurrentUser;
 
     try {
@@ -112,6 +115,7 @@ const useUsersStore = create((set) => ({
         if (fullName == userData.displayName && email == userData.email) return;
 
         await updateDoc(userRef, {
+          alternateDisplayName: fullName.toLowerCase(),
           displayName: fullName,
           email,
           updatedAt: serverTimestamp(),
@@ -121,6 +125,12 @@ const useUsersStore = create((set) => ({
         if (userr.exists()) {
           const userData = userr.data();
           setCurrentUser({ id, ...userData });
+          addAudit({
+            userId: id,
+            log: "Profile information updated successfully.",
+            action: "Updated Profile",
+            actionId: id,
+          });
         }
         return { success: "Profile updated successfully." };
       } else {
@@ -132,6 +142,8 @@ const useUsersStore = create((set) => ({
   },
 
   updateUserPassword: async (email, password, confirmPassword, oldPassword) => {
+    const { addAudit } = useAuditStore.getState();
+
     if (password !== confirmPassword) return { err: "Passwords do not match!" };
     try {
       await signInWithEmailAndPassword(auth, email, oldPassword);
@@ -143,6 +155,14 @@ const useUsersStore = create((set) => ({
           const isChanged = useAuthStore.getState().isChanged;
           const setChanged = useAuthStore.getState().setChanged;
           setChanged(!isChanged);
+
+          addAudit({
+            userId: user.uid,
+            log: "Password updated successfully.",
+            action: "Updated Password",
+            actionId: user.uid,
+          });
+
           return { success: "Password updated successfully." };
         }
       });
