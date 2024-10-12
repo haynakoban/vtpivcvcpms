@@ -76,7 +76,7 @@ const ActionCell = ({ appointment }) => {
                             <div>No pets available.</div>
                         )}
                 </div>
-                <div className="mt-2">Status: &nbsp;<span className={`py-2 px-4 text-white capitalize rounded bg-[${appointment?.color}]`}>{appointment?.desc}</span> </div>
+                <div className="mt-2"><span className={`py-2 px-4 text-white capitalize rounded bg-[${appointment?.color}]`}>{appointment?.desc}</span> </div>
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>

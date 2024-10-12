@@ -1,7 +1,7 @@
 import { ArrowUpDown } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import ActionCell from "@/components/appointments/ActionCell";
+import ActionCell from "@/components/careplan/admin/ActionCell";
 
 export const columns = [
   {
@@ -20,7 +20,25 @@ export const columns = [
     cell: ({ row }) => {
       const status = row.getValue("desc");
       const style = row.original.color;
-      return <div className="font-medium w-auto px-4"><span className={`w-auto capitalize px-3 py-2 text-white rounded bg-[${style}]`}>{status}</span></div>;
+      return <div className="font-medium w-auto px-4"><span className={`w-auto capitalize px-3 py-2 rounded text-white bg-[${style}]`}>{status}</span></div>;
+    },
+  },
+  {
+    accessorKey: "displayName",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Status
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      const owner = row.getValue("displayName");
+      return <div className="font-medium w-auto px-4">{owner}</div>;
     },
   },
   {

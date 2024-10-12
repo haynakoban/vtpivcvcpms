@@ -99,12 +99,18 @@ function AppointmentCalendar() {
     updatePrescriptionFile(file, appointmentId, url).finally(() => {
       setSaveLoading(false);
       setIsOpen(false);
-    });
 
-    addAudit({
-      userId: user.id,
-      log: "Uploaded a prescription",
-      action: "Uploaded file",
+      let log = "Uploaded a prescription";
+      if(url){
+        log = "Re-uploaded a prescription";   
+      }
+  
+      addAudit({
+        userId: user.id,
+        log,
+        action: "Uploaded file",
+        actionId: user.id,
+      });v
     });
   };
 
@@ -155,7 +161,6 @@ function AppointmentCalendar() {
                 <div>Date: {stringToDate(appointmentData?.date)}</div>
                 <div>Time: {appointmentData?.time}</div>
                 <div className="mt-2">
-                  Status: &nbsp;
                   <span
                     className={`py-1 px-2 text-white capitalize rounded-md bg-[${appointmentData?.color}]`}
                   >

@@ -43,12 +43,14 @@ export default function DataTable({ columns, data }) {
   const [searchTerm, setSearchTerm] = useState('');
   const customFilterFn = (row) => {
     const appointmentType = row.getValue("appointmentType")?.toString().toLowerCase();
+    const displayName = row.getValue("displayName")?.toString().toLowerCase();
     const desc = row.getValue("desc")?.toString().toLowerCase();
     const date = row.getValue("date")?.toString().toLowerCase();
     const time = row.getValue("time")?.toString().toLowerCase();
     const search = searchTerm.toLowerCase();
     return (
       (appointmentType && appointmentType.includes(search)) ||
+      (displayName && displayName.includes(search)) ||
       (desc && desc.includes(search)) ||
       (date && date.includes(search)) ||
       (time && time.includes(search)) 
@@ -84,7 +86,7 @@ export default function DataTable({ columns, data }) {
             value={searchTerm}
             onChange={(event) => {
               const value = event.target.value;
-              setSearchTerm(value)
+              setSearchTerm(value);
               table.setGlobalFilter(value);
             }}
             className="max-w-sm"
