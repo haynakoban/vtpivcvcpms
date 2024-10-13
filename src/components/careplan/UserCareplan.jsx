@@ -22,17 +22,20 @@ import {
 import useAppointmentStore from '@/store/useAppointmentStore';
 import { stringToDate } from "@/lib/functions";
 import { Textarea } from "@/components/ui/textarea";
+import LoadingSpinner from '../loaders/LoadingSpinner';
 
 function UserCareplan({ appointments }) {  
     const { updateUserFeedback } = useAppointmentStore();
     const [saveLoading, setSaveLoading] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
     const [feedback, setFeedback] = useState('');
+    const [appId, setAppId] = useState('');
         
     const handleAddRating = (appointmentId) => {
         setSaveLoading(true);
         updateUserFeedback(appointmentId, feedback).finally(() => {
         setFeedback('');
+        setAppId('');
         setIsOpen(false);
         setSaveLoading(false);
         });
@@ -56,21 +59,9 @@ function UserCareplan({ appointments }) {
                             <div onClick={() => {
                                 setIsOpen(true);
                                 setFeedback(appointment?.userFeedback);
+                                setAppId(appointment?.id);
                             }} className="text-center text-sm bg-primary text-primary-foreground py-2 px-3 mt-2 rounded cursor-pointer hover:bg-primary/85">Add Feedback</div>
-                            <AlertDialog open={isOpen}>
-                                <AlertDialogContent>
-                                    <AlertDialogHeader>
-                                    <AlertDialogTitle>Add your feedback</AlertDialogTitle>
-                                    <AlertDialogDescription>
-                                        <Textarea value={feedback} onChange={(e) => setFeedback(e.target.value)} placeholder="Enter you feedback"/>
-                                    </AlertDialogDescription>
-                                    </AlertDialogHeader>
-                                    <AlertDialogFooter>
-                                    <AlertDialogCancel onClick={() => setIsOpen(false)}>Close</AlertDialogCancel>
-                                    <AlertDialogAction disabled={!feedback || saveLoading} onClick={() => handleAddRating(appointment?.id)}><LoadingSpinner isLoading={saveLoading} disabled={true} /> Rate</AlertDialogAction>
-                                    </AlertDialogFooter>
-                                </AlertDialogContent>
-                            </AlertDialog>
+                            
                         </>
                         :
                         <div className="text-center text-sm bg-secondary text-secondary-foreground py-2 px-3 mt-5 rounded booked-cursor">View Prescription</div>
@@ -80,6 +71,20 @@ function UserCareplan({ appointments }) {
                 </div>
             })
             }
+            <AlertDialog open={isOpen}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                    <AlertDialogTitle>Add your feedback</AlertDialogTitle>
+                    <AlertDialogDescription>
+                        <Textarea value={feedback} onChange={(e) => setFeedback(e.target.value)} placeholder="Enter you feedback"/>
+                    </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                    <AlertDialogCancel onClick={() => setIsOpen(false)}>Close</AlertDialogCancel>
+                    <AlertDialogAction disabled={!feedback || saveLoading} onClick={() => handleAddRating(appId)}><LoadingSpinner isLoading={saveLoading} disabled={true} /> Rate</AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </>
     )
 }
