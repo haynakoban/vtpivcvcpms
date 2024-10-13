@@ -36,6 +36,21 @@ export default function DataTable({ columns, data }) {
     updatedAt: false,
   });
 
+  const [searchTerm, setSearchTerm] = useState('');
+  const customFilterFn = (row) => {
+    const userId = row.getValue("userId")?.toString().toLowerCase();
+    const log = row.getValue("log")?.toString().toLowerCase();
+    const action = row.getValue("action")?.toString().toLowerCase();
+    const actionId = row.getValue("actionId")?.toString().toLowerCase();
+    const search = searchTerm.toLowerCase();
+    return (
+      (userId && userId.includes(search)) ||
+      (log && log.includes(search)) ||
+      (action && action.includes(search)) ||
+      (actionId && actionId.includes(search)) 
+    );
+  };
+
   const table = useReactTable({
     data,
     columns,
@@ -44,6 +59,7 @@ export default function DataTable({ columns, data }) {
       columnFilters,
       columnVisibility,
     },
+    globalFilterFn: customFilterFn,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
@@ -61,10 +77,11 @@ export default function DataTable({ columns, data }) {
         <div className="flex items-center py-4">
           <Input
             placeholder="Search..."
-            value={table.getColumn("appointmentType")?.getFilterValue()}
+            value={searchTerm}
             onChange={(event) => {
               const value = event.target.value;
-              table.getColumn("appointmentType")?.setFilterValue(value);
+              setSearchTerm(value)
+              table.setGlobalFilter(value);
             }}
             className="max-w-sm"
           />

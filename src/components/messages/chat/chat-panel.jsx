@@ -3,7 +3,6 @@ import { Plus } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import moment from "moment";
 import useAuthStore from "@/store/useAuthStore";
 import { timeAgo } from "@/lib/functions";
 
@@ -47,7 +46,7 @@ export default function ChatPanel({ conversations }) {
                     <p className="font-medium truncate">{c.user.displayName}</p>
                     <p className="text-sm text-muted-foreground truncate">
                       {user?.id == c.message.senderId ? 'You: ' : ''}
-                      {c.message.content || 'Sent an attachment'}
+                      {c.message.content == undefined ? '' : (c.message.content || 'Sent an attachment')}
                     </p>
                   </div>
                   <div className="text-xs text-muted-foreground hidden md:block">

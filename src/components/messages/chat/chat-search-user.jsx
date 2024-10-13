@@ -17,7 +17,7 @@ export default function ChatSearchUser({
   const { fetchConversation } = useConversationStore();
 
   const handleBlur = (e) => {
-    if (!searchContainerRef.current.contains(e.relatedTarget)) {
+    if (searchContainerRef.current && !searchContainerRef.current.contains(e.relatedTarget || '')) {
       setIsFocused(false);
     }
   };
