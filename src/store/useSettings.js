@@ -78,10 +78,7 @@ const useSettingsStore = create((set) => ({
 
   getSchedule: async (userId) => {
     try {
-      const q = query(
-        collection(db, "schedules"),
-        where("userId", "==", userId)
-      );
+      const q = query(collection(db, "schedules"));
 
       const querySnapshot = await getDocs(q);
       const results = querySnapshot.docs.map((doc) => ({

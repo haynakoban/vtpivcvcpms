@@ -2,8 +2,8 @@
 
 import * as React from "react";
 import { Label } from "@/components/ui/label";
-import { TimePickerInput } from "./time-picker-input";
-import { TimePeriodSelect } from "./period-select";
+import { TimePickerInput } from "@/components/time-picker/time-picker-input";
+import { TimePeriodSelect } from "@/components/time-picker/period-select";
 import { isAMorPM } from "@/lib/functions";
 
 export function TimePicker({ date, setDate }) {

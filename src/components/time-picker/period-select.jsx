@@ -1,4 +1,5 @@
 /* eslint-disable react/prop-types */
+import { forwardRef } from 'react';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -7,14 +8,13 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 
-export function TimePeriodSelect({
+export const TimePeriodSelect = forwardRef(function TimePeriodSelect({
   period,
   setPeriod,
   date,
   setDate,
-  ref,
   onLeftFocus,
-}) {
+}, ref) {
   const handlePeriodChange = (newPeriod) => {
     const updatedDate = new Date(date);
 
@@ -50,4 +50,4 @@ export function TimePeriodSelect({
       </DropdownMenuContent>
     </DropdownMenu>
   );
-}
+});
