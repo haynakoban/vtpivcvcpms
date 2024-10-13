@@ -30,6 +30,7 @@ function UserCareplan({ appointments }) {
     const [isOpen, setIsOpen] = useState(false);
     const [feedback, setFeedback] = useState('');
     const [appId, setAppId] = useState('');
+    const [hasFeedback, setHasFeedback] = useState(false);
         
     const handleAddRating = (appointmentId) => {
         setSaveLoading(true);
@@ -37,6 +38,7 @@ function UserCareplan({ appointments }) {
         setFeedback('');
         setAppId('');
         setIsOpen(false);
+        setHasFeedback(false);
         setSaveLoading(false);
         });
     }
@@ -60,7 +62,8 @@ function UserCareplan({ appointments }) {
                                 setIsOpen(true);
                                 setFeedback(appointment?.userFeedback);
                                 setAppId(appointment?.id);
-                            }} className="text-center text-sm bg-primary text-primary-foreground py-2 px-3 mt-2 rounded cursor-pointer hover:bg-primary/85">Add Feedback</div>
+                                setHasFeedback(appointment?.feedback != '');
+                            }} className="text-center text-sm bg-secondary text-secondary-foreground py-2 px-3 mt-2 rounded cursor-pointer hover:bg-secondary/85">{appointment?.userFeedback == '' ? 'Add Feedback' : 'Edit Feedback'}</div>
                             
                         </>
                         :
@@ -74,7 +77,7 @@ function UserCareplan({ appointments }) {
             <AlertDialog open={isOpen}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
-                    <AlertDialogTitle>Add your feedback</AlertDialogTitle>
+                    <AlertDialogTitle>{!hasFeedback ? 'Add' : 'Edit'} your feedback</AlertDialogTitle>
                     <AlertDialogDescription>
                         <Textarea value={feedback} onChange={(e) => setFeedback(e.target.value)} placeholder="Enter you feedback"/>
                     </AlertDialogDescription>
