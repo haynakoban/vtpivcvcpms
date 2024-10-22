@@ -20,8 +20,8 @@ const PayPalButton = ({ amount, processForm }) => {
 
     useEffect(() => {
         const script = document.createElement('script');
-        // script.src = `https://www.paypal.com/sdk/js?client-id=${PAYPAL_CLIENT_ID}&currency=PHP`;
-        script.src = `https://www.paypal.com/sdk/js?client-id=${SANDBOX_CLIENT_ID}&currency=PHP`;
+        script.src = `https://www.paypal.com/sdk/js?client-id=${PAYPAL_CLIENT_ID}&currency=PHP`;
+        // script.src = `https://www.paypal.com/sdk/js?client-id=${SANDBOX_CLIENT_ID}&currency=PHP`;
         script.async = true;
         script.onload = () => {
         window.paypal.Buttons({
