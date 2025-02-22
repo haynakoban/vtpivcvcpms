@@ -168,23 +168,7 @@ function PetRegistrationForm({ setIsModalOpen, updateData }) {
 
   const genders = [
     "Male",
-    "Female",
-    "Non-binary",
-    "Genderqueer",
-    "Genderfluid",
-    "Agender",
-    "Bigender",
-    "Demiboy",
-    "Demigirl",
-    "Two-Spirit",
-    "Androgynous",
-    "Neutrois",
-    "Transgender",
-    "Transmasculine",
-    "Transfeminine",
-    "Intersex",
-    "Other",
-    "Prefer not to say",
+    "Female"
   ];
 
   return (
