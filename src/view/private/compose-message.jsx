@@ -15,10 +15,12 @@ import ChatWindow from "@/components/messages/chat/chat-window";
 import ChatSendMessage from "@/components/messages/chat/chat-send-message";
 import ChatSearchUser from "@/components/messages/chat/chat-search-user";
 import ChatMessagesEmpty from "@/components/messages/chat/chat-messages-empty";
+import { useNavigate } from "react-router-dom";
 
 export default function ComposeMessage() {
   const [isLoading, setIsLoading] = useState(false);
   const { user } = useAuthStore();
+  const navigate = useNavigate();
   const { searchResults, handleSearch } = useFirebaseSearch();
   const { conversations, fetchRecentConvo } = useConversationStore();
 
@@ -38,6 +40,13 @@ export default function ComposeMessage() {
       init();
     }
   }, [user?.uid, fetchRecentConvo]);
+
+  useEffect(() => {
+    if(user){
+      if(user?.userType == 3) navigate('/auth/dashboard')
+    }
+  }, [navigate, user])
+
   return (
     <SecureMainLayout>
       <ContentLayout title="Messages">

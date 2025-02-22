@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import SecureMainLayout from "@/layout/private";
 import { ContentLayout } from "@/layout/private/content-layout";
 
@@ -20,6 +20,7 @@ import UserCareplan from "@/components/careplan/UserCareplan";
 
 export default function Careplan() {
   const { user } = useAuthStore();
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const { userAppointments, appointments, getAppointments, getUserAppointments, isChanged } = useAppointmentStore();
 
@@ -35,6 +36,12 @@ export default function Careplan() {
 
   const getData = () => user?.userType == 1 ? appointments : userAppointments;
 
+  useEffect(() => {
+    if(user){
+      if(user?.userType == 3) navigate('/auth/dashboard')
+    }
+  }, [navigate, user])
+  
   return (
     <SecureMainLayout>
       <ContentLayout title="Careplan">

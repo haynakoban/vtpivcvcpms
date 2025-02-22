@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import SecureMainLayout from "@/layout/private";
 import { ContentLayout } from "@/layout/private/content-layout";
 
@@ -52,6 +52,7 @@ import { formatDate } from "@/lib/functions";
 
 export default function Pets() {
   const { user } = useAuthStore();
+  const navigate = useNavigate();
   const { isChanged, userPets, getUserPet, getUserPets, deletePetInformation } = usePetStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [petData, setPetData] = useState(null);
@@ -78,6 +79,12 @@ export default function Pets() {
     setIsLoading(true);
     deletePetInformation(id).finally(() => setIsLoading(false));
   }
+
+  useEffect(() => {
+    if(user){
+      if(user?.userType == 3) navigate('/auth/dashboard')
+    }
+  }, [navigate, user])
 
   return (
     <SecureMainLayout>
@@ -120,14 +127,18 @@ export default function Pets() {
                     <AlertDialogContent>
                       <AlertDialogHeader>
                         <AlertDialogTitle>Pet Information</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          <img src={pet?.petImage} alt="" className="w-full aspect-square object-cover" />
-                          <div className="mt-5">
-                            <p>Name: {pet?.petName}</p>
-                            <p>Species: {pet?.species}</p>
-                            <p>Breed: {pet?.breed}</p>
-                            <p>Age: {pet?.age}</p>
-                            <p>Birthday: {formatDate(pet?.birthday.seconds)}</p>
+                        <AlertDialogDescription asChild>
+                          <div>
+                            <img src={pet?.petImage} alt="" className="w-full aspect-square object-cover" />
+                            <div className="mt-5">
+                              <p>Name: {pet?.petName}</p>
+                              <p>Species: {pet?.species}</p>
+                              <p>Breed: {pet?.breed}</p>
+                              <p>Weight: {pet?.weight ? (pet?.weight + 'kg') : ''}</p>
+                              <p>Sex: {pet?.sex}</p>
+                              <p>Age: {pet?.age}</p>
+                              <p>Birthday: {formatDate(pet?.birthday.seconds)}</p>
+                            </div>
                           </div>
                         </AlertDialogDescription>
                       </AlertDialogHeader>

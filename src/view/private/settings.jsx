@@ -21,6 +21,7 @@ import LoadingSpinner from "@/components/loaders/LoadingSpinner";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
+  contactNumber: z.string().regex(/^[+]?[0-9]{7,15}$/, { message: "Invalid contact number" }),
   fullName: z.string(),
 });
 
@@ -35,6 +36,7 @@ export default function Settings() {
     defaultValues: {
       fullName: user?.displayName || "",
       email: user?.email || "",
+      contactNumber: user?.contactNumber || "",
     },
   });
 
@@ -42,15 +44,16 @@ export default function Settings() {
     form.reset({ 
       fullName: user?.displayName || "",
       email: user?.email || "",
+      contactNumber: user?.contactNumber || "",
      })
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   async function onUpdateProfile(values) {
-    const { fullName, email } = values;
+    const { fullName, email, contactNumber } = values;
     try {
       setIsLoading(true);
-      const result = await updateUserProfile(fullName, email, user.id).finally(() => setIsLoading(false));
+      const result = await updateUserProfile(fullName, email, contactNumber, user.id).finally(() => setIsLoading(false));
       if(result?.err) toast({ title: 'Error', description: result.err })
       if(result?.success) toast({ title: 'Success', description: result.success })
     } catch (error) {
@@ -90,6 +93,19 @@ export default function Settings() {
                               <FormLabel>Full Name</FormLabel>
                               <FormControl>
                                 <Input placeholder="Full Name" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="contactNumber"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Contact Number</FormLabel>
+                              <FormControl>
+                                <Input placeholder="Contact Number" {...field} />
                               </FormControl>
                               <FormMessage />
                             </FormItem>

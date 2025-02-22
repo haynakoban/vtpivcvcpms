@@ -13,10 +13,12 @@ import ChatHeaderEmpty from "@/components/messages/chat/chat-header-empty";
 import ChatSendMessage from "@/components/messages/chat/chat-send-message";
 import ChatMessagesIntro from "@/components/messages/chat/chat-messages-intro";
 import useConversationStore from "@/store/useConversationStore";
+import { useNavigate } from "react-router-dom";
 
 export default function Messages() {
   const [isLoading, setIsLoading] = useState(false);
   const { user } = useAuthStore();
+  const navigate = useNavigate();
   const { conversations, fetchRecentConvo } = useConversationStore();
 
   useEffect(() => {
@@ -35,6 +37,12 @@ export default function Messages() {
       init();
     }
   }, [user?.uid, fetchRecentConvo]);
+
+  useEffect(() => {
+    if(user){
+      if(user?.userType == 3) navigate('/auth/dashboard')
+    }
+  }, [navigate, user])
 
   return (
     <SecureMainLayout>

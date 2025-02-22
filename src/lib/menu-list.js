@@ -9,7 +9,7 @@ import {
   Logs
 } from "lucide-react";
 
-export function getMenuList(pathname, userType = 2) {
+export function getMenuList(pathname, userType) {
   const menu = [
     {
       href: "/auth/pets",
@@ -48,6 +48,16 @@ export function getMenuList(pathname, userType = 2) {
     },
   ];
 
+  const staff_menu = [
+    {
+      href: "/auth/appointment",
+      label: "Appointment",
+      active: pathname.includes("auth/appointment"),
+      icon: Calendar,
+      submenus: [],
+    }
+  ];
+
   if(userType == 1){
     menu.unshift({
       href: "/auth/audit",
@@ -73,7 +83,7 @@ export function getMenuList(pathname, userType = 2) {
     },
     {
       groupLabel: "Contents",
-      menus: menu
+      menus: userType == 3 ? staff_menu : ((userType == 2 || userType == 1) ? menu : staff_menu)
     },
     {
       groupLabel: "Settings and Privacy",

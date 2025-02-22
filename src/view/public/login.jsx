@@ -92,7 +92,7 @@ export default function Login() {
         <Card className="w-full md:w-[400px]">
           <CardHeader>
             <CardTitle>Welcome</CardTitle>
-            <CardDescription>Lorem ipsum dolor sit amet.</CardDescription>
+            <CardDescription>Create your account to get started!</CardDescription>
           </CardHeader>
           <CardContent>
             <Form {...form}>

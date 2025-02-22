@@ -67,7 +67,7 @@ export default function Appointment() {
           </div>
           :
           <>
-            {user?.userType != 1 ?
+            {user?.userType == 2 ?
               <div className="mt-5">
                 <div className="w-full justify-between flex items-center space-x-6">
                   <h1>Your Appointment History</h1>

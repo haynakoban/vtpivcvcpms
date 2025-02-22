@@ -1,5 +1,5 @@
 import { useCallback, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import SecureMainLayout from "@/layout/private";
 import { ContentLayout } from "@/layout/private/content-layout";
 
@@ -15,8 +15,11 @@ import {
 import DataTable from "@/components/audit/data-table";
 import { columns } from "@/components/audit/columns";
 import useAuditStore from "@/store/useAuditStore";
+import useAuthStore from "@/store/useAuthStore";
 
 export default function AuditTrails() {
+  const { user } = useAuthStore();
+  const navigate = useNavigate();
   const { logs, getAllAudit } = useAuditStore((state) => ({
     logs: state.logs,
     getAllAudit: state.getAllAudit,
@@ -32,6 +35,12 @@ export default function AuditTrails() {
   useEffect(() => {
     memoizedGetAllAudit();
   }, [memoizedGetAllAudit]);
+
+  useEffect(() => {
+    if(user){
+      if(user?.userType != 1) navigate('/auth/dashboard')
+    }
+  }, [navigate, user])
 
   return (
     <SecureMainLayout>

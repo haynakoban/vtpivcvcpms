@@ -44,6 +44,8 @@ const usePetStore = create((set) => ({
     age,
     birthday,
     petProfile,
+    weight,
+    sex,
     userId
   ) => {
     try {
@@ -88,6 +90,8 @@ const usePetStore = create((set) => ({
         age,
         birthday,
         petImage,
+        weight,
+        sex,
         userId,
         isDeleted: false,
         createdAt: serverTimestamp(),
@@ -163,6 +167,8 @@ const usePetStore = create((set) => ({
     age,
     birthday,
     petImage,
+    weight,
+    sex,
     id,
     preview
   ) => {
@@ -208,6 +214,8 @@ const usePetStore = create((set) => ({
         species,
         age,
         birthday,
+        weight,
+        sex,
         petImage: petImg,
         updatedAt: serverTimestamp(),
       };
