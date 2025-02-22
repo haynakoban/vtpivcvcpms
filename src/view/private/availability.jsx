@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import moment from "moment";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
 
 import useSettingsStore from "@/store/useSettings";
@@ -34,6 +34,7 @@ import { Input } from "@/components/ui/input";
 export default function Availability() {
   const { toast } = useToast();
   const { user } = useAuthStore();
+  const navigate = useNavigate();
   const { schedules, updateSchedule, getSchedule } = useSettingsStore();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -162,6 +163,11 @@ export default function Availability() {
     }
   };
 
+  useEffect(() => {
+    if(user){
+      if(user?.userType != 1) navigate('/auth/dashboard')
+    }
+  }, [navigate, user])
   return (
     <SecureMainLayout>
       <ContentLayout title="Settings and Privacy">

@@ -117,7 +117,7 @@ export default function Register() {
         <Card className="w-full md:w-[400px]">
           <CardHeader>
             <CardTitle>Create new account</CardTitle>
-            <CardDescription>Lorem ipsum dolor sit amet.</CardDescription>
+            <CardDescription>Fill in the details below to register your account.</CardDescription>
           </CardHeader>
           <CardContent>
             <Form {...form}>

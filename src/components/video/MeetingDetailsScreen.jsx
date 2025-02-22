@@ -125,6 +125,7 @@ export function MeetingDetailsScreen({
       {!iscreateMeetingClicked && !isJoinMeetingClicked && (
         <div className="w-full md:mt-0 mt-4 flex flex-col">
           <div className="flex items-center justify-center flex-col w-full ">
+            {user?.userType == 1 &&
             <Button
               className="w-full py-6 rounded-xl"
               onClick={async () => {
@@ -149,8 +150,9 @@ export function MeetingDetailsScreen({
             >
               Create a meeting
             </Button>
+            }
             <Button
-              variant="outline"
+              variant={`${user?.userType == 1 ? 'outline' : ''}`}
               className="w-full py-6 rounded-xl mt-5"
               onClick={() => {
                 setIsJoinMeetingClicked(true);

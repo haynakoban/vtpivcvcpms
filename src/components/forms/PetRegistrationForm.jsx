@@ -27,6 +27,7 @@ import usePetStore from "@/store/usePetStore";
 import useAuthStore from "@/store/useAuthStore";
 import { useToast } from "@/hooks/use-toast";
 import LoadingSpinner from "../loaders/LoadingSpinner";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const ageSchema = z
   .string()
@@ -41,10 +42,20 @@ const ageSchema = z
     message: "Age must be an integer.",
   });
 
+const weightSchema = z
+  .string()
+  .transform((val) => {
+    const numberVal = parseFloat(val);
+    if (isNaN(numberVal) || numberVal <= 0) throw new Error("Invalid weight format");
+    return numberVal;
+  });
+
 const formSchema = z.object({
   petName: z.string().min(1, "Pet name is required"),
   species: z.string().min(1, "Species is required"),
   breed: z.string().min(1, "Breed is required"),
+  sex: z.string().min(1, "Sex is required"),
+  weight: weightSchema,
   age: ageSchema,
   birthday: z.date(),
 });
@@ -68,6 +79,8 @@ function PetRegistrationForm({ setIsModalOpen, updateData }) {
       species: updateData?.species || "",
       breed: updateData?.breed || "",
       age: updateData?.age.toString() || "",
+      weight: updateData?.weight || "",
+      sex: updateData?.sex || "",
       birthday: updateData?.birthday
         ? new Date(updateData?.birthday.seconds * 1000)
         : undefined,
@@ -86,7 +99,7 @@ function PetRegistrationForm({ setIsModalOpen, updateData }) {
   }
 
   async function addPet(values) {
-    const { petName, breed, species, age, birthday } = values;
+    const { petName, breed, species, age, birthday, weight, sex } = values;
     if (!petImage) {
       setPetImgErr(true);
       return;
@@ -101,6 +114,8 @@ function PetRegistrationForm({ setIsModalOpen, updateData }) {
         age,
         birthday,
         petImage,
+        weight,
+        sex,
         user?.id
       );
       setIsModalOpen(false);
@@ -113,7 +128,7 @@ function PetRegistrationForm({ setIsModalOpen, updateData }) {
   }
 
   async function updatePet(values) {
-    const { petName, breed, species, age, birthday } = values;
+    const { petName, breed, species, age, birthday, weight, sex } = values;
     try {
       setIsLoading(true);
       const result = await updatePetInformation(
@@ -123,6 +138,8 @@ function PetRegistrationForm({ setIsModalOpen, updateData }) {
         age,
         birthday,
         petImage,
+        weight,
+        sex,
         updateData?.id,
         updateData?.petImage
       );
@@ -148,6 +165,27 @@ function PetRegistrationForm({ setIsModalOpen, updateData }) {
   useEffect(() => {
     setIsLoading(false);
   }, [isChanged]);
+
+  const genders = [
+    "Male",
+    "Female",
+    "Non-binary",
+    "Genderqueer",
+    "Genderfluid",
+    "Agender",
+    "Bigender",
+    "Demiboy",
+    "Demigirl",
+    "Two-Spirit",
+    "Androgynous",
+    "Neutrois",
+    "Transgender",
+    "Transmasculine",
+    "Transfeminine",
+    "Intersex",
+    "Other",
+    "Prefer not to say",
+  ];
 
   return (
     <div
@@ -272,6 +310,47 @@ function PetRegistrationForm({ setIsModalOpen, updateData }) {
                                 placeholder="Example: Persian, Chihuahua, Poodle and etc."
                                 {...field}
                               />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="weight"
+                        render={({ field }) => (
+                          <FormItem className="mt-4">
+                            <FormLabel>Weight (kg)</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Enter pet weight." {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="sex"
+                        render={({ field }) => (
+                          <FormItem className="mt-4">
+                            <FormLabel>Sex</FormLabel>
+                            <FormControl>
+                              <Select onValueChange={field.onChange} value={field.value}>
+                                <FormControl>
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Select pet sex" />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent className="z-[999]">
+                                  <SelectGroup>
+                                    {genders.map((gender) => (
+                                      <SelectItem key={gender} value={gender}>
+                                        {gender}
+                                      </SelectItem>
+                                    ))}
+                                  </SelectGroup>
+                                </SelectContent>
+                              </Select>
                             </FormControl>
                             <FormMessage />
                           </FormItem>

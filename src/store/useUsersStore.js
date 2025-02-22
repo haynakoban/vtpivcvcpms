@@ -41,6 +41,7 @@ const useUsersStore = create((set) => ({
         refreshToken: user.refreshToken,
         userType: 2,
         isDeleted: false,
+        contactNumber: null,
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
       };
@@ -102,7 +103,7 @@ const useUsersStore = create((set) => ({
     }
   },
 
-  updateUserProfile: async (fullName, email, id) => {
+  updateUserProfile: async (fullName, email, contactNumber, id) => {
     const { addAudit } = useAuditStore.getState();
     const setCurrentUser = useAuthStore.getState().setCurrentUser;
 
@@ -112,12 +113,13 @@ const useUsersStore = create((set) => ({
 
       if (docSnap.exists()) {
         const userData = docSnap.data();
-        if (fullName == userData.displayName && email == userData.email) return;
+        if (fullName == userData.displayName && email == userData.email && contactNumber == userData.contactNumber) return;
 
         await updateDoc(userRef, {
           alternateDisplayName: fullName.toLowerCase(),
           displayName: fullName,
           email,
+          contactNumber,
           updatedAt: serverTimestamp(),
         });
 

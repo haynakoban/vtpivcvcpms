@@ -88,7 +88,7 @@ const ActionCell = ({ appointment }) => {
         <DropdownMenuSeparator />
 
         <AlertDialog>
-          <AlertDialogTrigger className={`w-full bg-destructive text-white p-2 text-sm rounded-md ${appointment?.status == 'cancelled' ? 'bg-muted booked-cursor dark:!text-white !text-black' : 'hover:bg-destructive/90'}`} disabled={appointment?.status == 'cancelled'}>Cancel</AlertDialogTrigger>
+          <AlertDialogTrigger className={`w-full bg-destructive text-white p-2 text-sm rounded-md ${appointment?.status == 'cancelled' ? 'bg-muted booked-cursor dark:!text-white !text-black' : 'hover:bg-destructive/90'}`} disabled={appointment?.status == 'cancelled' || appointment?.status == 'completed'}>Cancel</AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
               <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>

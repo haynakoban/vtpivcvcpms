@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import SecureMainLayout from "@/layout/private";
 import { ContentLayout } from "@/layout/private/content-layout";
@@ -22,6 +22,7 @@ import ChatMessages from "@/components/messages/chat/chat-messages";
 export default function Conversations() {
   const { id } = useParams();
   const { user } = useAuthStore();
+  const navigate = useNavigate();
   const { talkingTo, getUser } = useUsersStore();
   const { messages, createMessage, fetchMessages } = useMessageStore();
   const {
@@ -144,6 +145,12 @@ export default function Conversations() {
       console.error(err);
     }
   };
+
+  useEffect(() => {
+    if(user){
+      if(user?.userType == 3) navigate('/auth/dashboard')
+    }
+  }, [navigate, user])
 
   return (
     <SecureMainLayout>

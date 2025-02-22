@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import SecureMainLayout from "@/layout/private";
 import { ContentLayout } from "@/layout/private/content-layout";
 
@@ -11,8 +11,19 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import Form from "@/components/appointments/form";
+import { useEffect } from "react";
+import useAuthStore from "@/store/useAuthStore";
 
 export default function CreateAppointment() {
+  const { user } = useAuthStore();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if(user){
+      if(user?.userType != 2) navigate('/auth/dashboard')
+    }
+  }, [navigate, user])
+
   return (
     <SecureMainLayout>
       <ContentLayout title="Careplan">
