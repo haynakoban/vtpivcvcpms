@@ -15,6 +15,7 @@ import Pets from "@/view/private/pets";
 import Appointment from "@/view/private/appointment";
 import Careplan from "@/view/private/careplan";
 import CreateAppointment from "@/view/private/create-appointment";
+import CreateCareplan from "@/view/private/create-careplan";
 import Messages from "@/view/private/messages";
 import Meetings from "@/view/private/meetings";
 import Settings from "@/view/private/settings";
@@ -23,6 +24,7 @@ import Security from "@/view/private/security";
 import Conversations from "@/view/private/conversations";
 import ComposeMessage from "@/view/private/compose-message";
 import AuditTrails from "@/view/private/audit-trails";
+import ForTest from "@/view/public/test";
 
 export default function AppRoutes() {
   return (
@@ -34,6 +36,7 @@ export default function AppRoutes() {
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
         <Route path="forgot" element={<Forgot />} />
+        <Route path="test" element={<ForTest />} />
       </Route>
 
       {/* Private routes - only accessible if logged in */}
@@ -43,6 +46,7 @@ export default function AppRoutes() {
       <Route path="auth/appointment" element={<Appointment />} />
       <Route path="auth/appointment/create" element={<CreateAppointment />} />
       <Route path="auth/careplan" element={<Careplan />} />
+      <Route path="auth/careplan/:apptId/:petId" element={<CreateCareplan />} />
       <Route path="auth/messages" element={<Messages />} />
       <Route path="auth/meetings" element={<Meetings />} />
       <Route path="auth/settings" element={<Settings />} />

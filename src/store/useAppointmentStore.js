@@ -13,6 +13,8 @@ import {
   getDoc,
   doc,
   updateDoc,
+  arrayUnion,
+  Timestamp,
 } from "firebase/firestore";
 import { convertTimeStringToDate, generateRandomId } from "@/lib/functions";
 import {
@@ -22,6 +24,7 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import useAuditStore from "@/store/useAuditStore";
+import { carePlanModel } from "@/model/careplan";
 
 async function deleteImage(downloadURL) {
   try {
@@ -94,7 +97,7 @@ const useAppointmentStore = create((set) => ({
           const pets = appointment?.pets;
           pets.map(async (pet) => {
             const petDoc = await getDoc(doc(db, "pets", pet));
-            petData.push(petDoc.data());
+            petData.push({ id: petDoc.id, ...petDoc.data() });
           });
 
           const { start, end, title, color, desc } = convertTimeStringToDate(
@@ -145,7 +148,7 @@ const useAppointmentStore = create((set) => ({
           const pets = appointment?.pets;
           pets.map(async (pet) => {
             const petDoc = await getDoc(doc(db, "pets", pet));
-            petData.push(petDoc.data());
+            petData.push({ id: petDoc.id, ...petDoc.data() });
           });
 
           const { start, end, title, color, desc } = convertTimeStringToDate(
@@ -266,6 +269,52 @@ const useAppointmentStore = create((set) => ({
 
       set({ isChanged: generateRandomId() });
     } catch (e) {}
+  },
+
+  createCarePlan: async (appointmentId, petId, userId) => {
+    try {
+      const carePlanRef = await addDoc(collection(db, "careplans"), {
+        petId,
+        appointmentId,
+        userId,
+        createdAt: Timestamp.now(),
+        updatedAt: Timestamp.now(),
+        ...carePlanModel,
+      });
+
+      const carePlanId = carePlanRef.id;
+
+      const appointmentRef = doc(db, "appointments", appointmentId);
+
+      const appointmentSnap = await getDoc(appointmentRef);
+
+      if (!appointmentSnap.exists()) {
+        throw new Error("Appointment not found");
+      }
+
+      await updateDoc(appointmentRef, {
+        carePlans: arrayUnion({
+          petId,
+          carePlanId,
+          createdAt: Timestamp.now(),
+          updatedAt: Timestamp.now(),
+        }),
+      });
+
+      const updatedAppointmentSnap = await getDoc(appointmentRef);
+
+      if (updatedAppointmentSnap.exists()) {
+        const updatedAppointment = updatedAppointmentSnap.data();
+        set({ isChanged: generateRandomId() });
+
+        return { id: updatedAppointmentSnap.id, ...updatedAppointment };
+      } else {
+        throw new Error("Failed to retrieve updated appointment");
+      }
+    } catch (error) {
+      console.error("Error creating care plan:", error);
+      return null;
+    }
   },
 }));
 

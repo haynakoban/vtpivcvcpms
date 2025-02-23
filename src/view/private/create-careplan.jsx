@@ -16,10 +16,9 @@ import { useEffect, useState } from "react";
 import useAuthStore from "@/store/useAuthStore";
 import LoadingSpinner from "@/components/loaders/LoadingSpinner";
 import AdminCareplan from "@/components/careplan/AdminCareplan";
-import DataTable from "@/components/careplan/CarePlanList/data-table";
-import { columns } from "@/components/careplan/CarePlanList/columns";
+import NewUserCareplan from "@/components/careplan/NewUserCareplan";
 
-export default function Careplan() {
+export default function CreateCareplan() {
   const { user } = useAuthStore();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
@@ -61,7 +60,13 @@ export default function Careplan() {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage>Careplan</BreadcrumbPage>
+              <BreadcrumbLink asChild>
+                <Link to="/auth/careplan">Careplan</Link>
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Careplan Assessment</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
@@ -79,9 +84,7 @@ export default function Careplan() {
                 />
               ) : (
                 <div>
-                  <DataTable columns={columns} data={getData} />
-
-                  {/* <NewUserCareplan /> */}
+                  <NewUserCareplan />
                 </div>
               )}
             </>
