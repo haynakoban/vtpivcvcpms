@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/popover";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
-export function DateTimePicker({ value, onChange }) {
+export function DateTimePicker({ value, onChange, disabled }) {
   const [isOpen, setIsOpen] = React.useState(false);
 
   const hours = Array.from({ length: 12 }, (_, i) => i + 1);
@@ -54,6 +54,7 @@ export function DateTimePicker({ value, onChange }) {
             "w-[200px] justify-start text-left font-normal",
             !value && "text-muted-foreground"
           )}
+          disabled={disabled}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
           {value ? (

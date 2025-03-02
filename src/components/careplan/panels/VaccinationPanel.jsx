@@ -16,9 +16,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { DateTimePicker } from "@/components/ui/date-time-picker";
 import { DatePicker } from "@/components/ui/date-picker";
 import { Controller } from "react-hook-form";
+import { formatDateForFirestore, normalizeDate } from "@/lib/functions";
 
 export function VaccinationPanel({
+  carePlan,
   control,
+  watch,
   errors,
   togglePanelState,
   isPanelOpen,
@@ -68,6 +71,7 @@ export function VaccinationPanel({
                           className="w-[200px] max-w-60"
                           type="text"
                           placeholder="e.g., Rabies Vaccine"
+                          disabled={carePlan?.status === "locked"}
                         />
                       )}
                     />
@@ -95,6 +99,7 @@ export function VaccinationPanel({
                         <Select
                           onValueChange={field.onChange}
                           value={field.value}
+                          disabled={carePlan?.status === "locked"}
                         >
                           <SelectTrigger className="w-[200px]">
                             <SelectValue placeholder="Select type" />
@@ -130,7 +135,15 @@ export function VaccinationPanel({
                     <Controller
                       name="vaccination.administeredAt"
                       control={control}
-                      render={({ field }) => <DateTimePicker {...field} />}
+                      render={({ field: { onChange, value } }) => (
+                        <DateTimePicker
+                          value={normalizeDate(value)}
+                          onChange={(date) =>
+                            onChange(formatDateForFirestore(date))
+                          }
+                          disabled={carePlan?.status === "locked"}
+                        />
+                      )}
                     />
                   </div>
                   {errors.administeredAt && (
@@ -144,20 +157,26 @@ export function VaccinationPanel({
                 <div>
                   <div className="flex items-center gap-1.5">
                     <Label
-                      htmlFor="nextDue"
+                      htmlFor="nextDueDate"
                       className="flex-shrink-0 w-[150px]"
                     >
                       Next Due Date:
                     </Label>
                     <Controller
-                      name="vaccination.nextDue"
+                      name="vaccination.nextDueDate"
                       control={control}
-                      render={({ field }) => <DatePicker {...field} />}
+                      render={({ field }) => (
+                        <DatePicker
+                          value={field.value}
+                          onChange={field.onChange}
+                          disabled={carePlan?.status === "locked"}
+                        />
+                      )}
                     />
                   </div>
-                  {errors.nextDue && (
+                  {errors.nextDueDate && (
                     <p className="text-red-500">
-                      {errors.vaccination.nextDue.message}
+                      {errors.vaccination.nextDueDate.message}
                     </p>
                   )}
                 </div>
@@ -173,7 +192,13 @@ export function VaccinationPanel({
                     >
                       Administered By:
                     </Label>
-                    <Controller
+                    <span className="font-semibold text-sm bg-secondary py-1 px-3 rounded-md">
+                      {carePlan?.vaccination?.administeredBy ||
+                        watch("vaccination.administeredBy") ||
+                        "-"}
+                    </span>
+
+                    {/* <Controller
                       name="vaccination.administeredBy"
                       control={control}
                       render={({ field }) => (
@@ -182,9 +207,10 @@ export function VaccinationPanel({
                           className="w-[200px] max-w-60"
                           type="text"
                           placeholder="Veterinarian Name"
+                          disabled={carePlan?.status === "locked"}
                         />
                       )}
-                    />
+                    /> */}
                   </div>
                   {errors.administeredBy && (
                     <p className="text-red-500">
@@ -211,6 +237,7 @@ export function VaccinationPanel({
                           className="w-[200px] max-w-60"
                           type="text"
                           placeholder="Batch Number"
+                          disabled={carePlan?.status === "locked"}
                         />
                       )}
                     />
@@ -237,7 +264,11 @@ export function VaccinationPanel({
                       name="vaccination.notes"
                       control={control}
                       render={({ field }) => (
-                        <Textarea {...field} placeholder="Additional Notes" />
+                        <Textarea
+                          {...field}
+                          placeholder="Additional Notes"
+                          disabled={carePlan?.status === "locked"}
+                        />
                       )}
                     />
                   </div>

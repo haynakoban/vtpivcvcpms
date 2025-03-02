@@ -34,7 +34,7 @@
   border-radius: 12px;
 }
 
-.booked-cursor{
+.booked-cursor {
   cursor: not-allowed;
 }
 
@@ -106,13 +106,40 @@
   }
 }
 
-
-
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@media print {
+  @page {
+    margin: 0 !important;
+  }
+
+  body {
+    margin: 0;
+    padding: 40px;
+  }
+
+  .bg-purple-500 {
+    background-color: #a855f7 !important; /* Ensure it prints */
+    -webkit-print-color-adjust: exact; /* Fix for WebKit browsers */
+    print-color-adjust: exact; /* Ensure background is printed */
+  }
+
+  .hover\:bg-purple-600 {
+    background-color: #9333ea !important;
+  }
+
+  .text-white {
+    color: white !important;
+  }
+
+  .no-print {
+    display: none !important;
   }
 }

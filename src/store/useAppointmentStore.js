@@ -25,6 +25,7 @@ import {
 } from "firebase/storage";
 import useAuditStore from "@/store/useAuditStore";
 import { carePlanModel } from "@/model/careplan";
+import useUsersStore from "@/store/useUsersStore";
 
 async function deleteImage(downloadURL) {
   try {
@@ -273,13 +274,32 @@ const useAppointmentStore = create((set) => ({
 
   createCarePlan: async (appointmentId, petId, userId) => {
     try {
+      const vetInfos = useUsersStore.getState().vetInfos;
+
+      const newCarePlan = {
+        ...carePlanModel, // Use the existing model
+        vaccination: {
+          ...carePlanModel.vaccination,
+          administeredBy: vetInfos?.displayName || "",
+        },
+        surgeries: {
+          ...carePlanModel.surgeries,
+          surgeonName: vetInfos?.displayName || "",
+        },
+        laboratory: {
+          ...carePlanModel.laboratory,
+          conductedBy: vetInfos?.displayName || "",
+        },
+      };
+
       const carePlanRef = await addDoc(collection(db, "careplans"), {
         petId,
         appointmentId,
         userId,
+        status: "draft",
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now(),
-        ...carePlanModel,
+        ...newCarePlan,
       });
 
       const carePlanId = carePlanRef.id;
@@ -296,6 +316,7 @@ const useAppointmentStore = create((set) => ({
         carePlans: arrayUnion({
           petId,
           carePlanId,
+          status: "draft",
           createdAt: Timestamp.now(),
           updatedAt: Timestamp.now(),
         }),

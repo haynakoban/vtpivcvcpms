@@ -6,8 +6,14 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { DateTimePicker } from "@/components/ui/date-time-picker";
 import { Controller } from "react-hook-form";
+import { formatDateForFirestore, normalizeDate } from "@/lib/functions";
 
-export function CarePlanPanel({ control, togglePanelState, isPanelOpen }) {
+export function CarePlanPanel({
+  carePlan,
+  control,
+  togglePanelState,
+  isPanelOpen,
+}) {
   return (
     <div className="mt-5">
       <div className="border rounded-md shadow-md">
@@ -47,6 +53,7 @@ export function CarePlanPanel({ control, togglePanelState, isPanelOpen }) {
                       <Textarea
                         {...field}
                         placeholder="Describe the treatment plan"
+                        disabled={carePlan?.status === "locked"}
                       />
                     )}
                   />
@@ -66,6 +73,7 @@ export function CarePlanPanel({ control, togglePanelState, isPanelOpen }) {
                       <Textarea
                         {...field}
                         placeholder="If the pet requires therapy or gradual recovery"
+                        disabled={carePlan?.status === "locked"}
                       />
                     )}
                   />
@@ -85,6 +93,7 @@ export function CarePlanPanel({ control, togglePanelState, isPanelOpen }) {
                       <Textarea
                         {...field}
                         placeholder="Medication details explicitly noted in the care plan"
+                        disabled={carePlan?.status === "locked"}
                       />
                     )}
                   />
@@ -104,6 +113,7 @@ export function CarePlanPanel({ control, togglePanelState, isPanelOpen }) {
                       <Textarea
                         {...field}
                         placeholder="Dietary recommendations"
+                        disabled={carePlan?.status === "locked"}
                       />
                     )}
                   />
@@ -123,6 +133,7 @@ export function CarePlanPanel({ control, togglePanelState, isPanelOpen }) {
                       <Textarea
                         {...field}
                         placeholder="Special instructions for the pet owner to follow at home"
+                        disabled={carePlan?.status === "locked"}
                       />
                     )}
                   />
@@ -142,6 +153,7 @@ export function CarePlanPanel({ control, togglePanelState, isPanelOpen }) {
                       <Textarea
                         {...field}
                         placeholder="What to do in case of complications or worsening symptoms"
+                        disabled={carePlan?.status === "locked"}
                       />
                     )}
                   />
@@ -156,7 +168,15 @@ export function CarePlanPanel({ control, togglePanelState, isPanelOpen }) {
                 <Controller
                   name="carePlan.followUpDateTime"
                   control={control}
-                  render={({ field }) => <DateTimePicker {...field} />}
+                  render={({ field: { onChange, value } }) => (
+                    <DateTimePicker
+                      value={normalizeDate(value)}
+                      onChange={(date) =>
+                        onChange(formatDateForFirestore(date))
+                      }
+                      disabled={carePlan?.status === "locked"}
+                    />
+                  )}
                 />
               </div>
 
@@ -170,7 +190,11 @@ export function CarePlanPanel({ control, togglePanelState, isPanelOpen }) {
                     name="carePlan.notes"
                     control={control}
                     render={({ field }) => (
-                      <Textarea {...field} placeholder="Additional notes" />
+                      <Textarea
+                        {...field}
+                        placeholder="Additional notes"
+                        disabled={carePlan?.status === "locked"}
+                      />
                     )}
                   />
                 </div>

@@ -1,4 +1,5 @@
 /* eslint-disable no-unused-vars */
+import { Timestamp } from "firebase/firestore";
 import moment from "moment";
 
 export const isAMorPM = (date) => {
@@ -345,6 +346,40 @@ export const formatDateForFirestore = (date) => {
     return { seconds: Math.floor(date.getTime() / 1000), nanoseconds: 0 };
   }
   return date; // If already a timestamp, keep it as is
+};
+
+export const formatFirebaseDate = (timestamp) => {
+  if (!timestamp || !timestamp.seconds) return "";
+  return moment.unix(timestamp.seconds).format("MM/DD/YYYY"); // Convert Firestore timestamp to MM/DD/YYYY
+};
+
+// Function to format date with time (MM/DD/YYYY hh:mm A)
+export const formatFirebaseDateTime = (timestamp) => {
+  if (!timestamp || !timestamp.seconds) return "";
+  return moment.unix(timestamp.seconds).format("MM/DD/YYYY hh:mm A");
+};
+
+export const removeUndefinedValues = (obj) => {
+  if (obj === null || obj === undefined) return null;
+
+  if (typeof obj === "object") {
+    if (obj instanceof Date) {
+      return Timestamp.fromDate(obj); // Convert Date to Firestore Timestamp
+    }
+
+    if (Array.isArray(obj)) {
+      return obj.map(removeUndefinedValues); // Recursively clean arrays
+    }
+
+    return Object.fromEntries(
+      Object.entries(obj).map(([key, value]) => [
+        key,
+        removeUndefinedValues(value),
+      ])
+    );
+  }
+
+  return obj;
 };
 
 export {

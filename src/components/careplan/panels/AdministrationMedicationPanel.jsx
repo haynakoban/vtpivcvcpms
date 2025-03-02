@@ -16,8 +16,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { DatePicker } from "@/components/ui/date-picker";
 import { DateTimePicker } from "@/components/ui/date-time-picker";
 import { Controller } from "react-hook-form";
+import { formatDateForFirestore, normalizeDate } from "@/lib/functions";
 
 export function AdministrationMedicationPanel({
+  carePlan,
   control,
   togglePanelState,
   isPanelOpen,
@@ -64,6 +66,7 @@ export function AdministrationMedicationPanel({
                           className="w-[200px] max-w-60"
                           type="text"
                           placeholder="e.g., Amoxicillin"
+                          disabled={carePlan?.status === "locked"}
                         />
                       )}
                     />
@@ -82,6 +85,7 @@ export function AdministrationMedicationPanel({
                           className="w-[200px] max-w-60"
                           type="text"
                           placeholder="e.g., 250mg"
+                          disabled={carePlan?.status === "locked"}
                         />
                       )}
                     />
@@ -100,6 +104,7 @@ export function AdministrationMedicationPanel({
                       <Select
                         onValueChange={field.onChange}
                         value={field.value}
+                        disabled={carePlan?.status === "locked"}
                       >
                         <SelectTrigger className="w-[200px]">
                           <SelectValue placeholder="Select frequency" />
@@ -127,6 +132,7 @@ export function AdministrationMedicationPanel({
                       <Select
                         onValueChange={field.onChange}
                         value={field.value}
+                        disabled={carePlan?.status === "locked"}
                       >
                         <SelectTrigger className="w-[200px]">
                           <SelectValue placeholder="Select method" />
@@ -151,7 +157,13 @@ export function AdministrationMedicationPanel({
                   <Controller
                     name="administrationMedication.startDate"
                     control={control}
-                    render={({ field }) => <DatePicker {...field} />}
+                    render={({ field }) => (
+                      <DatePicker
+                        value={field.value}
+                        onChange={field.onChange}
+                        disabled={carePlan?.status === "locked"}
+                      />
+                    )}
                   />
                 </div>
 
@@ -160,7 +172,13 @@ export function AdministrationMedicationPanel({
                   <Controller
                     name="administrationMedication.endDate"
                     control={control}
-                    render={({ field }) => <DatePicker {...field} />}
+                    render={({ field }) => (
+                      <DatePicker
+                        value={field.value}
+                        onChange={field.onChange}
+                        disabled={carePlan?.status === "locked"}
+                      />
+                    )}
                   />
                 </div>
               </div>
@@ -173,7 +191,15 @@ export function AdministrationMedicationPanel({
                 <Controller
                   name="administrationMedication.dateTimeAdministered"
                   control={control}
-                  render={({ field }) => <DateTimePicker {...field} />}
+                  render={({ field: { onChange, value } }) => (
+                    <DateTimePicker
+                      value={normalizeDate(value)}
+                      onChange={(date) =>
+                        onChange(formatDateForFirestore(date))
+                      }
+                      disabled={carePlan?.status === "locked"}
+                    />
+                  )}
                 />
               </div>
 
@@ -187,7 +213,11 @@ export function AdministrationMedicationPanel({
                     name="administrationMedication.notes"
                     control={control}
                     render={({ field }) => (
-                      <Textarea {...field} placeholder="Additional notes" />
+                      <Textarea
+                        {...field}
+                        placeholder="Additional notes"
+                        disabled={carePlan?.status === "locked"}
+                      />
                     )}
                   />
                 </div>

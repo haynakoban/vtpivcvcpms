@@ -18,6 +18,7 @@ import { Controller } from "react-hook-form";
 import { formatDateForFirestore, normalizeDate } from "@/lib/functions";
 
 export function AllergiesPanel({
+  carePlan,
   control,
   errors,
   togglePanelState,
@@ -68,6 +69,7 @@ export function AllergiesPanel({
                           className="w-[200px] max-w-60"
                           type="text"
                           placeholder="e.g., Peanuts"
+                          disabled={carePlan?.status === "locked"}
                         />
                       )}
                     />
@@ -95,6 +97,7 @@ export function AllergiesPanel({
                         <Select
                           onValueChange={field.onChange}
                           value={field.value}
+                          disabled={carePlan?.status === "locked"}
                         >
                           <SelectTrigger className="w-[200px]">
                             <SelectValue placeholder="Select severity" />
@@ -137,6 +140,7 @@ export function AllergiesPanel({
                           onChange={(date) =>
                             onChange(formatDateForFirestore(date))
                           }
+                          disabled={carePlan?.status === "locked"}
                         />
                       )}
                     />
@@ -166,6 +170,7 @@ export function AllergiesPanel({
                         <Textarea
                           {...field}
                           placeholder="Describe the reaction"
+                          disabled={carePlan?.status === "locked"}
                         />
                       )}
                     />
@@ -187,7 +192,11 @@ export function AllergiesPanel({
                       name="allergies.notes"
                       control={control}
                       render={({ field }) => (
-                        <Textarea {...field} placeholder="Additional Notes" />
+                        <Textarea
+                          {...field}
+                          placeholder="Additional Notes"
+                          disabled={carePlan?.status === "locked"}
+                        />
                       )}
                     />
                   </div>

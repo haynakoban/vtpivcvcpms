@@ -10,11 +10,12 @@ import { useEffect } from "react";
 
 function App() {
   const { initializeAuth } = useAuthStore();
-  const { users } = useUsersStore();
+  const { users, initVetInfos } = useUsersStore();
 
   useEffect(() => {
     initializeAuth();
-  }, [initializeAuth, users]);
+    initVetInfos();
+  }, [initializeAuth, initVetInfos, users]);
 
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">

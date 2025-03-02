@@ -9,7 +9,7 @@ export const carePlanModel = {
   vaccination: {
     vaccineName: "",
     vaccineType: "",
-    dateAdministered: "",
+    administeredAt: "",
     nextDueDate: "",
     batchNumber: "",
     administeredBy: "",

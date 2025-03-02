@@ -16,8 +16,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { DatePicker } from "@/components/ui/date-picker";
 import { DateTimePicker } from "@/components/ui/date-time-picker";
 import { Controller } from "react-hook-form";
+import { formatDateForFirestore, normalizeDate } from "@/lib/functions";
 
-export function MedicationPanel({ control, togglePanelState, isPanelOpen }) {
+export function MedicationPanel({
+  carePlan,
+  control,
+  togglePanelState,
+  isPanelOpen,
+}) {
   return (
     <div className="mt-5">
       <div className="border rounded-md shadow-md">
@@ -63,6 +69,7 @@ export function MedicationPanel({ control, togglePanelState, isPanelOpen }) {
                           className="w-[200px] max-w-60"
                           type="text"
                           placeholder="e.g., Amoxicillin"
+                          disabled={carePlan?.status === "locked"}
                         />
                       )}
                     />
@@ -83,6 +90,7 @@ export function MedicationPanel({ control, togglePanelState, isPanelOpen }) {
                           className="w-[200px] max-w-60"
                           type="text"
                           placeholder="e.g., 500mg"
+                          disabled={carePlan?.status === "locked"}
                         />
                       )}
                     />
@@ -106,6 +114,7 @@ export function MedicationPanel({ control, togglePanelState, isPanelOpen }) {
                       <Select
                         onValueChange={field.onChange}
                         value={field.value}
+                        disabled={carePlan?.status === "locked"}
                       >
                         <SelectTrigger className="w-[200px]">
                           <SelectValue placeholder="Select frequency" />
@@ -132,7 +141,15 @@ export function MedicationPanel({ control, togglePanelState, isPanelOpen }) {
                   <Controller
                     name="medication.dateTimeTaken"
                     control={control}
-                    render={({ field }) => <DateTimePicker {...field} />}
+                    render={({ field: { onChange, value } }) => (
+                      <DateTimePicker
+                        value={normalizeDate(value)}
+                        onChange={(date) =>
+                          onChange(formatDateForFirestore(date))
+                        }
+                        disabled={carePlan?.status === "locked"}
+                      />
+                    )}
                   />
                 </div>
               </div>
@@ -149,7 +166,13 @@ export function MedicationPanel({ control, togglePanelState, isPanelOpen }) {
                   <Controller
                     name="medication.startDate"
                     control={control}
-                    render={({ field }) => <DatePicker {...field} />}
+                    render={({ field }) => (
+                      <DatePicker
+                        value={field.value}
+                        onChange={field.onChange}
+                        disabled={carePlan?.status === "locked"}
+                      />
+                    )}
                   />
                 </div>
 
@@ -160,7 +183,13 @@ export function MedicationPanel({ control, togglePanelState, isPanelOpen }) {
                   <Controller
                     name="medication.endDate"
                     control={control}
-                    render={({ field }) => <DatePicker {...field} />}
+                    render={({ field }) => (
+                      <DatePicker
+                        value={field.value}
+                        onChange={field.onChange}
+                        disabled={carePlan?.status === "locked"}
+                      />
+                    )}
                   />
                 </div>
               </div>
@@ -178,7 +207,11 @@ export function MedicationPanel({ control, togglePanelState, isPanelOpen }) {
                     name="medication.notes"
                     control={control}
                     render={({ field }) => (
-                      <Textarea {...field} placeholder="Additional notes" />
+                      <Textarea
+                        {...field}
+                        placeholder="Additional notes"
+                        disabled={carePlan?.status === "locked"}
+                      />
                     )}
                   />
                 </div>

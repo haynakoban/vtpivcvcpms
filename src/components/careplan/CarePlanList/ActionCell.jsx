@@ -113,19 +113,35 @@ const ActionCell = ({ appointment }) => {
                               }
                             }}
                             className="mt-2.5"
-                            variant={
-                              appointment?.carePlans?.some(
-                                (plan) => plan.petId === pet.id
-                              )
-                                ? "success"
-                                : "outline"
-                            }
+                            variant={(() => {
+                              const existingCarePlan =
+                                appointment?.carePlans?.find(
+                                  (plan) => plan.petId === pet.id
+                                );
+
+                              if (existingCarePlan) {
+                                return existingCarePlan.status === "locked"
+                                  ? "ghost"
+                                  : "success";
+                              }
+
+                              return "outline";
+                            })()}
                           >
-                            {appointment?.carePlans?.some(
-                              (plan) => plan.petId === pet.id
-                            )
-                              ? "Update Careplan"
-                              : "Start Careplan"}
+                            {(() => {
+                              const existingCarePlan =
+                                appointment?.carePlans?.find(
+                                  (plan) => plan.petId === pet.id
+                                );
+
+                              if (existingCarePlan) {
+                                return existingCarePlan.status === "locked"
+                                  ? "View Careplan"
+                                  : "Update Careplan";
+                              }
+
+                              return "Start Careplan";
+                            })()}
                           </Button>
                         )}
                       </div>

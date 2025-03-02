@@ -25,6 +25,7 @@ import useAuditStore from "@/store/useAuditStore";
 const useUsersStore = create((set) => ({
   users: [],
   user: null,
+  vetInfos: {},
   talkingTo: {},
 
   createUser: async ({ fullName, user }) => {
@@ -113,7 +114,12 @@ const useUsersStore = create((set) => ({
 
       if (docSnap.exists()) {
         const userData = docSnap.data();
-        if (fullName == userData.displayName && email == userData.email && contactNumber == userData.contactNumber) return;
+        if (
+          fullName == userData.displayName &&
+          email == userData.email &&
+          contactNumber == userData.contactNumber
+        )
+          return;
 
         await updateDoc(userRef, {
           alternateDisplayName: fullName.toLowerCase(),
@@ -185,6 +191,23 @@ const useUsersStore = create((set) => ({
         const userData = { ...userDoc.data(), id: userDoc.id };
 
         set({ talkingTo: userData });
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  },
+
+  initVetInfos: async () => {
+    try {
+      const userRef = collection(db, "users");
+      const userQuery = query(userRef, where("userType", "==", 1));
+      const userSnapshot = await getDocs(userQuery);
+
+      if (!userSnapshot.empty) {
+        const userDoc = userSnapshot.docs[0];
+        const userData = { ...userDoc.data(), id: userDoc.id };
+
+        set({ vetInfos: userData });
       }
     } catch (err) {
       console.error(err);

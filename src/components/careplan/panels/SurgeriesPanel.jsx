@@ -15,8 +15,15 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { DateTimePicker } from "@/components/ui/date-time-picker";
 import { Controller } from "react-hook-form";
+import { formatDateForFirestore, normalizeDate } from "@/lib/functions";
 
-export function SurgeriesPanel({ control, togglePanelState, isPanelOpen }) {
+export function SurgeriesPanel({
+  carePlan,
+  watch,
+  control,
+  togglePanelState,
+  isPanelOpen,
+}) {
   return (
     <div className="mt-5">
       <div className="border rounded-md shadow-md">
@@ -62,6 +69,7 @@ export function SurgeriesPanel({ control, togglePanelState, isPanelOpen }) {
                           className="w-[200px] max-w-60"
                           type="text"
                           placeholder="e.g., Spay/Neuter"
+                          disabled={carePlan?.status === "locked"}
                         />
                       )}
                     />
@@ -84,6 +92,7 @@ export function SurgeriesPanel({ control, togglePanelState, isPanelOpen }) {
                         <Select
                           onValueChange={field.onChange}
                           value={field.value}
+                          disabled={carePlan?.status === "locked"}
                         >
                           <SelectTrigger className="w-[200px]">
                             <SelectValue placeholder="Select type" />
@@ -115,7 +124,15 @@ export function SurgeriesPanel({ control, togglePanelState, isPanelOpen }) {
                   <Controller
                     name="surgeries.dateOfSurgery"
                     control={control}
-                    render={({ field }) => <DateTimePicker {...field} />}
+                    render={({ field: { onChange, value } }) => (
+                      <DateTimePicker
+                        value={normalizeDate(value)}
+                        onChange={(date) =>
+                          onChange(formatDateForFirestore(date))
+                        }
+                        disabled={carePlan?.status === "locked"}
+                      />
+                    )}
                   />
                 </div>
 
@@ -127,7 +144,12 @@ export function SurgeriesPanel({ control, togglePanelState, isPanelOpen }) {
                   >
                     Surgeon Name:
                   </Label>
-                  <Controller
+                  <span className="font-semibold text-sm bg-secondary py-1 px-3 rounded-md">
+                    {carePlan?.surgeries?.surgeonName ||
+                      watch("surgeries.surgeonName") ||
+                      "-"}
+                  </span>
+                  {/* <Controller
                     name="surgeries.surgeonName"
                     control={control}
                     render={({ field }) => (
@@ -136,9 +158,10 @@ export function SurgeriesPanel({ control, togglePanelState, isPanelOpen }) {
                         className="w-[200px] max-w-60"
                         type="text"
                         placeholder="Veterinarian Name"
+                        disabled={carePlan?.status === "locked"}
                       />
                     )}
-                  />
+                  /> */}
                 </div>
               </div>
 
@@ -158,6 +181,7 @@ export function SurgeriesPanel({ control, togglePanelState, isPanelOpen }) {
                       <Textarea
                         {...field}
                         placeholder="Instructions for post-surgery care"
+                        disabled={carePlan?.status === "locked"}
                       />
                     )}
                   />
@@ -177,7 +201,11 @@ export function SurgeriesPanel({ control, togglePanelState, isPanelOpen }) {
                     name="surgeries.notes"
                     control={control}
                     render={({ field }) => (
-                      <Textarea {...field} placeholder="Additional Notes" />
+                      <Textarea
+                        {...field}
+                        placeholder="Additional Notes"
+                        disabled={carePlan?.status === "locked"}
+                      />
                     )}
                   />
                 </div>

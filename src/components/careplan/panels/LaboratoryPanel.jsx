@@ -15,8 +15,15 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { DateTimePicker } from "@/components/ui/date-time-picker";
 import { Controller } from "react-hook-form";
+import { formatDateForFirestore, normalizeDate } from "@/lib/functions";
 
-export function LaboratoryPanel({ control, togglePanelState, isPanelOpen }) {
+export function LaboratoryPanel({
+  carePlan,
+  watch,
+  control,
+  togglePanelState,
+  isPanelOpen,
+}) {
   return (
     <div className="mt-5">
       <div className="border rounded-md shadow-md">
@@ -62,6 +69,7 @@ export function LaboratoryPanel({ control, togglePanelState, isPanelOpen }) {
                           className="w-[200px] max-w-60"
                           type="text"
                           placeholder="e.g., Blood Test"
+                          disabled={carePlan?.status === "locked"}
                         />
                       )}
                     />
@@ -83,6 +91,7 @@ export function LaboratoryPanel({ control, togglePanelState, isPanelOpen }) {
                         <Select
                           onValueChange={field.onChange}
                           value={field.value}
+                          disabled={carePlan?.status === "locked"}
                         >
                           <SelectTrigger className="w-[200px]">
                             <SelectValue placeholder="Select type" />
@@ -116,7 +125,15 @@ export function LaboratoryPanel({ control, togglePanelState, isPanelOpen }) {
                   <Controller
                     name="laboratory.dateConducted"
                     control={control}
-                    render={({ field }) => <DateTimePicker {...field} />}
+                    render={({ field: { onChange, value } }) => (
+                      <DateTimePicker
+                        value={normalizeDate(value)}
+                        onChange={(date) =>
+                          onChange(formatDateForFirestore(date))
+                        }
+                        disabled={carePlan?.status === "locked"}
+                      />
+                    )}
                   />
                 </div>
 
@@ -127,7 +144,12 @@ export function LaboratoryPanel({ control, togglePanelState, isPanelOpen }) {
                   >
                     Conducted By:
                   </Label>
-                  <Controller
+                  <span className="font-semibold text-sm bg-secondary py-1 px-3 rounded-md">
+                    {carePlan?.laboratory?.conductedBy ||
+                      watch("laboratory.conductedBy") ||
+                      "-"}
+                  </span>
+                  {/* <Controller
                     name="laboratory.conductedBy"
                     control={control}
                     render={({ field }) => (
@@ -136,9 +158,10 @@ export function LaboratoryPanel({ control, togglePanelState, isPanelOpen }) {
                         className="w-[200px] max-w-60"
                         type="text"
                         placeholder="Veterinarian Name"
+                        disabled={carePlan?.status === "locked"}
                       />
                     )}
-                  />
+                  /> */}
                 </div>
               </div>
 
@@ -158,6 +181,7 @@ export function LaboratoryPanel({ control, togglePanelState, isPanelOpen }) {
                       <Textarea
                         {...field}
                         placeholder="Enter test result details"
+                        disabled={carePlan?.status === "locked"}
                       />
                     )}
                   />
@@ -177,7 +201,11 @@ export function LaboratoryPanel({ control, togglePanelState, isPanelOpen }) {
                     name="laboratory.notes"
                     control={control}
                     render={({ field }) => (
-                      <Textarea {...field} placeholder="Additional notes" />
+                      <Textarea
+                        {...field}
+                        placeholder="Additional notes"
+                        disabled={carePlan?.status === "locked"}
+                      />
                     )}
                   />
                 </div>

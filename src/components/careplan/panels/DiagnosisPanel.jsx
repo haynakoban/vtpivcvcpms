@@ -15,8 +15,14 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { DateTimePicker } from "@/components/ui/date-time-picker";
 import { Controller } from "react-hook-form";
+import { formatDateForFirestore, normalizeDate } from "@/lib/functions";
 
-export function DiagnosisPanel({ control, togglePanelState, isPanelOpen }) {
+export function DiagnosisPanel({
+  carePlan,
+  control,
+  togglePanelState,
+  isPanelOpen,
+}) {
   return (
     <div className="mt-5">
       <div className="border rounded-md shadow-md">
@@ -56,6 +62,7 @@ export function DiagnosisPanel({ control, togglePanelState, isPanelOpen }) {
                       <Select
                         onValueChange={field.onChange}
                         value={field.value}
+                        disabled={carePlan?.status === "locked"}
                       >
                         <SelectTrigger className="w-[200px]">
                           <SelectValue placeholder="Select type" />
@@ -88,6 +95,7 @@ export function DiagnosisPanel({ control, togglePanelState, isPanelOpen }) {
                         className="w-[200px]"
                         type="text"
                         placeholder="e.g., Arthritis"
+                        disabled={carePlan?.status === "locked"}
                       />
                     )}
                   />
@@ -103,7 +111,15 @@ export function DiagnosisPanel({ control, togglePanelState, isPanelOpen }) {
                   <Controller
                     name="diagnoses.dateOfDiagnosis"
                     control={control}
-                    render={({ field }) => <DateTimePicker {...field} />}
+                    render={({ field: { onChange, value } }) => (
+                      <DateTimePicker
+                        value={normalizeDate(value)}
+                        onChange={(date) =>
+                          onChange(formatDateForFirestore(date))
+                        }
+                        disabled={carePlan?.status === "locked"}
+                      />
+                    )}
                   />
                 </div>
 
@@ -119,6 +135,7 @@ export function DiagnosisPanel({ control, togglePanelState, isPanelOpen }) {
                       <Select
                         onValueChange={field.onChange}
                         value={field.value}
+                        disabled={carePlan?.status === "locked"}
                       >
                         <SelectTrigger className="w-[200px]">
                           <SelectValue placeholder="Select status" />
@@ -138,21 +155,31 @@ export function DiagnosisPanel({ control, togglePanelState, isPanelOpen }) {
 
               {/* Symptoms */}
               <div className="mt-5 flex gap-1.5">
-                <Label htmlFor="symptoms" className="w-[150px] mt-2.5">
+                <Label
+                  htmlFor="symptoms"
+                  className="w-[150px] flex-shrink-0 mt-2.5"
+                >
                   Symptoms:
                 </Label>
                 <Controller
                   name="diagnoses.symptoms"
                   control={control}
                   render={({ field }) => (
-                    <Textarea {...field} placeholder="List symptoms" />
+                    <Textarea
+                      {...field}
+                      placeholder="List symptoms"
+                      disabled={carePlan?.status === "locked"}
+                    />
                   )}
                 />
               </div>
 
               {/* Notes */}
               <div className="mt-5 flex gap-1.5">
-                <Label htmlFor="notes" className="w-[150px] mt-2.5">
+                <Label
+                  htmlFor="notes"
+                  className="flex-shrink-0 w-[150px] mt-2.5"
+                >
                   Notes:
                 </Label>
                 <Controller
@@ -162,6 +189,7 @@ export function DiagnosisPanel({ control, togglePanelState, isPanelOpen }) {
                     <Textarea
                       {...field}
                       placeholder="Additional notes or observations"
+                      disabled={carePlan?.status === "locked"}
                     />
                   )}
                 />

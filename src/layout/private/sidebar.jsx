@@ -32,16 +32,19 @@ export function Sidebar() {
         >
           <Link
             href="auth/dashboard"
-            className="flex items-center gap-2 !no-underline"
+            className="flex items-center gap-2 !no-underline print_logo"
           >
             <PawPrint className="w-6 h-6 mr-1" />
             <h1
-              className={cn(
-                "font-bold text-lg whitespace-nowrap transition-[transform,opacity,display] ease-in-out duration-300",
-                sidebar?.isOpen === false
-                  ? "-translate-x-96 opacity-0 hidden"
-                  : "translate-x-0 opacity-100"
-              )}
+              className={
+                ("open_when_print",
+                cn(
+                  "open_when_print font-bold text-lg whitespace-nowrap transition-[transform,opacity,display] ease-in-out duration-300",
+                  sidebar?.isOpen === false
+                    ? "-translate-x-96 opacity-0 hidden"
+                    : "translate-x-0 opacity-100"
+                ))
+              }
             >
               Paws and Care Clinic
             </h1>

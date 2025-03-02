@@ -24,7 +24,6 @@ import Security from "@/view/private/security";
 import Conversations from "@/view/private/conversations";
 import ComposeMessage from "@/view/private/compose-message";
 import AuditTrails from "@/view/private/audit-trails";
-import ForTest from "@/view/public/test";
 
 export default function AppRoutes() {
   return (
@@ -36,7 +35,6 @@ export default function AppRoutes() {
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
         <Route path="forgot" element={<Forgot />} />
-        <Route path="test" element={<ForTest />} />
       </Route>
 
       {/* Private routes - only accessible if logged in */}
