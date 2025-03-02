@@ -1,4 +1,6 @@
+/* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -21,23 +23,30 @@ import {
 } from "@/components/ui/alert-dialog";
 
 import useAppointmentStore from "@/store/useAppointmentStore";
-import useAuditStore from "@/store/useAuditStore";
 import useAuthStore from "@/store/useAuthStore";
+import useAuditStore from "@/store/useAuditStore";
 import { stringToDate } from "@/lib/functions";
 import { FaUpload } from "react-icons/fa6";
 import LoadingSpinner from "@/components/loaders/LoadingSpinner";
 
 const ActionCell = ({ appointment }) => {
+  const navigate = useNavigate();
   const { user } = useAuthStore();
   const { addAudit } = useAuditStore();
-  const { updatePrescriptionFile } = useAppointmentStore();
-  const [pets, setPets] = useState([]);
+  const { updatePrescriptionFile, createCarePlan } = useAppointmentStore();
+
   const [isOpen, setIsOpen] = useState(false);
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const [file, setFile] = useState(null);
   const [saveLoading, setSaveLoading] = useState(false);
+  const [pets, setPets] = useState([]);
 
-  
+  const handleCarePlan = async (appointmentId, petId, userId) => {
+    const response = await createCarePlan(appointmentId, petId, userId);
+
+    if (response) navigate(`/auth/careplan/${response.id}/${petId}`);
+  };
+
   const handleDrop = (e) => {
     e.preventDefault();
     const droppedFile = e.dataTransfer.files[0];
@@ -65,7 +74,7 @@ const ActionCell = ({ appointment }) => {
   useEffect(() => {
     setFile(null);
   }, [isOpen]);
-  
+
   const handleUploadPrescription = (appointmentId, url) => {
     setSaveLoading(true);
     updatePrescriptionFile(file, appointmentId, url).finally(() => {
@@ -74,10 +83,10 @@ const ActionCell = ({ appointment }) => {
       setIsUploadOpen(false);
 
       let log = "Uploaded a prescription";
-      if(url){
-        log = "Re-uploaded a prescription";   
+      if (url) {
+        log = "Re-uploaded a prescription";
       }
-  
+
       addAudit({
         userId: user.id,
         log,
@@ -88,7 +97,11 @@ const ActionCell = ({ appointment }) => {
   };
 
   return (
-    <DropdownMenu open={isOpen} onOpenChange={() => setIsOpen((prev) => !prev)} modal={isOpen}>
+    <DropdownMenu
+      open={isOpen}
+      onOpenChange={() => setIsOpen((prev) => !prev)}
+      modal={isOpen}
+    >
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="h-8 w-8 p-0">
           <span className="sr-only">Open menu</span>
@@ -99,56 +112,126 @@ const ActionCell = ({ appointment }) => {
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
         <AlertDialog>
           <AlertDialogTrigger>
-                <Button 
-                    className="w-full" 
-                    variant="ghost" 
-                    onClick={() => setPets(appointment?.pets)}
-                >
-                    View Information
-                </Button>
+            <Button
+              className="w-full"
+              variant="ghost"
+              onClick={() => setPets(appointment?.pets)}
+            >
+              View Information
+            </Button>
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
               <AlertDialogTitle>Appointment Informations</AlertDialogTitle>
               <AlertDialogDescription>
-                <div className="mt-2">Appointment: {appointment?.appointmentType}</div>
+                <div className="mt-2">
+                  Appointment: {appointment?.appointmentType}
+                </div>
                 <div>Date: {stringToDate(appointment?.date)}</div>
                 <div>Time: {appointment?.time}</div>
                 <div className="mt-2">Pets: </div>
                 <div className="flex mt-2 flex-wrap">
-                        {pets.length > 0 ? (
-                            pets.map((pet) => (
-                            <div key={pet?.id} className="w-1/3 p-2">
-                                <img src={pet?.petImage} alt={pet?.petName} className="w-full object-cover aspect-square rounded" />
-                                <div className="mt-2">Name: {pet?.petName}</div>
-                                <div>Species: {pet?.species}</div>
-                                <div>Breed: {pet?.breed}</div>
-                            </div>
-                            ))
-                        ) : (
-                            <div>No pets available.</div>
+                  {pets.length > 0 ? (
+                    pets.map((pet, index) => (
+                      <div key={`${pet?.id}-${index}`} className="w-1/3 p-2">
+                        <img
+                          src={pet?.petImage}
+                          alt={pet?.petName}
+                          className="w-full object-cover aspect-square rounded"
+                        />
+                        <div className="mt-2">Name: {pet?.petName}</div>
+                        <div>Species: {pet?.species}</div>
+                        <div>Breed: {pet?.breed}</div>
+                        {appointment?.desc === "Completed" && (
+                          <Button
+                            onClick={() => {
+                              const existingCarePlan =
+                                appointment?.carePlans?.find(
+                                  (plan) => plan.petId === pet.id
+                                );
+
+                              if (existingCarePlan) {
+                                navigate(
+                                  `/auth/careplan/${appointment.id}/${pet.id}`
+                                );
+                              } else {
+                                handleCarePlan(
+                                  appointment.id,
+                                  pet.id,
+                                  appointment.userId
+                                );
+                              }
+                            }}
+                            className="mt-2.5"
+                            variant={(() => {
+                              const existingCarePlan =
+                                appointment?.carePlans?.find(
+                                  (plan) => plan.petId === pet.id
+                                );
+
+                              if (existingCarePlan) {
+                                return existingCarePlan.status === "locked"
+                                  ? "ghost"
+                                  : "success";
+                              }
+
+                              return "outline";
+                            })()}
+                          >
+                            {(() => {
+                              const existingCarePlan =
+                                appointment?.carePlans?.find(
+                                  (plan) => plan.petId === pet.id
+                                );
+
+                              if (existingCarePlan) {
+                                return existingCarePlan.status === "locked"
+                                  ? "View Careplan"
+                                  : "Update Careplan";
+                              }
+
+                              return "Start Careplan";
+                            })()}
+                          </Button>
                         )}
+                      </div>
+                    ))
+                  ) : (
+                    <div>No pets available.</div>
+                  )}
                 </div>
-                <div className="mt-2"><span className={`py-2 px-4 text-white capitalize rounded bg-[${appointment?.color}]`}>{appointment?.desc}</span> </div>
-                <div className="mt-5">
-                  {appointment?.prescriptionFile ?
-                    <a className="px-3 py-2 bg-primary text-primary-foreground rounded hover:bg-primary/85" href={appointment?.prescriptionFile?.url} target="_blank">View Prescription</a>
-                    :
-                    <span className="px-3 py-2 bg-secondary text-secondary-foreground rounded hover:bg-secondary/85 booked-cursor">View Prescription</span>
-                  }
-                </div>
+                {/* <div className="mt-2">
+                  <span
+                    className={`py-2 px-4 text-white capitalize rounded bg-[${appointment?.color}]`}
+                  >
+                    {appointment?.desc}
+                  </span>{" "}
+                </div> */}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel onClick={() => setIsOpen((prev) => !prev)}>Close</AlertDialogCancel>
+              <AlertDialogCancel onClick={() => setIsOpen((prev) => !prev)}>
+                Close
+              </AlertDialogCancel>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
 
         <DropdownMenuSeparator />
 
-        <AlertDialog open={isUploadOpen || saveLoading} onOpenChange={() => setIsUploadOpen((prev) => !prev)}>
-          <AlertDialogTrigger className={`w-full p-2 text-sm rounded-md ${appointment?.prescriptionFile ? 'bg-secondary text-secondary-foreground' : 'bg-primary text-primary-foreground' }`}>{appointment?.prescriptionFile ? 'Re-upload' : 'Upload' }</AlertDialogTrigger>
+        <AlertDialog
+          open={isUploadOpen || saveLoading}
+          onOpenChange={() => setIsUploadOpen((prev) => !prev)}
+        >
+          <AlertDialogTrigger
+            className={`w-full p-2 text-sm rounded-md ${
+              appointment?.prescriptionFile
+                ? "bg-secondary text-secondary-foreground"
+                : "bg-primary text-primary-foreground"
+            }`}
+          >
+            {appointment?.prescriptionFile ? "Re-upload" : "Upload"}
+          </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
               <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
@@ -227,8 +310,10 @@ const ActionCell = ({ appointment }) => {
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel onClick={() => setIsOpen(false)}>Close</AlertDialogCancel>
-              <AlertDialogAction 
+              <AlertDialogCancel onClick={() => setIsOpen(false)}>
+                Close
+              </AlertDialogCancel>
+              <AlertDialogAction
                 disabled={!file || saveLoading}
                 onClick={() =>
                   handleUploadPrescription(
@@ -236,7 +321,11 @@ const ActionCell = ({ appointment }) => {
                     appointment?.prescriptionFile?.url
                   )
                 }
-                className="bg-primary hover:bg-primary/90"><LoadingSpinner isLoading={saveLoading} />{appointment?.prescriptionFile ? 'Update' : 'Upload'}</AlertDialogAction>
+                className="bg-primary hover:bg-primary/90"
+              >
+                <LoadingSpinner isLoading={saveLoading} />
+                {appointment?.prescriptionFile ? "Update" : "Upload"}
+              </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>

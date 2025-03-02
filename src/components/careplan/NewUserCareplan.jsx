@@ -241,10 +241,16 @@ function NewUserCareplan() {
       const logo = document.querySelector(".print_logo");
       const elementsToOpen = document.querySelectorAll(".open_when_print");
 
+      const html = document.querySelectorAll("html");
+
       if (!printSection) {
         console.error("Section not found:", sectionToPrint);
         return;
       }
+
+      html.forEach((element) => {
+        element.classList.remove("dark");
+      });
 
       elementsToOpen.forEach((element) => {
         element.classList.remove("hidden", "opacity-0", "-translate-x-96");

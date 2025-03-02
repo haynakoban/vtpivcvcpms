@@ -7,12 +7,10 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -21,6 +19,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Badge } from "@/components/ui/badge";
 
 import useAppointmentStore from "@/store/useAppointmentStore";
 import useAuthStore from "@/store/useAuthStore";
@@ -92,58 +91,41 @@ const ActionCell = ({ appointment }) => {
                         <div className="mt-2">Name: {pet?.petName}</div>
                         <div>Species: {pet?.species}</div>
                         <div>Breed: {pet?.breed}</div>
-                        {appointment?.desc === "Completed" && (
-                          <Button
-                            onClick={() => {
-                              const existingCarePlan =
-                                appointment?.carePlans?.find(
-                                  (plan) => plan.petId === pet.id
-                                );
+                        {appointment?.desc === "Completed" &&
+                          (() => {
+                            const existingCarePlan =
+                              appointment?.carePlans?.find(
+                                (plan) => plan.petId === pet.id
+                              );
 
-                              if (existingCarePlan) {
-                                navigate(
-                                  `/auth/careplan/${appointment.id}/${pet.id}`
-                                );
-                              } else {
-                                handleCarePlan(
-                                  appointment.id,
-                                  pet.id,
-                                  appointment.userId
-                                );
-                              }
-                            }}
-                            className="mt-2.5"
-                            variant={(() => {
-                              const existingCarePlan =
-                                appointment?.carePlans?.find(
-                                  (plan) => plan.petId === pet.id
-                                );
+                            if (
+                              existingCarePlan &&
+                              existingCarePlan.status === "locked"
+                            ) {
+                              return (
+                                <Button
+                                  onClick={() => {
+                                    navigate(
+                                      `/auth/careplan/${appointment.id}/${pet.id}`
+                                    );
+                                  }}
+                                  className="mt-2.5"
+                                  variant="ghost"
+                                >
+                                  View Careplan
+                                </Button>
+                              );
+                            }
 
-                              if (existingCarePlan) {
-                                return existingCarePlan.status === "locked"
-                                  ? "ghost"
-                                  : "success";
-                              }
-
-                              return "outline";
-                            })()}
-                          >
-                            {(() => {
-                              const existingCarePlan =
-                                appointment?.carePlans?.find(
-                                  (plan) => plan.petId === pet.id
-                                );
-
-                              if (existingCarePlan) {
-                                return existingCarePlan.status === "locked"
-                                  ? "View Careplan"
-                                  : "Update Careplan";
-                              }
-
-                              return "Start Careplan";
-                            })()}
-                          </Button>
-                        )}
+                            return (
+                              <Button
+                                className="mt-2.5 cursor-not-allowed"
+                                variant="ghost"
+                              >
+                                Unavailable
+                              </Button>
+                            );
+                          })()}
                       </div>
                     ))
                   ) : (
@@ -163,47 +145,6 @@ const ActionCell = ({ appointment }) => {
               <AlertDialogCancel onClick={() => setIsOpen((prev) => !prev)}>
                 Close
               </AlertDialogCancel>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-
-        <DropdownMenuSeparator />
-
-        <AlertDialog>
-          <AlertDialogTrigger
-            className={`w-full bg-destructive text-white p-2 text-sm rounded-md ${
-              appointment?.status == "cancelled"
-                ? "bg-muted booked-cursor dark:!text-white !text-black"
-                : "hover:bg-destructive/90"
-            }`}
-            disabled={
-              appointment?.status == "cancelled" ||
-              appointment?.status == "completed"
-            }
-          >
-            Cancel
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-              <AlertDialogDescription>
-                This action cannot be undone. This will cancel your booking and
-                no refund policy.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel onClick={() => setIsOpen((prev) => !prev)}>
-                Close
-              </AlertDialogCancel>
-              <AlertDialogAction
-                onClick={() => {
-                  handleCancel(appointment?.id);
-                  setIsOpen((prev) => !prev);
-                }}
-                className="bg-destructive hover:bg-destructive/90"
-              >
-                Sure
-              </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>

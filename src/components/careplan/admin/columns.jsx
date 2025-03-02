@@ -20,7 +20,15 @@ export const columns = [
     cell: ({ row }) => {
       const status = row.getValue("desc");
       const style = row.original.color;
-      return <div className="font-medium w-auto px-4"><span className={`w-auto capitalize px-3 py-2 rounded text-white bg-[${style}]`}>{status}</span></div>;
+      return (
+        <div className="font-medium w-auto px-4">
+          <span
+            className={`w-auto capitalize px-3 py-2 rounded text-white bg-[${style}]`}
+          >
+            {status}
+          </span>
+        </div>
+      );
     },
   },
   {
@@ -31,7 +39,7 @@ export const columns = [
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Status
+          Full Name
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
@@ -55,7 +63,7 @@ export const columns = [
       );
     },
     cell: ({ row }) => {
-      const formatted = row.getValue("appointmentType")
+      const formatted = row.getValue("appointmentType");
       return <div className="font-medium px-4">{formatted}</div>;
     },
   },

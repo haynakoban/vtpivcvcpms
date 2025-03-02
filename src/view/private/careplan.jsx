@@ -73,15 +73,14 @@ export default function Careplan() {
             </div>
           ) : (
             <>
-              {user?.userType == 1 ? (
+              {user?.userType == 1 && (
                 <AdminCareplan
                   appointments={getData?.filter((a) => a.status == "booked")}
                 />
-              ) : (
+              )}
+              {user?.userType == 2 && (
                 <div>
                   <DataTable columns={columns} data={getData} />
-
-                  {/* <NewUserCareplan /> */}
                 </div>
               )}
             </>

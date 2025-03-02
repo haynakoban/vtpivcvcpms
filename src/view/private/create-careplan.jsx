@@ -15,20 +15,14 @@ import useAppointmentStore from "@/store/useAppointmentStore";
 import { useEffect, useState } from "react";
 import useAuthStore from "@/store/useAuthStore";
 import LoadingSpinner from "@/components/loaders/LoadingSpinner";
-import AdminCareplan from "@/components/careplan/AdminCareplan";
 import NewUserCareplan from "@/components/careplan/NewUserCareplan";
 
 export default function CreateCareplan() {
   const { user } = useAuthStore();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
-  const {
-    userAppointments,
-    appointments,
-    getAppointments,
-    getUserAppointments,
-    isChanged,
-  } = useAppointmentStore();
+  const { getAppointments, getUserAppointments, isChanged } =
+    useAppointmentStore();
 
   useEffect(() => {
     if (user) {
@@ -38,9 +32,7 @@ export default function CreateCareplan() {
         getUserAppointments(user?.id).finally(() => setIsLoading(false));
       }
     }
-  }, [user, isChanged]);
-
-  const getData = user?.userType == 1 ? appointments : userAppointments;
+  }, [user, isChanged, getAppointments, getUserAppointments]);
 
   useEffect(() => {
     if (user) {
@@ -77,17 +69,9 @@ export default function CreateCareplan() {
               Loading
             </div>
           ) : (
-            <>
-              {user?.userType == 1 ? (
-                <AdminCareplan
-                  appointments={getData?.filter((a) => a.status == "booked")}
-                />
-              ) : (
-                <div>
-                  <NewUserCareplan />
-                </div>
-              )}
-            </>
+            <div>
+              <NewUserCareplan />
+            </div>
           )}
         </div>
       </ContentLayout>
