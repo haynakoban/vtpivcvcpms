@@ -1,5 +1,3 @@
-import { LabelList, Pie, PieChart } from "recharts";
-
 import {
   Card,
   CardContent,
@@ -8,44 +6,47 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-import {
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "@/components/ui/chart";
-
-import { returnPetPie } from "@/lib/functions";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 // eslint-disable-next-line react/prop-types
-function DashboardPieChart({ pets }) {
+function DashboardPieChart({ dashboard }) {
   return (
-    <Card className="flex flex-col">
-      <CardHeader className="items-center pb-0">
-        <CardTitle>Pet Popularity by Species</CardTitle>
-        <CardDescription>A breakdown of pet ownership by species, showing the percentage of each type.</CardDescription>
+    <Card className="flex flex-col mt-5">
+      <CardHeader className="items-center">
+        <CardTitle>{dashboard?.title || ""}</CardTitle>
+        <CardDescription>{dashboard?.description || ""}</CardDescription>
       </CardHeader>
-      <CardContent className="flex-1 pb-0">
-        <ChartContainer
-          config={(returnPetPie(pets))?.chartConfig}
-          className="mx-auto aspect-square max-h-[400px]"
-        >
-          <PieChart>
-            <ChartTooltip
-              content={<ChartTooltipContent hideLabel />}
+      <CardContent className="h-[500px] w-full">
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart
+            width={500}
+            height={300}
+            data={dashboard?.illnesses || []}
+            margin={{
+              top: 5,
+              right: 30,
+              left: 20,
+              bottom: 5,
+            }}
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip 
+              formatter={(value, name) => [
+                value, 
+                name === "lastWeekCases" ? "Last Week Cases" : "Current Week Cases"
+              ]} 
             />
-            <Pie data={(returnPetPie(pets))?.petData} dataKey="pets" nameKey="species">
-              <LabelList
-                dataKey="species"
-                nameKey="species"
-                className="fill-background"
-                position={`${pets.length > 0 ? '' : 'center'}`} 
-                stroke="none"
-                fontSize={12}
-                formatter={(value) => value}
-              />
-            </Pie>
-          </PieChart>
-        </ChartContainer>
+            <Legend 
+              formatter={(value) => 
+                value === "lastWeekCases" ? "Last Week Cases" : "Current Week Cases"
+              }
+            />
+            <Line dataKey="lastWeekCases" stroke="#8884d8" />
+            <Line dataKey="currentWeekCases" stroke="#82ca9d" activeDot={{ r: 8 }} />
+          </LineChart>
+        </ResponsiveContainer>
       </CardContent>
     </Card>
   );

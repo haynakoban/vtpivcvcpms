@@ -1,5 +1,9 @@
 import SecureMainLayout from "@/layout/private";
 import { ContentLayout } from "@/layout/private/content-layout";
+import {
+  Dialog,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 import {
   Breadcrumb,
@@ -9,25 +13,36 @@ import {
 } from "@/components/ui/breadcrumb";
 
 import DashboardPieChart from "@/components/dashboard/DashboardPieChart";
+import DashboardForm from "@/components/dashboard/DashboardForm";
 import { useEffect, useState } from "react";
 
 import usePetStore from "@/store/usePetStore";
 import useAuthStore from "@/store/useAuthStore";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import useDashboardStore from "@/store/useDashboardStore";
 
 export default function Dashboard() {
   const { user } = useAuthStore();
+  const { dashboard, getDashboard } = useDashboardStore();
   const { isChanged, userPets, getUserPet, getUserPets } = usePetStore();
   const [isLoading, setIsLoading] = useState(false);
+  const [clicked, setClicked] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    setIsLoading(true)
-    if(user?.userType == 1){
-      getUserPets(true).finally(() => setIsLoading(false));
+    if(user?.userType == 2){
+      getUserPet(true, user?.id);
     }else{
-      getUserPet(true, user?.id).finally(() => setIsLoading(false));
+      getUserPets(true);
     }
   },[getUserPet, getUserPets, isChanged, user?.id]);
+
+
+  useEffect(() => {
+    setIsLoading(true);
+    getDashboard().finally(() => setIsLoading(false));
+  },[])
 
   return (
     <SecureMainLayout>
@@ -40,19 +55,22 @@ export default function Dashboard() {
           </BreadcrumbList>
         </Breadcrumb>
         <div className="mt-5">
+          {user?.userType == 3 && 
+            <Dialog open={isOpen} onOpenChange={setIsOpen}>
+              <DialogTrigger asChild>
+                <Button variant="outline" onClick={() => setClicked(!clicked)}>Edit Dashboard</Button>
+              </DialogTrigger>
+              <DashboardForm clicked={clicked} onClose={() => setIsOpen(false)} />
+            </Dialog>
+          }
+
           {
             isLoading ?
-            <Card className="flex flex-col">
-            <CardHeader className="items-center pb-0">
-              <CardTitle>Pet Popularity by Species</CardTitle>
-              <CardDescription>A breakdown of pet ownership by species, showing the percentage of each type.</CardDescription>
-            </CardHeader>
-              <CardContent className="flex justify-center items-center max-h-[400px] min-h-[400px]">
-                  <div className="w-full text-center">Loading...</div>
-              </CardContent>
+            <Card className="flex flex-col mt-5 p-20">
+              <div className="w-full text-center">Loading...</div>
             </Card>
             :
-            <DashboardPieChart pets={userPets}/>
+            <DashboardPieChart dashboard={dashboard}/>
           }
         </div>
         <div className="mt-5">Recently Added Pet</div>
