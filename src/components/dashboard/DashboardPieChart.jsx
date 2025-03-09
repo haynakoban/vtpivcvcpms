@@ -6,7 +6,16 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
 
 // eslint-disable-next-line react/prop-types
 function DashboardPieChart({ dashboard }) {
@@ -32,19 +41,27 @@ function DashboardPieChart({ dashboard }) {
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
             <YAxis />
-            <Tooltip 
+            <Tooltip
               formatter={(value, name) => [
-                value, 
-                name === "lastWeekCases" ? "Last Week Cases" : "Current Week Cases"
-              ]} 
+                value,
+                name === "lastWeekCases"
+                  ? "Last Week Cases"
+                  : "Current Week Cases",
+              ]}
             />
-            <Legend 
-              formatter={(value) => 
-                value === "lastWeekCases" ? "Last Week Cases" : "Current Week Cases"
+            <Legend
+              formatter={(value) =>
+                value === "lastWeekCases"
+                  ? "Last Week Cases"
+                  : "Current Week Cases"
               }
             />
             <Line dataKey="lastWeekCases" stroke="#8884d8" />
-            <Line dataKey="currentWeekCases" stroke="#82ca9d" activeDot={{ r: 8 }} />
+            <Line
+              dataKey="currentWeekCases"
+              stroke="#82ca9d"
+              activeDot={{ r: 8 }}
+            />
           </LineChart>
         </ResponsiveContainer>
       </CardContent>

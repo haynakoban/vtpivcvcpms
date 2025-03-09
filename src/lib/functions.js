@@ -327,6 +327,44 @@ const vetAppointments = [
   "Emergency Visit",
 ];
 
+export const dashboardData = {
+  dentalDisease: "Dental Disease",
+  skinAllergies: "Skin Allergies",
+  earInfections: "Ear Infections",
+  urinaryTractInfections: "Urinary Tract Infections (UTI)",
+  gastrointestinalIssues: "Gastrointestinal Issues",
+  arthritis: "Arthritis",
+  obesity: "Obesity",
+  diabetes: "Diabetes",
+  heartDisease: "Heart Disease",
+  respiratoryInfections: "Respiratory Infections",
+  eyeInfections: "Eye Infections",
+  kidneyDisease: "Kidney Disease",
+  liverDisease: "Liver Disease",
+  hypothyroidism: "Hypothyroidism",
+  hyperthyroidism: "Hyperthyroidism",
+  cancer: "Cancer",
+  anemia: "Anemia",
+  seizures: "Seizures",
+  tickFever: "Tick Fever",
+  parvovirus: "Parvovirus",
+};
+
+export const dashboardChartConfig = {
+  appointments: {
+    label: "Datadata",
+  },
+  ...Object.fromEntries(
+    Object.entries(dashboardData).map(([key, label], index) => [
+      key,
+      {
+        label,
+        color: `hsl(var(--chart-${index + 1}))`,
+      },
+    ])
+  ),
+};
+
 // dateUtils.js
 
 export const normalizeDate = (value) => {

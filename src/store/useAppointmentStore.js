@@ -252,6 +252,7 @@ const useAppointmentStore = create((set) => ({
       const appointmentRef = doc(db, "appointments", appointmentId);
       await updateDoc(appointmentRef, {
         prescriptionFile: prescriptionUrl,
+        status: "completed",
         updatedAt: serverTimestamp(),
       });
 
