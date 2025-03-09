@@ -13,6 +13,7 @@ import { z } from "zod";
 import useDashboardStore from "@/store/useDashboardStore";
 import LoadingSpinner from "../loaders/LoadingSpinner";
 import { useToast } from "@/hooks/use-toast";
+import { Switch } from "@/components/ui/switch";
 
 const illnessSchema = z.object({
     name: z.string().min(1, "Illness Name is required"),
@@ -26,6 +27,7 @@ function DashboardForm({ clicked, onClose }) {
     const [illnesses, setIllnesses] = useState([]);
     const [defaultData, setDefaultData] = useState({});
     const [title, setTitle] = useState('');
+    const [version, setVersion] = useState(false);
     const [description, setDescription] = useState('');
     const [titleError, setTitleError] = useState('');
     const [descriptionError, setDescriptionError] = useState('');
@@ -43,7 +45,9 @@ function DashboardForm({ clicked, onClose }) {
                 setTitle(dashboard?.title);
                 setDescription(dashboard?.description);
                 setIllnesses(dashboard?.illnesses);
-                setDefaultData({ title: dashboard?.title, description: dashboard?.description, illnesses: dashboard?.illnesses });
+                setVersion(dashboard?.version);
+                console.log(dashboard)
+                setDefaultData({ version: dashboard?.version, title: dashboard?.title, description: dashboard?.description, illnesses: dashboard?.illnesses });
             }
         });
     }, [clicked]);
@@ -77,34 +81,36 @@ function DashboardForm({ clicked, onClose }) {
             return;
         }
 
-        const validationErrors = {};
-        let isValid = true;
+        if(!version){
+            const validationErrors = {};
+            let isValid = true;
 
-        if(!illnesses.length > 0){
-            setCountError('Add atleast one illnesses')
-            return;
-        }
-
-        illnesses.forEach((illness, index) => {
-            const result = illnessSchema.safeParse(illness);
-            if (!result.success) {
-                isValid = false;
-                validationErrors[index] = result.error.format();
+            if(!illnesses.length > 0){
+                setCountError('Add atleast one illnesses')
+                return;
             }
-        });
 
-        if (!isValid) {
-            setErrors(validationErrors);
-            return;
-        }
+            illnesses.forEach((illness, index) => {
+                const result = illnessSchema.safeParse(illness);
+                if (!result.success) {
+                    isValid = false;
+                    validationErrors[index] = result.error.format();
+                }
+            });
 
-        if (JSON.stringify(defaultData) === JSON.stringify({ title: title.trim(), description: description.trim(), illnesses })) {
-            toast({ title: "No Changes", description: 'No changes detect.' });
-            return;
+            if (!isValid) {
+                setErrors(validationErrors);
+                return;
+            }
+
+            if (JSON.stringify(defaultData) === JSON.stringify({ version, title: title.trim(), description: description.trim(), illnesses })) {
+                toast({ title: "No Changes", description: 'No changes detect.' });
+                return;
+            }   
         }
 
         setIsLoading(true);
-        const result = await saveDashboard(title.trim(), description.trim(), illnesses)
+        const result = await saveDashboard(title.trim(), description.trim(), illnesses, version)
         if(result) {
             if(result?.success){
                 toast({ title: "Success", description: result.success });
@@ -151,50 +157,64 @@ function DashboardForm({ clicked, onClose }) {
                     />
                     {descriptionError && <p className="text-red-500 text-sm">{descriptionError}</p>}
                 </div>
-                {illnesses?.length > 0 && <div>Pet Illnesses</div>}
-                <div className="flex flex-col gap-4 overflow-y-auto max-h-[50vh]">
-                    {illnesses?.map((illness, index) => (
-                        <div key={index} className="flex flex-col gap-2 bg-slate-100 dark:bg-slate-900 p-6 rounded-lg relative">
-                            <button 
-                                className="absolute top-2 right-4"
-                                onClick={() => removeIllness(index)}
-                            >
-                                ✖
-                            </button>
-                            <div className="flex flex-col gap-1">
-                                <div>Pet Illness</div>
-                                <Input 
-                                    value={illness.name}
-                                    placeholder="Illness Name"
-                                    onChange={(e) => handleChange(index, "name", e.target.value)}
-                                />
-                                {errors[index]?.name && <p className="text-red-500 text-sm">{errors[index].name._errors[0]}</p>}
-                            </div>
-                            <div className="flex flex-col gap-1">
-                                <div>Last Week Cases</div>
-                                <Input 
-                                    type="number"
-                                    placeholder="Number of cases"
-                                    value={illness.lastWeekCases}
-                                    onChange={(e) => handleChange(index, "lastWeekCases", e.target.value)}
-                                />
-                                {errors[index]?.lastWeekCases && <p className="text-red-500 text-sm">{errors[index].lastWeekCases._errors[0]}</p>}
-                            </div>
-                            <div className="flex flex-col gap-1">
-                                <div>Current Week Cases</div>
-                                <Input 
-                                    type="number"
-                                    placeholder="Number of cases"
-                                    value={illness.currentWeekCases}
-                                    onChange={(e) => handleChange(index, "currentWeekCases", e.target.value)}
-                                />
-                                {errors[index]?.currentWeekCases && <p className="text-red-500 text-sm">{errors[index].currentWeekCases._errors[0]}</p>}
-                            </div>
-                        </div>
-                    ))}
-                    <Button onClick={addIllness} className="mt-2">+ Add Pet Illness</Button>
-                    {countError && <p className="text-red-500 text-sm">{countError}</p>}
+
+                <div className="flex flex-col">
+                    <div>Dashboard Version</div>
+                    <Switch checked={version} value={version} onCheckedChange={() => setVersion(!version)} />
+                    {version ?
+                        <div className="text-sm">V2 Uses A Random Generated Data</div>
+                        :
+                        <div className="text-sm">V1 Uses A Provided Data Information</div>
+                    }
                 </div>
+                {!version &&
+                    <>
+                        {illnesses?.length > 0 && <div>Pet Illnesses</div>}
+                        <div className="flex flex-col gap-4 overflow-y-auto max-h-[40vh]">
+                            {illnesses?.map((illness, index) => (
+                                <div key={index} className="flex flex-col gap-2 bg-slate-100 dark:bg-slate-900 p-6 rounded-lg relative">
+                                    <button 
+                                        className="absolute top-2 right-4"
+                                        onClick={() => removeIllness(index)}
+                                    >
+                                        ✖
+                                    </button>
+                                    <div className="flex flex-col gap-1">
+                                        <div>Pet Illness</div>
+                                        <Input 
+                                            value={illness.name}
+                                            placeholder="Illness Name"
+                                            onChange={(e) => handleChange(index, "name", e.target.value)}
+                                        />
+                                        {errors[index]?.name && <p className="text-red-500 text-sm">{errors[index].name._errors[0]}</p>}
+                                    </div>
+                                    <div className="flex flex-col gap-1">
+                                        <div>Last Week Cases</div>
+                                        <Input 
+                                            type="number"
+                                            placeholder="Number of cases"
+                                            value={illness.lastWeekCases}
+                                            onChange={(e) => handleChange(index, "lastWeekCases", e.target.value)}
+                                        />
+                                        {errors[index]?.lastWeekCases && <p className="text-red-500 text-sm">{errors[index].lastWeekCases._errors[0]}</p>}
+                                    </div>
+                                    <div className="flex flex-col gap-1">
+                                        <div>Current Week Cases</div>
+                                        <Input 
+                                            type="number"
+                                            placeholder="Number of cases"
+                                            value={illness.currentWeekCases}
+                                            onChange={(e) => handleChange(index, "currentWeekCases", e.target.value)}
+                                        />
+                                        {errors[index]?.currentWeekCases && <p className="text-red-500 text-sm">{errors[index].currentWeekCases._errors[0]}</p>}
+                                    </div>
+                                </div>
+                            ))}
+                            <Button onClick={addIllness} className="mt-2">+ Add Pet Illness</Button>
+                            {countError && <p className="text-red-500 text-sm">{countError}</p>}
+                        </div>
+                    </>
+                }
             </div>
             <DialogFooter>
                 <Button type="submit" disabled={isLoading} onClick={handleSave}>Save changes <LoadingSpinner isLoading={isLoading} cls="ml-2 mr-0"/></Button>

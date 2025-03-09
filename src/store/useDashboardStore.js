@@ -89,7 +89,7 @@ const useDashboardStore = create((set) => ({
       console.error("Error fetching dashboard:", err);
     }
   },
-  saveDashboard: async (title, description, illnesses) => {
+  saveDashboard: async (title, description, illnesses, version) => {
     const dashboardCollection = collection(db, "dashboard");
 
     const dashboardQuery = query(dashboardCollection, limit(1));
@@ -103,6 +103,7 @@ const useDashboardStore = create((set) => ({
         title,
         description,
         illnesses,
+        version,
         updatedAt: serverTimestamp(),
       });
 
@@ -112,6 +113,7 @@ const useDashboardStore = create((set) => ({
         title,
         description,
         illnesses,
+        version,
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
       });

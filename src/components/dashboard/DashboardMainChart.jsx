@@ -26,7 +26,7 @@ import {
 import useDashboardStore from "@/store/useDashboardStore";
 import { dashboardChartConfig as chartConfig } from "@/lib/functions";
 
-export default function DashboardMainChart() {
+export default function DashboardMainChart({ dashboard }) {
   const { isLoading, dashboards } = useDashboardStore();
   const [timeRange, setTimeRange] = React.useState("90d");
 
@@ -81,9 +81,7 @@ export default function DashboardMainChart() {
       [leastFrequentType]: rest[leastFrequentType] || 0,
     }));
   }, [dashboards, timeRange]);
-
-  console.log("Filtered Data:", filteredData);
-
+  
   if (isLoading) {
     return <p>Loading...</p>;
   }
@@ -92,10 +90,9 @@ export default function DashboardMainChart() {
     <Card>
       <CardHeader className="flex items-center gap-2 space-y-0 border-b py-5 sm:flex-row">
         <div className="grid flex-1 gap-1 text-center sm:text-left">
-          <CardTitle>Pet Illness Trends</CardTitle>
+          <CardTitle>{dashboard?.title}</CardTitle>
           <CardDescription>
-            Showing the most and least common pet illnesses reported over the
-            last {timeRange.replace("d", "")} days.
+            {dashboard?.title}
           </CardDescription>
         </div>
         <Select value={timeRange} onValueChange={setTimeRange}>

@@ -97,8 +97,7 @@ export default function Dashboard() {
               <div className="w-full text-center">Loading...</div>
             </Card>
           ) : (
-            // <DashboardPieChart dashboard={dashboard}/>
-            <DashboardContainer />
+            <DashboardContainer dashboard={dashboard} userType={user?.userType} />
           )}
         </div>
         <div className="mt-5">Recently Added Pet</div>
