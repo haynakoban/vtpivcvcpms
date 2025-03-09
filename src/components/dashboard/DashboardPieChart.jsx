@@ -19,6 +19,11 @@ import {
 
 // eslint-disable-next-line react/prop-types
 function DashboardPieChart({ dashboard }) {
+  const maxCases = Math.max(
+    ...((dashboard?.illnesses || []).map((d) => Math.max(d.lastWeekCases, d.currentWeekCases))),
+    0
+  );  
+
   return (
     <Card className="flex flex-col mt-5">
       <CardHeader className="items-center">
@@ -40,7 +45,7 @@ function DashboardPieChart({ dashboard }) {
           >
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
-            <YAxis />
+            <YAxis domain={[0, maxCases + 50]} allowDataOverflow />
             <Tooltip
               formatter={(value, name) => [
                 value,

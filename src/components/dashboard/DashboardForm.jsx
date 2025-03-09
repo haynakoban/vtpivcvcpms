@@ -46,7 +46,6 @@ function DashboardForm({ clicked, onClose }) {
                 setDescription(dashboard?.description);
                 setIllnesses(dashboard?.illnesses);
                 setVersion(dashboard?.version);
-                console.log(dashboard)
                 setDefaultData({ version: dashboard?.version, title: dashboard?.title, description: dashboard?.description, illnesses: dashboard?.illnesses });
             }
         });
