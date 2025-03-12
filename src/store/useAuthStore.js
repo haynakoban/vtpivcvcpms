@@ -4,7 +4,7 @@ import { doc, getDoc } from "firebase/firestore";
 import { create } from "zustand";
 
 const useAuthStore = create((set) => ({
-  user: null,
+  user: undefined,
   isChanged: false,
   initializeAuth: () => {
     onAuthStateChanged(auth, async (u) => {

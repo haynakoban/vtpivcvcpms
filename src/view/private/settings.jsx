@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import SecureMainLayout from "@/layout/private";
 import { ContentLayout } from "@/layout/private/content-layout";
 
@@ -27,6 +27,7 @@ const formSchema = z.object({
 
 export default function Settings() {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const { user } = useAuthStore();
   const { updateUserProfile } = useUsersStore();
   const [isLoading, setIsLoading] = useState(false);
@@ -39,6 +40,13 @@ export default function Settings() {
       contactNumber: user?.contactNumber || "",
     },
   });
+
+  useEffect(() => {
+    if(user === undefined) return;
+    if (!user) {
+      navigate("/");
+    }
+  }, []);
 
   useEffect(() => {
     form.reset({ 

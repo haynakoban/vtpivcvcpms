@@ -85,6 +85,8 @@ function AppointmentCalendar() {
         color: "white",
         border: "0",
         display: "block",
+        textDecoration: event.status === "no-show" ? "line-through" : "none",
+        textDecorationThickness: "2px",
       },
     };
   };

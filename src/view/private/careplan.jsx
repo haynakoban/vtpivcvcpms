@@ -44,6 +44,7 @@ export default function Careplan() {
   const getData = user?.userType == 1 ? appointments : userAppointments;
 
   useEffect(() => {
+    if(user === undefined) return;
     if (user) {
       if (user?.userType == 3) navigate("/auth/dashboard");
     } else {
@@ -77,7 +78,7 @@ export default function Careplan() {
             <>
               {user?.userType == 1 && (
                 <AdminCareplan
-                  appointments={getData?.filter((a) => a.status == "booked")}
+                  appointments={getData?.filter((a) => a.status == "booked" || a.status == "completed")}
                 />
               )}
               {user?.userType == 2 && (

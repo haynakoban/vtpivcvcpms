@@ -13,11 +13,15 @@ export default function Meetings() {
   const { user } = useAuthStore();
   const navigate = useNavigate();
 
+  const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
+    if(user === undefined) return;
     if (!user) {
       navigate("/");
     }
-  }, []);
+    setParticipantName(user?.displayName || user?.email)
+    setIsLoading(false)
+  }, [user]);
 
   const [token, setToken] = useState("");
   const [meetingId, setMeetingId] = useState("");
@@ -44,7 +48,9 @@ export default function Meetings() {
   }, [isMobile]);
 
   return (
-    <>
+    <>{isLoading?
+      <div className="w-[100vw] h-[100vh] flex justify-center items-center animate">Loading...</div>
+      :
       <MeetingAppProvider>
         {isMeetingStarted ? (
           <MeetingProvider
@@ -97,6 +103,7 @@ export default function Meetings() {
           />
         )}
       </MeetingAppProvider>
+      }
     </>
   );
 }

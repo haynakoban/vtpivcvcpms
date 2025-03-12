@@ -5,7 +5,6 @@ import { toast } from "react-toastify";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { IoMdArrowRoundBack } from "react-icons/io";
-import { useNavigate } from "react-router-dom";
 import useAuditStore from "@/store/useAuditStore";
 import useAuthStore from "@/store/useAuthStore";
 
@@ -18,7 +17,6 @@ export function MeetingDetailsScreen({
 }) {
   const { user } = useAuthStore();
   const { addAudit } = useAuditStore();
-  const navigate = useNavigate();
   const [meetingId, setMeetingId] = useState("");
   const [meetingIdError, setMeetingIdError] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
@@ -159,15 +157,6 @@ export function MeetingDetailsScreen({
               }}
             >
               Join a meeting
-            </Button>
-            <Button
-              variant="outline"
-              className="w-full px-16 py-6 mt-5 rounded-xl text-sm font-semibold border"
-              onClick={() => {
-                navigate("/");
-              }}
-            >
-              <IoMdArrowRoundBack /> &nbsp;Back to home
             </Button>
           </div>
         </div>

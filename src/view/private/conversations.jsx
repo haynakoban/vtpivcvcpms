@@ -147,6 +147,7 @@ export default function Conversations() {
   };
 
   useEffect(() => {
+    if(user === undefined) return;
     if(user){
       if(user?.userType == 3) navigate('/auth/dashboard')
     } else {

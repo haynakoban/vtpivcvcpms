@@ -76,7 +76,23 @@ export function Menu({ isOpen }) {
                             >
                               <Button
                                 variant={"ghost"}
-                                onClick={() => navigate(href)}
+                                onClick={() => {
+                                  if(href == '/auth/meetings'){
+                                    // window.open(href, "_blank");
+                                    const width = 800;
+                                    const height = 600;
+                                    const left = (window.screen.width - width) / 2;
+                                    const top = (window.screen.height - height) / 2;
+
+                                    window.open(
+                                      href,
+                                      "VideoCallWindow",
+                                      `width=${width},height=${height},top=${top},left=${left},resizable=no,toolbar=no,menubar=no,status=no`
+                                    );
+                                  } else {
+                                    navigate(href);
+                                  }
+                                }}
                               >
                                 <span
                                   className={cn(isOpen === false ? "" : "mr-4")}

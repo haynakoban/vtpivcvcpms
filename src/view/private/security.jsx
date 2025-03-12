@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import SecureMainLayout from "@/layout/private";
 import { ContentLayout } from "@/layout/private/content-layout";
 import { Button } from "@/components/ui/button";
@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import useAuthStore from "@/store/useAuthStore";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useUsersStore from "@/store/useUsersStore";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -43,9 +43,17 @@ const formSchema2 = z.object({
 
 export default function Security() {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const { user, isChanged } = useAuthStore();
   const { updateUserPassword } = useUsersStore();
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if(user === undefined) return;
+    if (!user) {
+      navigate("/");
+    }
+  }, []);
 
   const form2 = useForm({
     resolver: zodResolver(formSchema2),

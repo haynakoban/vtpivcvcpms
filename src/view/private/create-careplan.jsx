@@ -35,10 +35,9 @@ export default function CreateCareplan() {
   }, [user, isChanged, getAppointments, getUserAppointments]);
 
   useEffect(() => {
+    if(user === undefined) return;
     if (user) {
       if (user?.userType == 3) navigate("/auth/dashboard");
-    } else {
-      navigate('/')
     }
   }, [navigate, user]);
 

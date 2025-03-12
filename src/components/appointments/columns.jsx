@@ -20,7 +20,7 @@ export const columns = [
     cell: ({ row }) => {
       const status = row.getValue("desc");
       const style = row.original.color;
-      return <div className="font-medium w-auto px-4"><span className={`w-auto capitalize px-3 py-2 text-white rounded bg-[${style}]`}>{status}</span></div>;
+      return <div className="font-medium w-auto px-4"><span className={`w-auto capitalize px-3 py-2 font-black text-white rounded bg-[${style}]`}>{status}</span></div>;
     },
   },
   {

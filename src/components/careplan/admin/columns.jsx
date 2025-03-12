@@ -23,7 +23,7 @@ export const columns = [
       return (
         <div className="font-medium w-auto px-4">
           <span
-            className={`w-auto capitalize px-3 py-2 rounded text-white bg-[${style}]`}
+            className={`w-auto capitalize px-3 py-2 font-black rounded text-white bg-[${style}]`}
           >
             {status}
           </span>

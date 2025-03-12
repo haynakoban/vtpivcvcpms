@@ -39,6 +39,7 @@ export default function Messages() {
   }, [user?.uid, fetchRecentConvo]);
 
   useEffect(() => {
+    if(user === undefined) return;
     if(user){
       if(user?.userType == 3) navigate('/auth/dashboard')
     } else {

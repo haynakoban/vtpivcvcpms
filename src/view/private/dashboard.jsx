@@ -45,6 +45,7 @@ export default function Dashboard() {
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
+    if(user === undefined) return;
     if (!user) {
       navigate("/");
     }

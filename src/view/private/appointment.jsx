@@ -39,6 +39,7 @@ export default function Appointment() {
   const { getUserAppointments, userAppointments } = useAppointmentStore();
 
   useEffect(() => {
+    if(user === undefined) return;
     if(user){
       getUserAppointments(user?.id).finally(() => setIsLoading(false));
     } else {
