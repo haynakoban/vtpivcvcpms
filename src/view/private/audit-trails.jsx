@@ -39,6 +39,8 @@ export default function AuditTrails() {
   useEffect(() => {
     if(user){
       if(user?.userType != 1) navigate('/auth/dashboard')
+    } else {
+      navigate('/')
     }
   }, [navigate, user])
 

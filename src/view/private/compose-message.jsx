@@ -44,6 +44,8 @@ export default function ComposeMessage() {
   useEffect(() => {
     if(user){
       if(user?.userType == 3) navigate('/auth/dashboard')
+    } else {
+      navigate('/')
     }
   }, [navigate, user])
 

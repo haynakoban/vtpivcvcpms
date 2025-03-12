@@ -21,6 +21,8 @@ export default function CreateAppointment() {
   useEffect(() => {
     if(user){
       if(user?.userType != 2) navigate('/auth/dashboard')
+    } else {
+      navigate('/')
     }
   }, [navigate, user])
 

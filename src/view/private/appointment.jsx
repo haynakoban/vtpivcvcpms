@@ -41,6 +41,8 @@ export default function Appointment() {
   useEffect(() => {
     if(user){
       getUserAppointments(user?.id).finally(() => setIsLoading(false));
+    } else {
+      navigate('/')
     }
   },[user])
   

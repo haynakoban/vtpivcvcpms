@@ -46,6 +46,8 @@ export default function Careplan() {
   useEffect(() => {
     if (user) {
       if (user?.userType == 3) navigate("/auth/dashboard");
+    } else {
+      navigate('/')
     }
   }, [navigate, user]);
 

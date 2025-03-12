@@ -26,6 +26,7 @@ import {
 import { Button } from "@/components/ui/button";
 import useDashboardStore from "@/store/useDashboardStore";
 import DashboardContainer from "@/components/dashboard/DashboardContainer";
+import { useNavigate } from "react-router-dom";
 
 export default function Dashboard() {
   const { user } = useAuthStore();
@@ -38,9 +39,16 @@ export default function Dashboard() {
     fetchApptSummary,
   } = useDashboardStore();
   const { isChanged, userPets, getUserPet, getUserPets } = usePetStore();
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [clicked, setClicked] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    if (!user) {
+      navigate("/");
+    }
+  }, []);
 
   useEffect(() => {
     if (user?.userType == 2) {

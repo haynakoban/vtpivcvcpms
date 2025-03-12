@@ -166,6 +166,8 @@ export default function Availability() {
   useEffect(() => {
     if(user){
       if(user?.userType != 1) navigate('/auth/dashboard')
+    } else {
+      navigate('/')
     }
   }, [navigate, user])
   return (
