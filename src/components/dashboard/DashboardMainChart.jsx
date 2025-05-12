@@ -40,7 +40,7 @@ export default function DashboardMainChart({ dashboard }) {
 
     const startDate = new Date(referenceDate);
     startDate.setDate(referenceDate.getDate() - daysToSubtract);
-    console.log(startDate);
+    // console.log(startDate);
 
     // Filter entries within time range
     const dataInRange = dashboards.filter((item) => {
@@ -87,7 +87,7 @@ export default function DashboardMainChart({ dashboard }) {
     return <p>Loading...</p>;
   }
 
-  console.log("dashboards", filteredData);
+  // console.log("dashboards", filteredData);
   return (
     <Card>
       <CardHeader className="flex items-center gap-2 space-y-0 border-b py-5 sm:flex-row">

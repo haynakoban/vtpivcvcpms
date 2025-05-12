@@ -331,7 +331,7 @@ const useDashboardStore = create((set) => ({
             ? new Date(createdAtRaw.seconds * 1000)
             : null;
 
-        console.log("data: ", data);
+        // console.log("data: ", data);
 
         return problems.map((entry) => ({
           id: doc.id,
@@ -341,7 +341,7 @@ const useDashboardStore = create((set) => ({
         }));
       });
 
-      console.log("dashboardData: ", dashboardData);
+      // console.log("dashboardData: ", dashboardData);
       set({ dashboards: dashboardData });
     } catch (error) {
       console.error("Error fetching dashboard data from careplans:", error);
