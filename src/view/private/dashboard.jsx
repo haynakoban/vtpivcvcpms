@@ -33,7 +33,8 @@ export default function Dashboard() {
   const {
     dashboard,
     getDashboard,
-    fetchDashboardData,
+    // fetchDashboardData,
+    fetchDashboardFromCarePlans,
     fetchUsersSummary,
     fetchPetsSummary,
     fetchApptSummary,
@@ -45,7 +46,7 @@ export default function Dashboard() {
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    if(user === undefined) return;
+    if (user === undefined) return;
     if (!user) {
       navigate("/");
     }
@@ -60,15 +61,17 @@ export default function Dashboard() {
   }, [getUserPet, getUserPets, isChanged, user?.id]);
 
   useEffect(() => {
-    fetchDashboardData();
+    // fetchDashboardData();
+    fetchDashboardFromCarePlans();
     fetchUsersSummary();
     fetchPetsSummary();
     fetchApptSummary();
   }, [
-    fetchDashboardData,
+    // fetchDashboardData,
     fetchUsersSummary,
     fetchPetsSummary,
     fetchApptSummary,
+    fetchDashboardFromCarePlans,
   ]);
 
   useEffect(() => {
@@ -106,7 +109,10 @@ export default function Dashboard() {
               <div className="w-full text-center">Loading...</div>
             </Card>
           ) : (
-            <DashboardContainer dashboard={dashboard} userType={user?.userType} />
+            <DashboardContainer
+              dashboard={dashboard}
+              userType={user?.userType}
+            />
           )}
         </div>
         <div className="mt-5">Recently Added Pet</div>

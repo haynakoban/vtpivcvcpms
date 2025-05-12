@@ -59,6 +59,7 @@ export const carePlanModel = {
     notes: "",
   },
   carePlan: {
+    problems: [],
     treatmentPlan: "",
     rehabilitationPlan: "",
     prescribedMedications: "",

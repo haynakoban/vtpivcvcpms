@@ -28,7 +28,7 @@ const initialPanelState = {
   medicationIsOpen: true,
   administrationMedicationIsOpen: true,
   carePlanIsOpen: true,
-  medicalHistoryIsOpen: true,
+  medicalHistoryIsOpen: false,
 };
 
 function NewUserCareplan() {
@@ -150,6 +150,29 @@ function NewUserCareplan() {
       try {
         const { pet, user, id, ...filteredData } = data;
 
+        const filteredProblems = filteredData.carePlan?.problems
+          ?.filter((item) => item.problem?.key && item.problem?.value)
+          .filter(
+            (item, index, self) =>
+              index ===
+              self.findIndex(
+                (t) =>
+                  t.problem.key === item.problem.key &&
+                  t.problem.value === item.problem.value
+              )
+          );
+
+        filteredData.carePlan.problems = filteredProblems;
+
+        // if (filteredData.carePlan.problems.length === 0) {
+        //   toast({
+        //     title: "No valid care plan problems",
+        //     description: "Please add valid care plan problems before saving.",
+        //     status: "error",
+        //   });
+        //   return;
+        // }
+
         saveCarePlan(apptId, petId, filteredData);
 
         setTimeout(() => {
@@ -176,6 +199,33 @@ function NewUserCareplan() {
 
   const lockCareplan = () => {
     if (apptId && petId) {
+      const formData = getValues();
+      const problems = formData.carePlan?.problems || [];
+
+      const validProblems = problems.filter(
+        (item) => item.problem?.key && item.problem?.value
+      );
+
+      const uniqueProblems = validProblems.filter(
+        (item, index, self) =>
+          index ===
+          self.findIndex(
+            (t) =>
+              t.problem.key === item.problem.key &&
+              t.problem.value === item.problem.value
+          )
+      );
+
+      // if (uniqueProblems.length === 0) {
+      //   toast({
+      //     title: "No valid care plan problems",
+      //     description:
+      //       "Please add valid care plan problems before locking the care plan.",
+      //     status: "error",
+      //   });
+      //   return;
+      // }
+
       const toastId = toast({
         title: "Locking Careplan",
         description: "Your care plan is being locked...",
@@ -210,6 +260,30 @@ function NewUserCareplan() {
         const formData = getValues();
 
         const { pet, user, id, ...filteredData } = formData;
+
+        const filteredProblems = filteredData.carePlan?.problems
+          ?.filter((item) => item.problem?.key && item.problem?.value)
+          .filter(
+            (item, index, self) =>
+              index ===
+              self.findIndex(
+                (t) =>
+                  t.problem.key === item.problem.key &&
+                  t.problem.value === item.problem.value
+              )
+          );
+
+        filteredData.carePlan.problems = filteredProblems;
+
+        // if (filteredProblems.length === 0) {
+        //   toast({
+        //     title: "No valid care plan problems",
+        //     description:
+        //       "Please add valid care plan problems before locking the care plan.",
+        //     status: "error",
+        //   });
+        //   return;
+        // }
 
         await saveCarePlan(apptId, petId, filteredData);
 
@@ -358,6 +432,7 @@ function NewUserCareplan() {
             control={control}
             togglePanelState={togglePanelState}
             isPanelOpen={panels.carePlanIsOpen}
+            setValue={setValue}
           />
 
           <MedicalHistoryPanel

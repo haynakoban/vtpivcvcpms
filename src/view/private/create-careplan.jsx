@@ -16,11 +16,13 @@ import { useEffect, useState } from "react";
 import useAuthStore from "@/store/useAuthStore";
 import LoadingSpinner from "@/components/loaders/LoadingSpinner";
 import NewUserCareplan from "@/components/careplan/NewUserCareplan";
+import useLookUpsStore from "@/store/useLookUpsStore";
 
 export default function CreateCareplan() {
   const { user } = useAuthStore();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
+  const { getPetDiseases } = useLookUpsStore();
   const { getAppointments, getUserAppointments, isChanged } =
     useAppointmentStore();
 
@@ -31,11 +33,12 @@ export default function CreateCareplan() {
       } else {
         getUserAppointments(user?.id).finally(() => setIsLoading(false));
       }
+      getPetDiseases();
     }
-  }, [user, isChanged, getAppointments, getUserAppointments]);
+  }, [user, isChanged, getAppointments, getUserAppointments, getPetDiseases]);
 
   useEffect(() => {
-    if(user === undefined) return;
+    if (user === undefined) return;
     if (user) {
       if (user?.userType == 3) navigate("/auth/dashboard");
     }

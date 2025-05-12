@@ -13,6 +13,7 @@ import {
   limit,
   getDocs,
   updateDoc,
+  Timestamp,
 } from "firebase/firestore";
 import { db } from "@/config/firebase";
 import { dashboardData } from "@/lib/functions";
@@ -313,6 +314,40 @@ const useDashboardStore = create((set) => ({
       console.error("Error fetching data:", error);
     }
   },
+  fetchDashboardFromCarePlans: async () => {
+    try {
+      const carePlanCollection = collection(db, "careplans");
+      const snapshot = await getDocs(carePlanCollection);
+
+      const dashboardData = snapshot.docs.flatMap((doc) => {
+        const data = doc.data();
+        const problems = data?.carePlan?.problems ?? [];
+        const createdAtRaw = data?.createdAt;
+
+        const createdAt =
+          createdAtRaw instanceof Timestamp
+            ? createdAtRaw.toDate()
+            : createdAtRaw?.seconds
+            ? new Date(createdAtRaw.seconds * 1000)
+            : null;
+
+        console.log("data: ", data);
+
+        return problems.map((entry) => ({
+          id: doc.id,
+          date: createdAt ? createdAt.toISOString().split("T")[0] : null,
+          problemKey: entry?.problem?.key ?? null,
+          problemValue: entry?.problem?.value ?? null,
+        }));
+      });
+
+      console.log("dashboardData: ", dashboardData);
+      set({ dashboards: dashboardData });
+    } catch (error) {
+      console.error("Error fetching dashboard data from careplans:", error);
+    }
+  },
+
   insertData: async () => {
     set({ isLoading: true });
 
@@ -347,6 +382,49 @@ const useDashboardStore = create((set) => ({
 
     set({ isLoading: false });
   },
+  // addTestProblemsToCarePlans: async () => {
+  //   const testProblems = [
+  //     { problem: { key: 3000, value: "Rabies" } },
+  //     { problem: { key: 3004, value: "Heartworm Disease" } },
+  //     { problem: { key: 3006, value: "Parvovirus" } },
+  //   ];
+
+  //   try {
+  //     const carePlanCollection = collection(db, "careplans");
+  //     const snapshot = await getDocs(carePlanCollection);
+
+  //     const updatedCarePlans = [];
+
+  //     // Iterate over each care plan and update the problems
+  //     for (const docSnapshot of snapshot.docs) {
+  //       const data = docSnapshot.data();
+  //       const currentProblems = data?.carePlan?.problems ?? [];
+
+  //       // Add test problems to the current problems
+  //       const updatedProblems = [...currentProblems, ...testProblems];
+
+  //       // Update the care plan document with the new problems
+  //       const carePlanDocRef = doc(db, "careplans", docSnapshot.id);
+  //       await updateDoc(carePlanDocRef, {
+  //         "carePlan.problems": updatedProblems,
+  //       });
+
+  //       console.log(`Updated care plan ${docSnapshot.id} with test problems.`);
+
+  //       // Push updated care plan to the array
+  //       updatedCarePlans.push({
+  //         ...data,
+  //         id: docSnapshot.id,
+  //         carePlan: { ...data.carePlan, problems: updatedProblems },
+  //       });
+  //     }
+
+  //     // Update Zustand state with the updated care plans
+  //     set({ dashboards: updatedCarePlans });
+  //   } catch (error) {
+  //     console.error("Error adding test problems to care plans:", error);
+  //   }
+  // },
 }));
 
 export default useDashboardStore;

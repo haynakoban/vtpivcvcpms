@@ -33,67 +33,67 @@ export default function DashboardMainChart({ dashboard }) {
   const filteredData = React.useMemo(() => {
     if (!dashboards.length) return [];
 
-    // Set reference date & calculate start date based on selected range
     const referenceDate = new Date();
     let daysToSubtract = 90;
-
-    if (timeRange === "30d") {
-      daysToSubtract = 30;
-    } else if (timeRange === "7d") {
-      daysToSubtract = 7;
-    }
+    if (timeRange === "30d") daysToSubtract = 30;
+    if (timeRange === "7d") daysToSubtract = 7;
 
     const startDate = new Date(referenceDate);
-    startDate.setDate(startDate.getDate() - daysToSubtract);
+    startDate.setDate(referenceDate.getDate() - daysToSubtract);
+    console.log(startDate);
 
-    // Filter data by date range
-    const dataInRange = dashboards
-      .filter((item) => new Date(item.date) >= startDate)
+    // Filter entries within time range
+    const dataInRange = dashboards.filter((item) => {
+      const itemDate = new Date(item.date);
+      return itemDate >= startDate;
+    });
+
+    // Aggregate counts per date per problemValue
+    const dateMap = new Map();
+
+    dataInRange.forEach(({ date, problemValue }) => {
+      if (!dateMap.has(date)) {
+        dateMap.set(date, {});
+      }
+      const current = dateMap.get(date);
+      current[problemValue] = (current[problemValue] || 0) + 1;
+    });
+
+    // Transform map into array format for chart
+    const result = Array.from(dateMap.entries())
+      .map(([date, values]) => ({ date, ...values }))
       .sort((a, b) => new Date(a.date) - new Date(b.date));
 
-    if (dataInRange.length === 0) return [];
-
-    // Aggregate totals for each appointment type
-    const appointmentTotals = dataInRange.reduce((acc, entry) => {
-      Object.keys(entry).forEach((key) => {
-        if (key !== "date" && key !== "id") {
-          acc[key] = (acc[key] || 0) + entry[key];
-        }
-      });
-      return acc;
-    }, {});
-
-    // Find most and least frequent appointment types
-    const sortedAppointments = Object.entries(appointmentTotals).sort(
-      (a, b) => b[1] - a[1] // Sort descending by value
-    );
-
-    if (sortedAppointments.length === 0) return [];
-
-    const mostFrequentType = sortedAppointments[0][0]; // Highest count
-    const leastFrequentType =
-      sortedAppointments[sortedAppointments.length - 1][0]; // Lowest count
-
-    // Keep only the date, most frequent, and least frequent appointment types
-    return dataInRange.map(({ id, date, ...rest }) => ({
-      date,
-      [mostFrequentType]: rest[mostFrequentType] || 0,
-      [leastFrequentType]: rest[leastFrequentType] || 0,
-    }));
+    return result;
   }, [dashboards, timeRange]);
-  
+
+  const topKeys = React.useMemo(() => {
+    const counts = {};
+
+    dashboards.forEach((entry) => {
+      const key = entry.problemValue;
+      if (key) {
+        counts[key] = (counts[key] || 0) + 1;
+      }
+    });
+
+    return Object.entries(counts)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 2)
+      .map(([key]) => key);
+  }, [dashboards]);
+
   if (isLoading) {
     return <p>Loading...</p>;
   }
 
+  console.log("dashboards", filteredData);
   return (
     <Card>
       <CardHeader className="flex items-center gap-2 space-y-0 border-b py-5 sm:flex-row">
         <div className="grid flex-1 gap-1 text-center sm:text-left">
           <CardTitle>{dashboard?.title}</CardTitle>
-          <CardDescription>
-            {dashboard?.description}
-          </CardDescription>
+          <CardDescription>{dashboard?.description}</CardDescription>
         </div>
         <Select value={timeRange} onValueChange={setTimeRange}>
           <SelectTrigger
@@ -161,14 +161,14 @@ export default function DashboardMainChart({ dashboard }) {
               }
             />
             <Area
-              dataKey={Object.keys(filteredData[0] ?? {})[1]}
+              dataKey={topKeys[0]}
               type="natural"
               fill="url(#illnessUrl1)"
               stroke="purple"
               stackId="a"
             />
             <Area
-              dataKey={Object.keys(filteredData[0] ?? {})[2]}
+              dataKey={topKeys[1]}
               type="natural"
               fill="url(#illnessUrl2)"
               stroke="blue"
